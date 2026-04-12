@@ -1,0 +1,45 @@
+Entorno virtual
+.venv/
+venv/
+env/
+
+Variables de entorno
+.env
+
+Python
+pycache/
+*.py[cod]
+*$py.class
+
+Archivos de Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+
+Archivos de migraciones compiladas
+*.pyc
+
+Archivos estáticos y media (opcional según proyecto)
+staticfiles/
+media/
+
+Archivos de configuración de entorno
+*.pot
+*.mo
+
+Distribución / packaging
+build/
+dist/
+*.egg-info/
+
+Editor / IDE
+.vscode/
+.idea/
+
+Sistema operativo
+.DS_Store
+Thumbs.db
+
+Archivos temporales
+*.swp
+*.swo
