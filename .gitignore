@@ -44,6 +44,11 @@ Archivos temporales
 *.swp
 *.swo
 
-.node_modules
+package-lock.json
+package.json
+
+CACHE
+__pycache__/
+*/__pycache__/
+/src/output.css
 node_modules/
-.node_modules/
