@@ -1,0 +1,647 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi perfil — Endereza2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal:     #0D9488;
+      --teal-mid: #14B8A6;
+      --teal-lt:  #CCFBF1;
+      --teal-bg:  #F0FDFA;
+      --dark:     #0F2027;
+      --mid:      #374151;
+      --muted:    #6B7280;
+      --border:   #E5E7EB;
+      --surface:  #F9FAFB;
+      --white:    #FFFFFF;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--mid);
+      background: var(--surface);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Sora', sans-serif; }
+
+    /* ══════════════════════════════
+       NAV
+    ══════════════════════════════ */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 clamp(1rem, 5vw, 4rem);
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo {
+      width: 36px; height: 36px;
+      background: var(--teal);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-logo svg { width: 22px; height: 22px; color: #fff; }
+    .brand-name {
+      font-size: 1.15rem; font-weight: 700; color: var(--dark);
+      letter-spacing: -0.02em;
+    }
+    .brand-name span { color: var(--teal); }
+    .nav-links {
+      display: flex; align-items: center; gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none; font-size: 0.9rem; font-weight: 500;
+      color: var(--mid); transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--teal); }
+    .nav-actions { display: flex; gap: .75rem; align-items: center; }
+    .btn-ghost {
+      background: none; border: 1.5px solid var(--border);
+      color: var(--mid); padding: .45rem 1.1rem;
+      border-radius: 10px; font-size: .875rem; font-weight: 500;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: border-color .2s, color .2s;
+      text-decoration: none; display: inline-flex; align-items: center; gap: .4rem;
+    }
+    .btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+    .btn-ghost svg { width: 15px; height: 15px; }
+    .btn-primary {
+      background: var(--teal); color: #fff;
+      border: none; padding: .48rem 1.2rem;
+      border-radius: 10px; font-size: .875rem; font-weight: 600;
+      cursor: pointer; font-family: 'Sora', sans-serif;
+      transition: background .2s, transform .15s;
+      text-decoration: none; display: inline-block;
+    }
+    .btn-primary:hover { background: #0f766e; transform: translateY(-1px); }
+    .hamburger {
+      display: none; background: none; border: none; cursor: pointer;
+      flex-direction: column; gap: 5px; padding: 4px;
+    }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--mid); border-radius: 2px; }
+
+    /* ══════════════════════════════
+       PAGE WRAPPER
+    ══════════════════════════════ */
+    main {
+      flex: 1;
+      padding: clamp(2rem, 5vw, 3.5rem) clamp(1rem, 5vw, 2rem);
+    }
+
+    .page-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      animation: fadeUp .4s cubic-bezier(.22,1,.36,1);
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ══════════════════════════════
+       HEADER CARD (avatar + nombre)
+    ══════════════════════════════ */
+    .profile-header {
+      background: linear-gradient(160deg, var(--dark) 0%, #0F3443 60%, #0a2a37 100%);
+      border-radius: 20px;
+      padding: 2rem 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .profile-header::before {
+      content: '';
+      position: absolute; bottom: -60px; right: -60px;
+      width: 220px; height: 220px;
+      background: radial-gradient(circle, rgba(13,148,136,.35) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .profile-header::after {
+      content: '';
+      position: absolute; top: -40px; left: -40px;
+      width: 160px; height: 160px;
+      background: radial-gradient(circle, rgba(8,145,178,.2) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .avatar {
+      position: relative; z-index: 1; flex-shrink: 0;
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: var(--teal);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Sora', sans-serif;
+      font-size: 1.6rem; font-weight: 800; color: #fff;
+      letter-spacing: -.03em;
+      border: 3px solid rgba(255,255,255,.15);
+    }
+    .profile-info { position: relative; z-index: 1; }
+    .profile-info .tag {
+      display: inline-block; font-size: .7rem; font-weight: 700;
+      letter-spacing: .09em; text-transform: uppercase;
+      color: var(--teal-mid); margin-bottom: .3rem;
+    }
+    .profile-info h1 {
+      font-size: 1.45rem; font-weight: 800; color: #fff;
+      letter-spacing: -.03em; line-height: 1.2;
+    }
+    .profile-info p {
+      font-size: .875rem; color: rgba(255,255,255,.5); margin-top: .2rem;
+    }
+    .profile-header-actions {
+      margin-left: auto; position: relative; z-index: 1;
+      display: flex; gap: .6rem; align-items: center;
+    }
+    .btn-outline-white {
+      background: rgba(255,255,255,.08);
+      border: 1.5px solid rgba(255,255,255,.2);
+      color: rgba(255,255,255,.8);
+      padding: .42rem 1rem;
+      border-radius: 10px; font-size: .82rem; font-weight: 500;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: background .2s, border-color .2s;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: .4rem;
+    }
+    .btn-outline-white svg { width: 14px; height: 14px; }
+    .btn-outline-white:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.35); }
+
+    /* ══════════════════════════════
+       CARDS
+    ══════════════════════════════ */
+    .card {
+      background: var(--white);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 1.75rem 2rem;
+    }
+    .card-title {
+      font-size: .72rem; font-weight: 700;
+      letter-spacing: .09em; text-transform: uppercase;
+      color: var(--teal); margin-bottom: 1.25rem;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .card-title svg { width: 14px; height: 14px; }
+
+    /* ── DATA GRID ── */
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem 1.5rem;
+    }
+    .data-item {}
+    .data-label {
+      font-size: .75rem; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .05em; margin-bottom: .25rem;
+    }
+    .data-value {
+      font-size: .95rem; font-weight: 500; color: var(--dark);
+    }
+    .data-value.mono {
+      font-family: 'Sora', monospace; font-size: .9rem; letter-spacing: .02em;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px; background: var(--border); margin: 1.25rem 0;
+    }
+
+    /* ── BADGE ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: .35rem;
+      padding: .25rem .75rem;
+      border-radius: 999px;
+      font-size: .78rem; font-weight: 600;
+    }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .badge-active  { background: #ECFDF5; color: #065F46; }
+    .badge-active .badge-dot  { background: #10B981; }
+    .badge-pending { background: #FFFBEB; color: #92400E; }
+    .badge-pending .badge-dot { background: #F59E0B; }
+    .badge-role    { background: var(--teal-bg); color: var(--teal); }
+
+    /* ── TWO COL LAYOUT ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    /* ── STAT BOXES ── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .75rem;
+    }
+    .stat-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      text-align: center;
+    }
+    .stat-number {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.5rem; font-weight: 800;
+      color: var(--dark); letter-spacing: -.03em;
+    }
+    .stat-number span { color: var(--teal); }
+    .stat-label {
+      font-size: .75rem; color: var(--muted);
+      margin-top: .2rem;
+    }
+
+    /* ── CHANGE PASSWORD ── */
+    .field { display: flex; flex-direction: column; gap: .4rem; margin-bottom: .9rem; }
+    .field label { font-size: .8rem; font-weight: 600; color: var(--mid); }
+    .field-input-wrap { position: relative; }
+    .field-icon {
+      position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+      display: flex; align-items: center;
+      color: var(--muted);
+    }
+    .field-icon svg { width: 16px; height: 16px; }
+    .field-input-wrap input {
+      width: 100%; padding: .65rem 1rem .65rem 2.5rem;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: .875rem; font-family: 'DM Sans', sans-serif;
+      color: var(--dark); background: var(--white);
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+    }
+    .field-input-wrap input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(13,148,136,.12);
+    }
+    .btn-save {
+      background: var(--teal); color: #fff;
+      border: none; padding: .6rem 1.5rem;
+      border-radius: 10px; font-size: .875rem; font-weight: 600;
+      cursor: pointer; font-family: 'Sora', sans-serif;
+      transition: background .2s, transform .15s;
+      display: inline-flex; align-items: center; gap: .4rem;
+    }
+    .btn-save svg { width: 15px; height: 15px; }
+    .btn-save:hover { background: #0f766e; transform: translateY(-1px); }
+
+    /* ── DANGER ZONE ── */
+    .danger-zone {
+      border-color: #FEE2E2;
+    }
+    .danger-zone .card-title { color: #DC2626; }
+    .danger-zone .card-title svg { color: #DC2626; }
+    .btn-danger {
+      background: none; border: 1.5px solid #FCA5A5;
+      color: #DC2626; padding: .45rem 1.1rem;
+      border-radius: 10px; font-size: .82rem; font-weight: 600;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: background .2s, border-color .2s;
+      display: inline-flex; align-items: center; gap: .4rem;
+    }
+    .btn-danger svg { width: 14px; height: 14px; }
+    .btn-danger:hover { background: #FEF2F2; border-color: #DC2626; }
+    .danger-text { font-size: .85rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.55; }
+
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
+    footer {
+      background: var(--dark); color: rgba(255,255,255,.45);
+      padding: 2.5rem clamp(1rem, 5vw, 4rem);
+      margin-top: auto;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: auto;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-brand { display: flex; align-items: center; gap: .6rem; }
+    .footer-logo {
+      width: 28px; height: 28px; background: var(--teal);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .footer-logo svg { width: 16px; height: 16px; color: #fff; }
+    .footer-name { color: #fff; font-family: 'Sora', sans-serif; font-size: .9rem; font-weight: 700; }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { color: rgba(255,255,255,.4); font-size: .82rem; text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: var(--teal-mid); }
+
+    /* ══════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════ */
+    @media (max-width: 680px) {
+      .profile-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .profile-header-actions { margin-left: 0; }
+      .two-col { grid-template-columns: 1fr; }
+      .data-grid { grid-template-columns: 1fr; }
+      .stat-grid { grid-template-columns: repeat(3, 1fr); }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .nav-actions .btn-ghost { display: none; }
+    }
+    @media (max-width: 400px) {
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+      .card { padding: 1.25rem 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <a class="nav-brand" href="{% url 'home' %}">
+    <div class="nav-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a3 3 0 100 6 3 3 0 000-6zM12 8v12M9 14l3-2 3 2"/>
+      </svg>
+    </div>
+    <span class="brand-name">Endereza<span>2</span></span>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}#actividades">Actividades</a></li>
+    <li><a href="{% url 'home' %}#clases">Clases</a></li>
+    <li><a href="{% url 'mis-turnos' %}">Mis turnos</a></li>
+  </ul>
+
+  <div class="nav-actions">
+    <a href="{% url 'mis-turnos' %}" class="btn-ghost">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Mis turnos
+    </a>
+    <a href="{% url 'logout' %}" class="btn-primary">Cerrar sesión</a>
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+
+<!-- ══ MAIN ══ -->
+<main>
+  <div class="page-inner">
+
+    <!-- ── HEADER DEL PERFIL ── -->
+    <div class="profile-header">
+      <!-- Iniciales del usuario; reemplazar con {{ user.first_name|first }}{{ user.last_name|first }} -->
+      <div class="avatar" id="avatar-initials">JD</div>
+
+      <div class="profile-info">
+        <span class="tag">Mi perfil</span>
+        <!-- Reemplazar con {{ user.get_full_name }} -->
+        <h1 id="profile-name">Juan Díaz</h1>
+        <!-- Reemplazar con {{ user.email }} -->
+        <p id="profile-email">juan.diaz@email.com</p>
+      </div>
+
+      <div class="profile-header-actions">
+        <span class="badge badge-role">Cliente</span>
+        <a href="{% url 'logout' %}" class="btn-outline-white">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          Cerrar sesión
+        </a>
+      </div>
+    </div>
+
+
+    <!-- ── FILA: DATOS PERSONALES + ESTADÍSTICAS ── -->
+    <div class="two-col">
+
+      <!-- Datos personales -->
+      <div class="card">
+        <p class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Datos personales
+        </p>
+        <div class="data-grid">
+          <div class="data-item">
+            <p class="data-label">Nombre</p>
+            <!-- {{ user.first_name }} -->
+            <p class="data-value">Juan</p>
+          </div>
+          <div class="data-item">
+            <p class="data-label">Apellido</p>
+            <!-- {{ user.last_name }} -->
+            <p class="data-value">Díaz</p>
+          </div>
+          <div class="data-item">
+            <p class="data-label">DNI</p>
+            <!-- {{ user.profile.dni }} -->
+            <p class="data-value mono">38.472.910</p>
+          </div>
+          <div class="data-item">
+            <p class="data-label">Fecha de nacimiento</p>
+            <!-- {{ user.profile.birth_date|date:"d/m/Y" }} -->
+            <p class="data-value">15/04/1992</p>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="data-item">
+          <p class="data-label">Correo electrónico</p>
+          <!-- {{ user.email }} -->
+          <p class="data-value">juan.diaz@email.com</p>
+        </div>
+      </div>
+
+      <!-- Estadísticas rápidas -->
+      <div class="card">
+        <p class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Resumen de actividad
+        </p>
+
+        <div class="stat-grid">
+          <div class="stat-box">
+            <!-- {{ stats.total_clases }} -->
+            <p class="stat-number">12</p>
+            <p class="stat-label">Clases totales</p>
+          </div>
+          <div class="stat-box">
+            <!-- {{ stats.clases_mes }} -->
+            <p class="stat-number"><span>4</span></p>
+            <p class="stat-label">Este mes</p>
+          </div>
+          <div class="stat-box">
+            <!-- {{ stats.clases_favor }} -->
+            <p class="stat-number">1</p>
+            <p class="stat-label">A favor</p>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Estado de membresía -->
+        <p class="data-label" style="margin-bottom:.6rem">Estado de cuenta</p>
+        <div style="display:flex; flex-direction:column; gap:.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:.875rem; color:var(--mid);">Cuenta activa</span>
+            <span class="badge badge-active">
+              <span class="badge-dot"></span>Activa
+            </span>
+          </div>
+          <!-- Si el usuario tiene abono activo -->
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:.875rem; color:var(--mid);">Abono mensual</span>
+            <!-- Cambiar badge según estado real -->
+            <span class="badge badge-pending">
+              <span class="badge-dot"></span>Sin abono
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ── CAMBIAR CONTRASEÑA ── -->
+    <div class="card">
+      <p class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        Cambiar contraseña
+      </p>
+
+      <form method="post" action="{% url 'change-password' %}" style="max-width: 520px;">
+        {% csrf_token %}
+
+        <div class="field">
+          <label for="pass-actual">Contraseña actual</label>
+          <div class="field-input-wrap">
+            <span class="field-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </span>
+            <input type="password" id="pass-actual" name="old_password" placeholder="Tu contraseña actual" autocomplete="current-password" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="pass-nueva">Nueva contraseña</label>
+          <div class="field-input-wrap">
+            <span class="field-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </span>
+            <input type="password" id="pass-nueva" name="new_password1" placeholder="Nueva contraseña" autocomplete="new-password" />
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom: 1.25rem;">
+          <label for="pass-nueva2">Repetir nueva contraseña</label>
+          <div class="field-input-wrap">
+            <span class="field-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </span>
+            <input type="password" id="pass-nueva2" name="new_password2" placeholder="Repetí la nueva contraseña" autocomplete="new-password" />
+          </div>
+        </div>
+
+        <button class="btn-save" type="submit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          Guardar cambios
+        </button>
+      </form>
+    </div>
+
+
+    <!-- ── ZONA DE PELIGRO ── -->
+    <div class="card danger-zone">
+      <p class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Zona de peligro
+      </p>
+      <p class="danger-text">
+        Si eliminás tu cuenta, se borrarán permanentemente todos tus datos, historial de turnos y abonos activos. Esta acción no se puede deshacer.
+      </p>
+      <button class="btn-danger" type="button" onclick="confirmDelete()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+        Eliminar mi cuenta
+      </button>
+    </div>
+
+  </div>
+</main>
+
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 100 6 3 3 0 000-6zM12 8v12M9 14l3-2 3 2"/>
+        </svg>
+      </div>
+      <span class="footer-name">Endereza2</span>
+    </div>
+    <div class="footer-links">
+      <a href="{% url 'home' %}#actividades">Actividades</a>
+      <a href="{% url 'home' %}#clases">Clases</a>
+      <a href="{% url 'mis-turnos' %}">Mis turnos</a>
+      <a href="{% url 'logout' %}">Cerrar sesión</a>
+    </div>
+    <p style="font-size:.78rem">&copy; 2026 Endereza2. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+
+<script>
+  /* ── Avatar: iniciales dinámicas desde Django ─────────────────
+     Reemplazar el contenido del avatar con template tag:
+     {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+  ── */
+
+  /* ── Confirmar eliminación de cuenta ── */
+  function confirmDelete() {
+    if (confirm('¿Estás seguro que querés eliminar tu cuenta? Esta acción es permanente y no se puede deshacer.')) {
+      window.location.href = "{% url 'delete-account' %}";
+    }
+  }
+
+  /* ── Menú móvil ── */
+  function toggleMenu() {
+    const links = document.querySelector('.nav-links');
+    if (!links) return;
+    const open = links.style.display === 'flex';
+    Object.assign(links.style, {
+      display: open ? 'none' : 'flex',
+      flexDirection: 'column',
+      position: 'absolute',
+      top: '64px', left: '0', right: '0',
+      background: '#fff',
+      padding: '1rem 2rem 1.5rem',
+      borderBottom: '1px solid #E5E7EB',
+      boxShadow: '0 4px 12px rgba(0,0,0,.08)'
+    });
+    if (open) links.style.display = 'none';
+  }
+</script>
+</body>
+</html>
