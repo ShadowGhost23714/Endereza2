@@ -136,5 +136,6 @@ STATICFILES_FINDERS = [
 # AUTH CONFIGURATION
 # =========================
 
+LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'core:home'
 LOGOUT_REDIRECT_URL = 'core:home'

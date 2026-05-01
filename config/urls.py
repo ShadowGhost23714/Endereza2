@@ -1,22 +1,16 @@
 from django.contrib import admin
 from django.urls import path, include
-from apps.core.views import home
-from apps.accounts.views import CustomLoginView
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # HOME
-    path('', home, name='home'),
+    # CORE
+    path('', include('apps.core.urls')), 
 
-    # LOGIN
-    path('login/', CustomLoginView.as_view(), name='login'),
+    # ACCOUNTS (login, register, profile, etc)
+    path('accounts/', include('apps.accounts.urls')),  
 
-    # REGISTER (esto conecta con accounts/urls.py)
-    path('', include('apps.accounts.urls')),
+    # LOGOUT (opcional acá o dentro de accounts)
+    path('logout/', LogoutView.as_view(), name='logout'),
 ]
-
-from django.conf import settings
-from django.conf.urls.static import static
-
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

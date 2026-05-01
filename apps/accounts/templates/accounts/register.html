@@ -345,7 +345,7 @@
 
 <!-- NAV -->
 <nav>
-  <a class="nav-brand" href="{% url 'home' %}">
+  <a class="nav-brand" href="{% url 'core:home' %}">
     <div class="nav-logo">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 2a3 3 0 100 6 3 3 0 000-6zM12 8v12M9 14l3-2 3 2"/>
@@ -361,7 +361,7 @@
   </ul>
 
   <div class="nav-actions">
-    <a href="{% url 'login' %}" class="btn-ghost">Iniciar sesión</a>
+    <a href="{% url 'accounts:login' %}" class="btn-ghost">Iniciar sesión</a>
     <a href="#" class="btn-primary">Registrarse</a>
     <button class="hamburger" onclick="toggleMenu()" aria-label="Menú">
       <span></span><span></span><span></span>
@@ -520,7 +520,7 @@
             </button>
           </form>
 
-          <p class="form-alt">¿Ya tenés cuenta? <a href="{% url 'login' %}">Iniciá sesión</a></p>
+          <p class="form-alt">¿Ya tenés cuenta? <a href="{% url 'accounts:login' %}">Iniciá sesión</a></p>
 
         </div>
       </div>
