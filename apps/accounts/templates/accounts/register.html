@@ -423,98 +423,102 @@
           <h3>Crear tu cuenta</h3>
           <p>Completá tus datos para unirte a Endereza2.</p>
         </div>
+        
+        <form method="post">
+          {% csrf_token %}
+          <div class="form-body">
 
-        <div class="form-body">
-
-          <div class="form-row">
-            <div class="field">
-              <label for="r-nombre">Nombre</label>
-              <div class="field-input-wrap">
-                <span class="field-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </span>
-                <input type="text" id="r-nombre" placeholder="Tu nombre" autocomplete="given-name" />
+            <div class="form-row">
+              <div class="field">
+                <label for="r-nombre">Nombre</label>
+                <div class="field-input-wrap">
+                  <span class="field-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  </span>
+                  <input type="text" name="first_name" id="r-nombre" placeholder="Tu nombre" autocomplete="given-name" />
+                </div>
+              </div>
+              <div class="field">
+                <label for="r-apellido">Apellido</label>
+                <div class="field-input-wrap">
+                  <span class="field-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  </span>
+                  <input type="text" name="last_name" id="r-apellido" placeholder="Tu apellido" autocomplete="family-name" />
+                </div>
               </div>
             </div>
-            <div class="field">
-              <label for="r-apellido">Apellido</label>
-              <div class="field-input-wrap">
-                <span class="field-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </span>
-                <input type="text" id="r-apellido" placeholder="Tu apellido" autocomplete="family-name" />
+
+            <div class="form-row">
+              <div class="field">
+                <label for="r-dni">DNI</label>
+                <div class="field-input-wrap">
+                  <span class="field-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                  </span>
+                  <input type="text" name="dni" id="r-dni" placeholder="Número de DNI" inputmode="numeric" />
+                </div>
+              </div>
+              <div class="field">
+                <label for="r-nacimiento">Fecha de nacimiento</label>
+                <div class="field-input-wrap">
+                  <span class="field-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                  </span>
+                  <input type="date" id="r-nacimiento" autocomplete="bday" />
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="form-row">
             <div class="field">
-              <label for="r-dni">DNI</label>
+              <label for="r-email">Correo electrónico</label>
               <div class="field-input-wrap">
                 <span class="field-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
                 </span>
-                <input type="text" id="r-dni" placeholder="Número de DNI" inputmode="numeric" />
+                <input type="email" name="email" id="r-email" placeholder="tucorreo@email.com" autocomplete="email" />
               </div>
+              <span class="field-hint">Recibirás la confirmación de tus turnos aquí.</span>
             </div>
+
             <div class="field">
-              <label for="r-nacimiento">Fecha de nacimiento</label>
+              <label for="r-pass">Contraseña</label>
               <div class="field-input-wrap">
                 <span class="field-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
                 </span>
-                <input type="date" id="r-nacimiento" autocomplete="bday" />
+                <input type="password" name="password" id="r-pass" placeholder="Elegí una contraseña segura" autocomplete="new-password" oninput="checkStrength()" />
+              </div>
+              <div class="pass-strength">
+                <div class="strength-bar" id="sb-1"></div>
+                <div class="strength-bar" id="sb-2"></div>
+                <div class="strength-bar" id="sb-3"></div>
+                <div class="strength-bar" id="sb-4"></div>
+              </div>
+              <span class="strength-label" id="strength-label">Mínimo 8 caracteres</span>
+            </div>
+
+            <div class="field">
+              <label for="r-pass2">Repetir contraseña</label>
+              <div class="field-input-wrap">
+                <span class="field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                </span>
+                <input type="password" id="r-pass2" placeholder="Repetí la contraseña" autocomplete="new-password" />
               </div>
             </div>
-          </div>
 
-          <div class="field">
-            <label for="r-email">Correo electrónico</label>
-            <div class="field-input-wrap">
-              <span class="field-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
-              </span>
-              <input type="email" id="r-email" placeholder="tucorreo@email.com" autocomplete="email" />
+            <div class="terms-check">
+              <input type="checkbox" id="terms" />
+              <label for="terms">Acepto los <a href="#">términos y condiciones</a> y la <a href="#">política de privacidad</a> de Endereza2.</label>
             </div>
-            <span class="field-hint">Recibirás la confirmación de tus turnos aquí.</span>
-          </div>
-
-          <div class="field">
-            <label for="r-pass">Contraseña</label>
-            <div class="field-input-wrap">
-              <span class="field-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-              </span>
-              <input type="password" id="r-pass" placeholder="Elegí una contraseña segura" autocomplete="new-password" oninput="checkStrength()" />
-            </div>
-            <div class="pass-strength">
-              <div class="strength-bar" id="sb-1"></div>
-              <div class="strength-bar" id="sb-2"></div>
-              <div class="strength-bar" id="sb-3"></div>
-              <div class="strength-bar" id="sb-4"></div>
-            </div>
-            <span class="strength-label" id="strength-label">Mínimo 8 caracteres</span>
-          </div>
-
-          <div class="field">
-            <label for="r-pass2">Repetir contraseña</label>
-            <div class="field-input-wrap">
-              <span class="field-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-              </span>
-              <input type="password" id="r-pass2" placeholder="Repetí la contraseña" autocomplete="new-password" />
-            </div>
-          </div>
-
-          <div class="terms-check">
-            <input type="checkbox" id="terms" />
-            <label for="terms">Acepto los <a href="#">términos y condiciones</a> y la <a href="#">política de privacidad</a> de Endereza2.</label>
-          </div>
-
-          <button class="btn-submit" type="button" onclick="submitForm()">
-            Crear cuenta
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-          </button>
+            
+            <!-- botón -->
+            <button class="btn-submit" type="submit">
+              Crear cuenta
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </button>
+          </form>
 
           <p class="form-alt">¿Ya tenés cuenta? <a href="{% url 'login' %}">Iniciá sesión</a></p>
 
@@ -580,11 +584,6 @@
     for (let i = 0; i < score; i++) bars[i].classList.add(cls[score - 1]);
     label.textContent = score === 0 ? 'Mínimo 8 caracteres' : labels[score - 1];
     label.style.color = score >= 3 ? 'var(--teal)' : score === 2 ? '#D97706' : '#EF4444';
-  }
-
-  function submitForm() {
-    document.getElementById('reg-form-area').style.display = 'none';
-    document.getElementById('success-screen').style.display = 'flex';
   }
 
   function toggleMenu() {
