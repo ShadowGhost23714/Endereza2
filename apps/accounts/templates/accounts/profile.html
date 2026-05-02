@@ -299,7 +299,7 @@
     </a>
     <span class="btn-ghost-disabled">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      Perfil
+      Mi perfil
     </span>
   </div>
 </nav>
@@ -311,11 +311,11 @@
 
     <!-- HEADER DEL PERFIL -->
     <div class="profile-header">
-      <div class="avatar">JD</div>
+      <div class="avatar">{{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}</div>
       <div class="profile-info">
         <span class="tag">Mi perfil</span>
-        <h1>Juan Díaz</h1><!-- {{ user.get_full_name }} -->
-        <p>juan.diaz@email.com</p><!-- {{ user.email }} -->
+        <h1>{{ user.get_full_name }}</h1>
+        <p>{{ user.email }}</p>
       </div>
       <div class="profile-header-badge">
         <span class="badge badge-role">Cliente</span>
@@ -345,19 +345,19 @@
         <div class="data-grid">
           <div>
             <p class="data-label">Nombre</p>
-            <p class="data-value">Juan</p> {{ user.first_name }}
+            <p class="data-value">{{ user.first_name }}</p> 
           </div>
           <div>
             <p class="data-label">Apellido</p>
-            <p class="data-value">Díaz</p><!-- {{ user.last_name }} -->
+            <p class="data-value">{{ user.last_name }}</p>
           </div>
           <div>
             <p class="data-label">DNI</p>
-            <p class="data-value mono">38.472.910</p><!-- {{ user.profile.dni }} -->
+            <p class="data-value mono">{{ user.profile.dni }}</p>
           </div>
           <div>
             <p class="data-label">Fecha de nacimiento</p>
-            <p class="data-value">15/04/1992</p><!-- {{ user.profile.birth_date|date:"d/m/Y" }} -->
+            <p class="data-value">{{ user.profile.birth_date|date:"d/m/Y" }}</p>
           </div>
         </div>
 
@@ -365,7 +365,7 @@
 
         <div style="margin-bottom:1.25rem;">
           <p class="data-label">Correo electrónico</p>
-          <p class="data-value">juan.diaz@email.com</p><!-- {{ user.email }} -->
+          <p class="data-value">{{ user.email }}</p>
         </div>
 
         <a href="#" class="btn-save">
