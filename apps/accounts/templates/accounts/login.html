@@ -347,9 +347,9 @@
   </a>
 
   <ul class="nav-links">
-    <a href="{% url 'core:home' %}#actividades">
-    <li><a href="index.html#como-funciona">Cómo funciona</a></li>
-    <li><a href="index.html#horarios">Turnos</a></li>
+    <li><a href="{% url 'core:home' %}#actividades">Actividades</a></li>
+    <li><a href="{% url 'core:home' %}#como-funciona">Cómo funciona</a></li>
+    <li><a href="{% url 'core:home' %}#horarios">Turnos</a></li>
   </ul>
 
   <div class="nav-actions">
@@ -416,10 +416,12 @@
       </div>
 
       <!-- LOGIN -->
-      {% if error %}
-        <p style="color:red; font-size:0.8rem;">
-          Usuario o contraseña incorrectos
-        </p>
+      {% if messages %}
+        {% for message in messages %}
+          <p style="color:red; font-size:0.8rem;">
+            {{ message }}
+          </p>
+        {% endfor %}
       {% endif %}
       <form method="post" action="{% url 'accounts:login' %}" class="form-body">
         {% csrf_token %}
