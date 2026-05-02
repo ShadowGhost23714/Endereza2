@@ -33,7 +33,7 @@ def register(request):
         # Validar usuario existente
         if User.objects.filter(username=username).exists():
             messages.error(request, 'El usuario ya existe')
-            return redirect('accounts:register')
+            return redirect('accounts:login')
 
         # Crear usuario
         user = User.objects.create_user(
