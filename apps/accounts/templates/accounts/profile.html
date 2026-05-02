@@ -1,0 +1,524 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi perfil — Endereza2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal:     #0D9488;
+      --teal-mid: #14B8A6;
+      --teal-lt:  #CCFBF1;
+      --teal-bg:  #F0FDFA;
+      --dark:     #0F2027;
+      --mid:      #374151;
+      --muted:    #6B7280;
+      --border:   #E5E7EB;
+      --surface:  #F9FAFB;
+      --white:    #FFFFFF;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--mid);
+      background: var(--surface);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Sora', sans-serif; }
+
+    /* ══ NAV ══ */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 clamp(1rem, 5vw, 4rem);
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo {
+      width: 36px; height: 36px; background: var(--teal);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    }
+    .nav-logo svg { width: 22px; height: 22px; color: #fff; }
+    .brand-name { font-size: 1.15rem; font-weight: 700; color: var(--dark); letter-spacing: -0.02em; }
+    .brand-name span { color: var(--teal); }
+    .nav-actions { display: flex; gap: .6rem; align-items: center; }
+    .btn-ghost {
+      background: none; border: 1.5px solid var(--border);
+      color: var(--mid); padding: .45rem 1.1rem;
+      border-radius: 10px; font-size: .875rem; font-weight: 500;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: border-color .2s, color .2s;
+      text-decoration: none; display: inline-flex; align-items: center; gap: .4rem;
+    }
+    .btn-ghost svg { width: 15px; height: 15px; }
+    .btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+    .btn-ghost-disabled {
+      background: var(--surface); border: 1.5px solid var(--border);
+      color: var(--muted); padding: .45rem 1.1rem;
+      border-radius: 10px; font-size: .875rem; font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      display: inline-flex; align-items: center; gap: .4rem;
+      cursor: default; opacity: .55;
+    }
+    .btn-ghost-disabled svg { width: 15px; height: 15px; }
+
+    /* ══ MAIN ══ */
+    main { flex: 1; padding: clamp(2rem, 5vw, 3.5rem) clamp(1rem, 5vw, 2rem); }
+
+    .page-inner {
+      max-width: 900px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 1.5rem;
+      animation: fadeUp .4s cubic-bezier(.22,1,.36,1);
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ══ PROFILE HEADER ══ */
+    .profile-header {
+      background: linear-gradient(160deg, var(--dark) 0%, #0F3443 60%, #0a2a37 100%);
+      border-radius: 20px; padding: 2rem 2.5rem;
+      display: flex; align-items: center; gap: 1.5rem;
+      position: relative; overflow: hidden;
+    }
+    .profile-header::before {
+      content: ''; position: absolute; bottom: -60px; right: -60px;
+      width: 220px; height: 220px;
+      background: radial-gradient(circle, rgba(13,148,136,.35) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .profile-header::after {
+      content: ''; position: absolute; top: -40px; left: -40px;
+      width: 160px; height: 160px;
+      background: radial-gradient(circle, rgba(8,145,178,.2) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .avatar {
+      position: relative; z-index: 1; flex-shrink: 0;
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--teal);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Sora', sans-serif; font-size: 1.6rem; font-weight: 800; color: #fff;
+      letter-spacing: -.03em; border: 3px solid rgba(255,255,255,.15);
+    }
+    .profile-info { position: relative; z-index: 1; }
+    .profile-info .tag {
+      display: inline-block; font-size: .7rem; font-weight: 700;
+      letter-spacing: .09em; text-transform: uppercase;
+      color: var(--teal-mid); margin-bottom: .3rem;
+    }
+    .profile-info h1 {
+      font-size: 1.45rem; font-weight: 800; color: #fff;
+      letter-spacing: -.03em; line-height: 1.2;
+    }
+    .profile-info p { font-size: .875rem; color: rgba(255,255,255,.5); margin-top: .2rem; }
+    .profile-header-badge { margin-left: auto; position: relative; z-index: 1; display: flex; align-items: center; }
+    .btn-outline-white {
+      background: rgba(255,255,255,.08);
+      border: 1.5px solid rgba(255,255,255,.2);
+      color: rgba(255,255,255,.85);
+      padding: .38rem .9rem; border-radius: 10px;
+      font-size: .82rem; font-weight: 500; cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: background .2s, border-color .2s;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: .4rem;
+    }
+    .btn-outline-white svg { width: 14px; height: 14px; }
+    .btn-outline-white:hover { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.35); }
+
+    /* ══ CARDS ══ */
+    .card {
+      background: var(--white); border-radius: 16px;
+      border: 1px solid var(--border); padding: 1.75rem 2rem;
+    }
+    .card-title {
+      font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
+      color: var(--teal); margin-bottom: 1.25rem;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .card-title svg { width: 14px; height: 14px; }
+
+    /* ── DATA GRID ── */
+    .data-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem 1.5rem; }
+    .data-label {
+      font-size: .75rem; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .05em; margin-bottom: .25rem;
+    }
+    .data-value { font-size: .95rem; font-weight: 500; color: var(--dark); }
+    .data-value.mono { font-family: 'Sora', monospace; font-size: .9rem; letter-spacing: .02em; }
+
+    .divider { height: 1px; background: var(--border); margin: 1.25rem 0; }
+
+    /* ── BADGES ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: .35rem;
+      padding: .25rem .75rem; border-radius: 999px; font-size: .78rem; font-weight: 600;
+    }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .badge-active  { background: #ECFDF5; color: #065F46; }
+    .badge-active .badge-dot  { background: #10B981; }
+    .badge-pending { background: #FFFBEB; color: #92400E; }
+    .badge-pending .badge-dot { background: #F59E0B; }
+    .badge-role    { background: var(--teal-bg); color: var(--teal); }
+
+    /* ── 2 COLUMNAS ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+    /* ── STATS ── */
+    .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; }
+    .stat-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1rem .9rem; text-align: center;
+    }
+    .stat-number {
+      font-family: 'Sora', sans-serif; font-size: 1.5rem; font-weight: 800;
+      color: var(--dark); letter-spacing: -.03em;
+    }
+    .stat-number span { color: var(--teal); }
+    .stat-label { font-size: .72rem; color: var(--muted); margin-top: .25rem; line-height: 1.4; }
+
+    /* ── BOTONES ── */
+    .btn-save {
+      background: var(--teal); color: #fff; border: none;
+      padding: .55rem 1.2rem; border-radius: 10px;
+      font-size: .875rem; font-weight: 600; cursor: pointer;
+      font-family: 'Sora', sans-serif; transition: background .2s, transform .15s;
+      display: inline-flex; align-items: center; gap: .4rem; text-decoration: none;
+    }
+    .btn-save svg { width: 15px; height: 15px; }
+    .btn-save:hover { background: #0f766e; transform: translateY(-1px); }
+
+    .btn-cancel {
+      background: none; border: 1.5px solid var(--border); color: var(--muted);
+      padding: .55rem 1.2rem; border-radius: 10px;
+      font-size: .875rem; font-weight: 500; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; transition: border-color .2s, color .2s;
+    }
+    .btn-cancel:hover { border-color: var(--mid); color: var(--mid); }
+
+    /* ── CAMPOS ── */
+    .field { display: flex; flex-direction: column; gap: .4rem; margin-bottom: .9rem; }
+    .field label { font-size: .8rem; font-weight: 600; color: var(--mid); }
+    .field-input-wrap { position: relative; }
+    .field-icon {
+      position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+      display: flex; align-items: center; color: var(--muted);
+    }
+    .field-icon svg { width: 16px; height: 16px; }
+    .field-input-wrap input {
+      width: 100%; padding: .65rem 1rem .65rem 2.5rem;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      font-size: .875rem; font-family: 'DM Sans', sans-serif;
+      color: var(--dark); background: var(--white);
+      transition: border-color .2s, box-shadow .2s; outline: none;
+    }
+    .field-input-wrap input:focus {
+      border-color: var(--teal); box-shadow: 0 0 0 3px rgba(13,148,136,.12);
+    }
+
+    /* ── ZONA DE PELIGRO ── */
+    .danger-zone { border-color: #FEE2E2; }
+    .danger-zone .card-title { color: #DC2626; }
+    .danger-text { font-size: .85rem; color: var(--muted); line-height: 1.55; }
+    .btn-danger {
+      background: none; border: 1.5px solid #FCA5A5; color: #DC2626;
+      padding: .55rem 1.1rem; border-radius: 10px;
+      font-size: .82rem; font-weight: 600; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; transition: background .2s, border-color .2s;
+      display: inline-flex; align-items: center; gap: .4rem; flex-shrink: 0;
+    }
+    .btn-danger svg { width: 14px; height: 14px; }
+    .btn-danger:hover { background: #FEF2F2; border-color: #DC2626; }
+
+    /* ══ FOOTER — solo copyright ══ */
+    footer {
+      background: var(--dark); color: rgba(255,255,255,.35);
+      padding: 1.5rem clamp(1rem, 5vw, 4rem);
+    }
+    .footer-inner {
+      max-width: 900px; margin: auto;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .75rem;
+    }
+    .footer-brand { display: flex; align-items: center; gap: .6rem; }
+    .footer-logo {
+      width: 28px; height: 28px; background: var(--teal);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .footer-logo svg { width: 16px; height: 16px; color: #fff; }
+    .footer-name { color: #fff; font-family: 'Sora', sans-serif; font-size: .9rem; font-weight: 700; }
+
+    /* ══ RESPONSIVE ══ */
+    @media (max-width: 680px) {
+      .profile-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .profile-header-badge { margin-left: 0; }
+      .two-col { grid-template-columns: 1fr; }
+      .data-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 400px) {
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+      .card { padding: 1.25rem 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <a class="nav-brand" href="{% url 'core:home' %}">
+    <div class="nav-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a3 3 0 100 6 3 3 0 000-6zM12 8v12M9 14l3-2 3 2"/>
+      </svg>
+    </div>
+    <span class="brand-name">Endereza<span>2</span></span>
+  </a>
+
+  <div class="nav-actions">
+    <a href="#" class="btn-ghost">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Mis turnos
+    </a>
+    <span class="btn-ghost-disabled">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Mi perfil
+    </span>
+  </div>
+</nav>
+
+
+<!-- ══ MAIN ══ -->
+<main>
+  <div class="page-inner">
+
+    <!-- HEADER DEL PERFIL -->
+    <div class="profile-header">
+      <div class="avatar">{{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}</div>
+      <div class="profile-info">
+        <span class="tag">Mi perfil</span>
+        <h1>{{ user.get_full_name }}</h1>
+        <p>{{ user.email }}</p>
+      </div>
+      <div class="profile-header-badge">
+        <span class="badge badge-role">Cliente</span>
+        <form method="post" action="{% url 'logout' %}" style="margin-left:.6rem;">
+          {% csrf_token %}
+          <button type="submit" class="btn-outline-white">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
+            </svg>
+            Cerrar sesión
+          </button>
+        </form>
+      </div>
+    </div>
+
+
+    <!-- DATOS PERSONALES + RESUMEN -->
+    <div class="two-col">
+
+      <!-- Datos personales -->
+      <div class="card">
+        <p class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Datos personales
+        </p>
+
+        <div class="data-grid">
+          <div>
+            <p class="data-label">Nombre</p>
+            <p class="data-value">{{ user.first_name }}</p> 
+          </div>
+          <div>
+            <p class="data-label">Apellido</p>
+            <p class="data-value">{{ user.last_name }}</p>
+          </div>
+          <div>
+            <p class="data-label">DNI</p>
+            <p class="data-value mono">{{ user.profile.dni }}</p>
+          </div>
+          <div>
+            <p class="data-label">Fecha de nacimiento</p>
+            <p class="data-value">{{ user.profile.birth_date|date:"d/m/Y" }}</p>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div style="margin-bottom:1.25rem;">
+          <p class="data-label">Correo electrónico</p>
+          <p class="data-value">{{ user.email }}</p>
+        </div>
+
+        <a href="#" class="btn-save">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Cambiar datos
+        </a>
+      </div>
+
+      <!-- Resumen de actividad -->
+      <div class="card">
+        <p class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Resumen de actividad
+        </p>
+
+        <div class="stat-grid">
+          <div class="stat-box">
+            <p class="stat-number">12</p><!-- {{ stats.total_clases }} -->
+            <p class="stat-label">Clases<br>asistidas</p>
+          </div>
+          <div class="stat-box">
+            <p class="stat-number"><span>4</span></p><!-- {{ stats.clases_mes }} -->
+            <p class="stat-label">Clases<br>este mes</p>
+          </div>
+          <div class="stat-box">
+            <p class="stat-number">1</p><!-- {{ stats.clases_favor }} -->
+            <p class="stat-label">Clases<br>a favor</p>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <p class="data-label" style="margin-bottom:.65rem;">Estado de cuenta</p>
+        <div style="display:flex; flex-direction:column; gap:.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:.875rem; color:var(--mid);">Cuenta</span>
+            <span class="badge badge-active"><span class="badge-dot"></span>Activa</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:.875rem; color:var(--mid);">Abono mensual</span>
+            <!-- {% if user.profile.tiene_abono %} -->
+            <!-- <span class="badge badge-active"><span class="badge-dot"></span>Activo</span> -->
+            <!-- {% else %} -->
+            <span class="badge badge-pending"><span class="badge-dot"></span>Sin abono</span>
+            <!-- {% endif %} -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- CAMBIAR CONTRASEÑA -->
+    <div class="card">
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <p class="card-title" style="margin-bottom:.2rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            Contraseña
+          </p>
+          <p style="font-size:.85rem; color:var(--muted);">Actualizá tu contraseña de acceso.</p>
+        </div>
+        <button class="btn-save" type="button" onclick="togglePass()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          Cambiar contraseña
+        </button>
+      </div>
+
+      <div id="pass-form" style="display:none; margin-top:1.5rem;">
+        <div class="divider" style="margin-top:0; margin-bottom:1.25rem;"></div>
+        <form method="post" action="#" style="max-width:520px;">
+          {% csrf_token %}
+          <div class="field">
+            <label for="pass-actual">Contraseña actual</label>
+            <div class="field-input-wrap">
+              <span class="field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+              <input type="password" id="pass-actual" name="old_password" placeholder="Tu contraseña actual" autocomplete="current-password" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="pass-nueva">Nueva contraseña</label>
+            <div class="field-input-wrap">
+              <span class="field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+              <input type="password" id="pass-nueva" name="new_password1" placeholder="Nueva contraseña" autocomplete="new-password" />
+            </div>
+          </div>
+          <div class="field" style="margin-bottom:1.25rem;">
+            <label for="pass-nueva2">Repetir nueva contraseña</label>
+            <div class="field-input-wrap">
+              <span class="field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+              <input type="password" id="pass-nueva2" name="new_password2" placeholder="Repetí la nueva contraseña" autocomplete="new-password" />
+            </div>
+          </div>
+          <div style="display:flex; gap:.75rem; flex-wrap:wrap;">
+            <button class="btn-save" type="submit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+              Guardar
+            </button>
+            <button type="button" class="btn-cancel" onclick="togglePass()">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+    <!-- ZONA DE PELIGRO -->
+    <div class="card danger-zone">
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <p class="card-title" style="margin-bottom:.2rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Zona de peligro
+          </p>
+          <p class="danger-text">Eliminá tu cuenta de forma permanente. Esta acción no se puede deshacer.</p>
+        </div>
+        <button class="btn-danger" type="button" onclick="confirmDelete()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+          Eliminar cuenta
+        </button>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 100 6 3 3 0 000-6zM12 8v12M9 14l3-2 3 2"/>
+        </svg>
+      </div>
+      <span class="footer-name">Endereza2</span>
+    </div>
+    <p style="font-size:.78rem;">&copy; 2026 Endereza2. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+
+<script>
+  function togglePass() {
+    const f = document.getElementById('pass-form');
+    f.style.display = f.style.display === 'none' ? 'block' : 'none';
+  }
+
+  function confirmDelete() {
+    if (confirm('¿Estás seguro que querés eliminar tu cuenta? Esta acción es permanente y no se puede deshacer.')) {
+      window.location.href = "#";
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,112 +1,839 @@
-<!-- templates/index.html -->
+{% load static %}
 
-{% extends "_base.html" %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Endereza2 — Centro de Rehabilitación</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-{% block content %}
+    :root {
+      --teal:     #0D9488;
+      --teal-mid: #14B8A6;
+      --teal-lt:  #CCFBF1;
+      --teal-bg:  #F0FDFA;
+      --dark:     #0F2027;
+      --mid:      #374151;
+      --muted:    #6B7280;
+      --border:   #E5E7EB;
+      --white:    #FFFFFF;
+      --radius:   16px;
+    }
 
-<h1 class="mb-6 text-3xl text-green-800">Django + Tailwind CSS + Flowbite</h1>
-<div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
-    <a href="#">
-        <img class="rounded-t-lg" src="/docs/images/blog/image-1.jpg" alt="" />
-    </a>
-    <div class="p-5">
-        <a href="#">
-            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Noteworthy technology
-                acquisitions 2021</h5>
-        </a>
-        <p class="mb-3 font-normal text-gray-600 dark:text-gray-400">Here are the biggest enterprise technology
-            acquisitions of 2021 so far, in reverse chronological order.</p>
-        <a href="#"
-            class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-            Read more
-            <svg class="w-4 h-4 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd"
-                    d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                    clip-rule="evenodd"></path>
-            </svg>
-        </a>
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--mid);
+      background: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, .brand {
+      font-family: 'Sora', sans-serif;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 clamp(1rem, 5vw, 4rem);
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo {
+      width: 36px; height: 36px;
+      background: var(--teal);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-logo svg { width: 22px; height: 22px; color: #fff; }
+    .brand-name {
+      font-size: 1.15rem; font-weight: 700; color: var(--dark);
+      letter-spacing: -0.02em;
+    }
+    .brand-name span { color: var(--teal); }
+    .nav-links {
+      display: flex; align-items: center; gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none; font-size: 0.9rem; font-weight: 500;
+      color: var(--mid); transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--teal); }
+    .nav-actions { display: flex; gap: .75rem; align-items: center; }
+    .btn-ghost {
+      background: none; border: 1.5px solid var(--border);
+      color: var(--mid); padding: .45rem 1.1rem;
+      border-radius: 10px; font-size: .875rem; font-weight: 500;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: border-color .2s, color .2s;
+      text-decoration: none; display: inline-block;
+    }
+    .btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+    .btn-primary {
+      background: var(--teal); color: #fff;
+      border: none; padding: .48rem 1.2rem;
+      border-radius: 10px; font-size: .875rem; font-weight: 600;
+      cursor: pointer; font-family: 'Sora', sans-serif;
+      transition: background .2s, transform .15s;
+      text-decoration: none; display: inline-block;
+    }
+    .btn-primary:hover { background: #0f766e; transform: translateY(-1px); }
+    .hamburger { display: none; background: none; border: none; cursor: pointer; flex-direction: column; gap: 5px; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--mid); border-radius: 2px; transition: .3s; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: calc(100vh - 64px);
+      display: flex; align-items: center;
+      padding: clamp(3rem, 8vw, 6rem) clamp(1rem, 5vw, 4rem);
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, var(--teal-bg) 0%, #fff 60%);
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 80% 50%, rgba(13,148,136,.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-blob {
+      position: absolute; top: -80px; right: -80px;
+      width: 420px; height: 420px;
+      background: radial-gradient(circle, rgba(20,184,166,.18) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .hero-inner {
+      max-width: 1200px; margin: auto; width: 100%;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+      position: relative; z-index: 1;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: var(--teal-lt); color: var(--teal);
+      font-size: .78rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+      padding: .35rem .9rem; border-radius: 999px; margin-bottom: 1.5rem;
+    }
+    .hero-badge::before { content: ''; width: 7px; height: 7px; background: var(--teal); border-radius: 50%; display: block; }
+    h1 {
+      font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+      font-weight: 800; color: var(--dark);
+      line-height: 1.12; letter-spacing: -0.03em;
+      margin-bottom: 1.2rem;
+    }
+    h1 em { color: var(--teal); font-style: normal; }
+    .hero-sub {
+      color: var(--muted); font-size: 1.05rem; max-width: 420px;
+      margin-bottom: 2.2rem; font-weight: 400;
+    }
+    .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-lg {
+      padding: .8rem 1.8rem; font-size: 1rem; border-radius: 12px;
+      font-family: 'Sora', sans-serif; font-weight: 600;
+      cursor: pointer; border: none; transition: all .2s; text-decoration: none;
+      display: inline-flex; align-items: center; gap: .5rem;
+    }
+    .btn-lg.primary { background: var(--teal); color: #fff; }
+    .btn-lg.primary:hover { background: #0f766e; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(13,148,136,.3); }
+    .btn-lg.outline {
+      background: #fff; color: var(--teal);
+      border: 1.5px solid var(--teal-mid);
+    }
+    .btn-lg.outline:hover { background: var(--teal-bg); }
+    .hero-note { margin-top: 1.4rem; font-size: .82rem; color: var(--muted); display: flex; align-items: center; gap: .4rem; }
+    .hero-note svg { color: var(--teal); flex-shrink: 0; }
+
+    /* hero card */
+    .hero-card {
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.04);
+      overflow: hidden; border: 1px solid var(--border);
+    }
+    .card-header {
+      background: linear-gradient(135deg, var(--teal) 0%, #0891B2 100%);
+      padding: 1.8rem 2rem; color: #fff;
+    }
+    .card-header p { opacity: .75; font-size: .85rem; margin-bottom: .3rem; }
+    .card-header h3 { font-size: 1.3rem; font-weight: 700; letter-spacing: -.02em; }
+    .schedule-list { padding: 1.5rem 2rem; display: flex; flex-direction: column; gap: .75rem; }
+    .schedule-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .75rem 1rem;
+      border-radius: 12px; background: var(--teal-bg);
+      transition: background .2s;
+    }
+    .schedule-item:hover { background: var(--teal-lt); }
+    .schedule-item-left { display: flex; align-items: center; gap: .75rem; }
+    .schedule-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-superior { background: var(--teal); }
+    .dot-media    { background: #0891B2; }
+    .dot-inferior { background: #059669; }
+    .schedule-name { font-size: .9rem; font-weight: 600; color: var(--dark); }
+    .schedule-time { font-size: .78rem; color: var(--muted); }
+    .schedule-badge {
+      font-size: .72rem; font-weight: 600; padding: .2rem .65rem;
+      border-radius: 999px;
+    }
+    .badge-open { background: #D1FAE5; color: #065F46; }
+    .badge-few  { background: #FEF3C7; color: #92400E; }
+    .card-footer {
+      padding: 1rem 2rem 1.5rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .card-footer p { font-size: .8rem; color: var(--muted); margin-bottom: .75rem; }
+
+    /* ── SECTION SHARED ── */
+    section { padding: clamp(4rem, 8vw, 6rem) clamp(1rem, 5vw, 4rem); }
+    .container { max-width: 1200px; margin: auto; }
+    .section-tag {
+      display: inline-block; font-size: .75rem; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: var(--teal); margin-bottom: .75rem;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800;
+      color: var(--dark); letter-spacing: -.03em; line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+    .section-sub { color: var(--muted); max-width: 520px; font-size: .97rem; }
+    .section-head { margin-bottom: 3rem; }
+    .section-head.center { text-align: center; }
+    .section-head.center .section-sub { margin: 0 auto; }
+
+    /* ── ACTIVIDADES ── */
+    .actividades { background: var(--teal-bg); }
+    .acts-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .act-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 2.2rem 2rem;
+      border: 1px solid var(--border);
+      transition: transform .25s, box-shadow .25s;
+      display: flex; flex-direction: column; gap: 1.2rem;
+      position: relative; overflow: hidden;
+    }
+    .act-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 3px; background: var(--accent, var(--teal));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .3s;
+    }
+    .act-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(0,0,0,.1); }
+    .act-card:hover::after { transform: scaleX(1); }
+    .act-card.superior { --accent: var(--teal); }
+    .act-card.media    { --accent: #0891B2; }
+    .act-card.inferior { --accent: #059669; }
+    .act-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .act-icon.superior { background: var(--teal-lt); }
+    .act-icon.media    { background: #CFFAFE; }
+    .act-icon.inferior { background: #D1FAE5; }
+    .act-icon svg { width: 26px; height: 26px; }
+    .act-icon.superior svg { color: var(--teal); }
+    .act-icon.media    svg { color: #0891B2; }
+    .act-icon.inferior svg { color: #059669; }
+    .act-card h3 { font-size: 1.15rem; font-weight: 700; color: var(--dark); }
+    .act-card p  { font-size: .9rem; color: var(--muted); line-height: 1.65; flex: 1; }
+    .act-tag {
+      align-self: flex-start;
+      font-size: .72rem; font-weight: 600; padding: .25rem .7rem;
+      border-radius: 999px; background: var(--teal-lt); color: var(--teal);
+    }
+    .act-card.media    .act-tag { background: #CFFAFE; color: #0E7490; }
+    .act-card.inferior .act-tag { background: #D1FAE5; color: #065F46; }
+
+    /* ── CÓMO FUNCIONA ── */
+    .como { background: #fff; }
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem;
+      counter-reset: step;
+    }
+    .step {
+      display: flex; flex-direction: column; gap: .9rem;
+      position: relative;
+    }
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute; top: 22px; left: calc(100% - 1rem);
+      width: 2rem; height: 2px;
+      background: var(--border);
+    }
+    .step-num {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--teal-lt); color: var(--teal);
+      font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .step h4 { font-size: .97rem; font-weight: 700; color: var(--dark); }
+    .step p  { font-size: .87rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── HORARIOS / TURNOS ── */
+    .horarios { background: var(--teal-bg); }
+    .horarios-inner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;
+    }
+    .schedule-table {
+      background: #fff; border-radius: 20px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .st-head {
+      display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      background: var(--dark); color: rgba(255,255,255,.55);
+      font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+      padding: .75rem 1.25rem;
+    }
+    .st-row {
+      display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      padding: .9rem 1.25rem; border-bottom: 1px solid var(--border);
+      align-items: center; transition: background .15s;
+    }
+    .st-row:last-child { border-bottom: none; }
+    .st-row:hover { background: var(--teal-bg); }
+    .st-time { font-size: .88rem; font-weight: 600; color: var(--dark); }
+    .st-dot {
+      width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: .4rem;
+    }
+    .st-act { font-size: .82rem; color: var(--mid); display: flex; align-items: center; }
+    .cupo {
+      font-size: .78rem; font-weight: 600;
+      padding: .18rem .55rem; border-radius: 999px;
+    }
+    .cupo-ok  { background: #D1FAE5; color: #065F46; }
+    .cupo-few { background: #FEF3C7; color: #92400E; }
+    .horarios-text .section-sub { margin-bottom: 1.5rem; }
+    .info-chips { display: flex; flex-direction: column; gap: .75rem; }
+    .chip {
+      display: flex; align-items: flex-start; gap: .75rem;
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 14px; padding: 1rem 1.2rem;
+    }
+    .chip-icon { width: 20px; flex-shrink: 0; color: var(--teal); margin-top: 1px; }
+    .chip-text p:first-child { font-weight: 600; font-size: .9rem; color: var(--dark); }
+    .chip-text p:last-child  { font-size: .82rem; color: var(--muted); }
+
+    /* ── CTA BANNER ── */
+    .cta-section {
+      background: linear-gradient(135deg, var(--dark) 0%, #0F3443 100%);
+      position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute; top: -60px; right: -60px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(13,148,136,.3) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-inner {
+      max-width: 700px; margin: auto; text-align: center; position: relative; z-index: 1;
+    }
+    .cta-inner h2 { color: #fff; margin-bottom: 1rem; }
+    .cta-inner p  { color: rgba(255,255,255,.6); margin-bottom: 2rem; font-size: 1rem; }
+    .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-white {
+      background: #fff; color: var(--dark);
+      font-family: 'Sora', sans-serif; font-weight: 700;
+      padding: .8rem 1.8rem; border-radius: 12px; font-size: .97rem;
+      border: none; cursor: pointer; text-decoration: none;
+      transition: transform .2s, box-shadow .2s;
+      display: inline-flex; align-items: center; gap: .5rem;
+    }
+    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+    .btn-outline-white {
+      background: transparent; color: rgba(255,255,255,.85);
+      border: 1.5px solid rgba(255,255,255,.3);
+      font-family: 'Sora', sans-serif; font-weight: 600;
+      padding: .8rem 1.8rem; border-radius: 12px; font-size: .97rem;
+      cursor: pointer; text-decoration: none; transition: border-color .2s, background .2s;
+      display: inline-flex; align-items: center; gap: .5rem;
+    }
+    .btn-outline-white:hover { border-color: rgba(255,255,255,.6); background: rgba(255,255,255,.07); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark); color: rgba(255,255,255,.45);
+      padding: 2.5rem clamp(1rem, 5vw, 4rem);
+    }
+    .footer-inner {
+      max-width: 1200px; margin: auto;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-brand { display: flex; align-items: center; gap: .6rem; }
+    .footer-logo {
+      width: 28px; height: 28px; background: var(--teal);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .footer-logo svg { width: 16px; height: 16px; color: #fff; }
+    .footer-name { color: #fff; font-family: 'Sora', sans-serif; font-size: .9rem; font-weight: 700; }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { color: rgba(255,255,255,.4); font-size: .82rem; text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: var(--teal-mid); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,.45); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #fff; border-radius: 24px;
+      padding: 2.5rem; width: 100%; max-width: 420px;
+      position: relative;
+      animation: popIn .25s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes popIn { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: scale(1); } }
+    .modal-close {
+      position: absolute; top: 1rem; right: 1rem;
+      background: none; border: none; cursor: pointer; color: var(--muted);
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s;
+    }
+    .modal-close:hover { background: var(--teal-bg); }
+    .modal h3 { font-size: 1.4rem; font-weight: 700; color: var(--dark); margin-bottom: .4rem; }
+    .modal > p { font-size: .9rem; color: var(--muted); margin-bottom: 1.75rem; }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label { display: block; font-size: .82rem; font-weight: 600; color: var(--mid); margin-bottom: .45rem; }
+    .form-group input {
+      width: 100%; padding: .7rem 1rem;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      font-family: 'DM Sans', sans-serif; font-size: .92rem; color: var(--dark);
+      outline: none; transition: border-color .2s;
+    }
+    .form-group input:focus { border-color: var(--teal); }
+    .modal-submit {
+      width: 100%; padding: .8rem; border: none;
+      background: var(--teal); color: #fff;
+      font-family: 'Sora', sans-serif; font-weight: 700; font-size: .97rem;
+      border-radius: 12px; cursor: pointer; margin-top: .4rem;
+      transition: background .2s;
+    }
+    .modal-submit:hover { background: #0f766e; }
+    .modal-alt { text-align: center; margin-top: 1rem; font-size: .82rem; color: var(--muted); }
+    .modal-alt a { color: var(--teal); font-weight: 600; text-decoration: none; }
+    .modal-tabs { display: flex; gap: .5rem; margin-bottom: 1.75rem; }
+    .modal-tab {
+      flex: 1; padding: .55rem; border: 1.5px solid var(--border);
+      border-radius: 10px; background: none; cursor: pointer;
+      font-family: 'Sora', sans-serif; font-size: .85rem; font-weight: 600;
+      color: var(--muted); transition: all .2s;
+    }
+    .modal-tab.active { border-color: var(--teal); color: var(--teal); background: var(--teal-bg); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .hero-inner    { grid-template-columns: 1fr; gap: 2.5rem; }
+      .acts-grid     { grid-template-columns: 1fr; }
+      .steps-grid    { grid-template-columns: 1fr 1fr; }
+      .step:nth-child(2)::after { display: none; }
+      .step:nth-child(4)::after { display: none; }
+      .horarios-inner { grid-template-columns: 1fr; }
+      .nav-links      { display: none; }
+      .hamburger      { display: flex; }
+    }
+    @media (max-width: 600px) {
+      .steps-grid { grid-template-columns: 1fr; }
+      .step::after { display: none; }
+      .st-head, .st-row { grid-template-columns: 1fr 1fr; }
+      .st-head :nth-child(3), .st-head :nth-child(4),
+      .st-row  :nth-child(3), .st-row  :nth-child(4) { display: none; }
+      .nav-actions .btn-ghost { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="{% url 'core:home' %}">
+    <div class="nav-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a3 3 0 100 6 3 3 0 000-6zM6.5 8.5C5 10 4 12 4 14c0 2 1 4 2.5 5.5M17.5 8.5C19 10 20 12 20 14c0 2-1 4-2.5 5.5M12 8v12M9 14l3-2 3 2"/>
+      </svg>
     </div>
-</div>
+    <span class="brand-name">Endereza<span>2</span></span>
+  </a>
 
+  <ul class="nav-links">
+    <li><a href="#actividades">Actividades</a></li>
+    <li><a href="#como-funciona">Cómo funciona</a></li>
+    <li><a href="#horarios">Turnos</a></li>
+  </ul>
 
+  <div class="nav-actions">
+    {% if user.is_authenticated %}
 
-<div class="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
-    <table class="w-full text-sm text-left rtl:text-right text-body">
-        <thead class="text-sm text-body bg-neutral-secondary-soft border-b rounded-base border-default">
-            <tr>
-                <th scope="col" class="px-6 py-3 font-medium">
-                    Product name
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                    Color
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                    Category
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                    Price
-                </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                    Stock
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="bg-neutral-primary border-b border-default">
-                <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
-                    Apple MacBook Pro 17"
-                </th>
-                <td class="px-6 py-4">
-                    Silver
-                </td>
-                <td class="px-6 py-4">
-                    Laptop
-                </td>
-                <td class="px-6 py-4">
-                    $2999
-                </td>
-                <td class="px-6 py-4">
-                    231
-                </td>
-            </tr>
-            <tr class="bg-neutral-primary border-b border-default">
-                <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
-                    Microsoft Surface Pro
-                </th>
-                <td class="px-6 py-4">
-                    White
-                </td>
-                <td class="px-6 py-4">
-                    Laptop PC
-                </td>
-                <td class="px-6 py-4">
-                    $1999
-                </td>
-                <td class="px-6 py-4">
-                    423
-                </td>
-            </tr>
-            <tr class="bg-neutral-primary">
-                <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
-                    Magic Mouse 2
-                </th>
-                <td class="px-6 py-4">
-                    Black
-                </td>
-                <td class="px-6 py-4">
-                    Accessories
-                </td>
-                <td class="px-6 py-4">
-                    $99
-                </td>
-                <td class="px-6 py-4">
-                    121
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+      <a href="#" class="btn-ghost">
+        Mis turnos
+      </a>
 
+      <a href="{% url 'accounts:profile' %}" class="btn-ghost">
+        Perfil
+      </a>
 
-{% endblock content %}
+    {% else %}
+
+      <a href="{% url 'accounts:login' %}" class="btn-ghost">
+        Iniciar sesión
+      </a>
+
+      <a href="{% url 'accounts:register' %}" class="btn-primary">
+        Registrarse
+      </a>
+
+    {% endif %}
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-blob"></div>
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-badge">Centro de rehabilitación</div>
+      <h1>Movimiento que <em>restaura</em> tu bienestar</h1>
+      <p class="hero-sub">En Endereza2 acompañamos tu recuperación con clases profesionales de rehabilitación para todas las edades, desde adolescentes hasta adultos mayores.</p>
+      <div class="hero-ctas">
+        <a href="#horarios" class="btn-lg primary">
+          Ver clases disponibles
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#actividades" class="btn-lg outline">Nuestras actividades</a>
+      </div>
+      <p class="hero-note">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Clases de 1 hora · Lunes a viernes · 8:00 a 20:00 h
+      </p>
+    </div>
+
+    <div class="hero-card">
+      <div class="card-header">
+        <p>Próximas clases disponibles</p>
+        <h3>Hoy — Jueves 30 abr.</h3>
+      </div>
+      <div class="schedule-list">
+        <div class="schedule-item">
+          <div class="schedule-item-left">
+            <span class="schedule-dot dot-superior"></span>
+            <div>
+              <div class="schedule-name">Tren Superior</div>
+              <div class="schedule-time">09:00 — 10:00</div>
+            </div>
+          </div>
+          <span class="schedule-badge badge-open">Lugares disponibles</span>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-item-left">
+            <span class="schedule-dot dot-media"></span>
+            <div>
+              <div class="schedule-name">Zona Media</div>
+              <div class="schedule-time">11:00 — 12:00</div>
+            </div>
+          </div>
+          <span class="schedule-badge badge-open">Lugares disponibles</span>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-item-left">
+            <span class="schedule-dot dot-inferior"></span>
+            <div>
+              <div class="schedule-name">Tren Inferior</div>
+              <div class="schedule-time">14:00 — 15:00</div>
+            </div>
+          </div>
+          <span class="schedule-badge badge-few">Pocos lugares</span>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-item-left">
+            <span class="schedule-dot dot-superior"></span>
+            <div>
+              <div class="schedule-name">Tren Superior</div>
+              <div class="schedule-time">16:00 — 17:00</div>
+            </div>
+          </div>
+          <span class="schedule-badge badge-open">Lugares disponibles</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <p>Para reservar tu lugar necesitás una cuenta</p>
+        <a href="{% url 'accounts:register' %}" class="btn-primary">Registrarse gratis</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACTIVIDADES -->
+<section class="actividades" id="actividades">
+  <div class="container">
+    <div class="section-head center">
+      <span class="section-tag">Nuestras actividades</span>
+      <h2 class="section-title">Tres disciplinas, un mismo objetivo</h2>
+      <p class="section-sub">Trabajamos el cuerpo de manera integral. Cada actividad está diseñada para la rehabilitación y el bienestar, sin importar tu edad ni condición física.</p>
+    </div>
+    <div class="acts-grid">
+
+      <div class="act-card superior">
+        <div class="act-icon superior">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 4h12M8 4v4a4 4 0 008 0V4M12 12v8M9 16h6"/>
+          </svg>
+        </div>
+        <div>
+          <span class="act-tag">Tren Superior</span>
+          <h3 style="margin-top:.6rem">Rehabilitación<br>de Tren Superior</h3>
+        </div>
+        <p>Trabajamos hombros, brazos, pecho y espalda alta. Ideal para recuperarse de lesiones de cuello, columna cervical, codo o muñeca.</p>
+      </div>
+
+      <div class="act-card media">
+        <div class="act-icon media">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="10" width="18" height="4" rx="2"/>
+            <path d="M7 10V7m10 3V7M7 14v3m10-3v3"/>
+          </svg>
+        </div>
+        <div>
+          <span class="act-tag">Zona Media</span>
+          <h3 style="margin-top:.6rem">Rehabilitación<br>de Zona Media</h3>
+        </div>
+        <p>Fortalecemos el core y la columna lumbar. Enfocado en el alivio de dolor lumbar, problemas posturales y recuperación abdominal.</p>
+      </div>
+
+      <div class="act-card inferior">
+        <div class="act-icon inferior">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v10M8 12l-3 8M16 12l3 8M5 20h14"/>
+            <circle cx="12" cy="5" r="2"/>
+          </svg>
+        </div>
+        <div>
+          <span class="act-tag">Tren Inferior</span>
+          <h3 style="margin-top:.6rem">Rehabilitación<br>de Tren Inferior</h3>
+        </div>
+        <p>Rodillas, caderas, tobillos y musculatura de piernas. Perfecta para recuperar movilidad, fuerza y estabilidad después de lesiones.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CÓMO FUNCIONA -->
+<section class="como" id="como-funciona">
+  <div class="container">
+    <div class="section-head center">
+      <span class="section-tag">Cómo funciona</span>
+      <h2 class="section-title">Reservar es muy sencillo</h2>
+      <p class="section-sub">Podés explorar todas las clases disponibles sin tener cuenta. Para reservar, solo necesitás registrarte.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>Explorá las clases</h4>
+        <p>Mirá los turnos disponibles, horarios y actividades sin necesidad de registrarte.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>Creá tu cuenta</h4>
+        <p>Registrate con tu nombre, email y DNI. Es gratuito y solo te lleva un minuto.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>Elegí tu turno</h4>
+        <p>Seleccioná la actividad, el día y el horario que mejor se adapte a tu rutina.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h4>Abonás y listo</h4>
+        <p>Pagá con Mercado Pago, efectivo o transferencia. Recibís confirmación por email.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HORARIOS -->
+<section class="horarios" id="horarios">
+  <div class="container">
+    <div class="horarios-inner">
+      <div>
+        <div class="section-head">
+          <span class="section-tag">Horarios de hoy</span>
+          <h2 class="section-title">Dos turnos diarios para adaptarse a vos</h2>
+          <p class="section-sub">Trabajamos de lunes a viernes en turno mañana y turno tarde. Los cupos los definen los dueños y pueden variar por horario y actividad.</p>
+        </div>
+        <div class="info-chips">
+          <div class="chip">
+            <svg class="chip-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <div class="chip-text">
+              <p>Turno mañana</p>
+              <p>08:00 a 14:00 hs — 3 profesionales por actividad</p>
+            </div>
+          </div>
+          <div class="chip">
+            <svg class="chip-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 00-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/></svg>
+            <div class="chip-text">
+              <p>Turno tarde</p>
+              <p>14:00 a 20:00 hs — 3 profesionales por actividad</p>
+            </div>
+          </div>
+          <div class="chip">
+            <svg class="chip-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+            <div class="chip-text">
+              <p>Sin indicación médica obligatoria</p>
+              <p>Podés asistir por iniciativa propia</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="schedule-table">
+        <div class="st-head">
+          <span>Horario</span>
+          <span>Actividad</span>
+          <span>Turno</span>
+          <span>Lugares</span>
+        </div>
+        <div class="st-row">
+          <span class="st-time">08:00 – 09:00</span>
+          <span class="st-act"><span class="st-dot" style="background:var(--teal)"></span>Tren Superior</span>
+          <span style="font-size:.8rem;color:var(--muted)">Mañana</span>
+          <span class="cupo cupo-ok">Disponible</span>
+        </div>
+        <div class="st-row">
+          <span class="st-time">09:00 – 10:00</span>
+          <span class="st-act"><span class="st-dot" style="background:#0891B2"></span>Zona Media</span>
+          <span style="font-size:.8rem;color:var(--muted)">Mañana</span>
+          <span class="cupo cupo-ok">Disponible</span>
+        </div>
+        <div class="st-row">
+          <span class="st-time">11:00 – 12:00</span>
+          <span class="st-act"><span class="st-dot" style="background:#059669"></span>Tren Inferior</span>
+          <span style="font-size:.8rem;color:var(--muted)">Mañana</span>
+          <span class="cupo cupo-few">Pocos lugares</span>
+        </div>
+        <div class="st-row">
+          <span class="st-time">14:00 – 15:00</span>
+          <span class="st-act"><span class="st-dot" style="background:var(--teal)"></span>Tren Superior</span>
+          <span style="font-size:.8rem;color:var(--muted)">Tarde</span>
+          <span class="cupo cupo-ok">Disponible</span>
+        </div>
+        <div class="st-row">
+          <span class="st-time">16:00 – 17:00</span>
+          <span class="st-act"><span class="st-dot" style="background:#0891B2"></span>Zona Media</span>
+          <span style="font-size:.8rem;color:var(--muted)">Tarde</span>
+          <span class="cupo cupo-ok">Disponible</span>
+        </div>
+        <div class="st-row">
+          <span class="st-time">18:00 – 19:00</span>
+          <span class="st-act"><span class="st-dot" style="background:#059669"></span>Tren Inferior</span>
+          <span style="font-size:.8rem;color:var(--muted)">Tarde</span>
+          <span class="cupo cupo-ok">Disponible</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-inner">
+      <span class="section-tag" style="color:rgba(255,255,255,.5)">¿Listo para empezar?</span>
+      <h2 class="section-title" style="color:#fff">Tu rehabilitación empieza con un turno</h2>
+      <p>Creá tu cuenta gratis, explorá las clases y reservá el horario que mejor se adapte a tu vida. Sin indicación médica obligatoria.</p>
+      <div class="cta-btns">
+        <a href="{% url 'accounts:register' %}" class="btn-white">
+          Crear cuenta gratis
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#horarios" class="btn-outline-white">Ver turnos disponibles</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 100 6 3 3 0 000-6zM12 8v12M9 14l3-2 3 2"/>
+        </svg>
+      </div>
+      <span class="footer-name">Endereza2</span>
+    </div>
+    <div class="footer-links">
+      <a href="#actividades">Actividades</a>
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#horarios">Horarios</a>
+    </div>
+    <p style="font-size:.78rem">&copy; 2026 Endereza2. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<script>
+  function openModal(tab) {
+    document.getElementById('modal').classList.add('open');
+    switchTab(tab || 'login');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('modal')) closeModal();
+  }
+  function switchTab(tab) {
+    document.getElementById('form-login').style.display    = tab === 'login'    ? 'block' : 'none';
+    document.getElementById('form-register').style.display = tab === 'register' ? 'block' : 'none';
+    document.getElementById('tab-login').classList.toggle('active',    tab === 'login');
+    document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+  }
+  function toggleMenu() {
+    const links = document.querySelector('.nav-links');
+    if (links) {
+      const open = links.style.display === 'flex';
+      links.style.display = open ? 'none' : 'flex';
+      links.style.flexDirection = 'column';
+      links.style.position = 'absolute';
+      links.style.top = '64px';
+      links.style.left = '0'; links.style.right = '0';
+      links.style.background = '#fff';
+      links.style.padding = '1rem 2rem 1.5rem';
+      links.style.borderBottom = '1px solid #E5E7EB';
+      links.style.boxShadow = '0 4px 12px rgba(0,0,0,.08)';
+      if (open) links.style.display = 'none';
+    }
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>

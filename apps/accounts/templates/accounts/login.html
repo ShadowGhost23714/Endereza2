@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iniciar sesión — Endereza2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal:     #0D9488;
+      --teal-mid: #14B8A6;
+      --teal-lt:  #CCFBF1;
+      --teal-bg:  #F0FDFA;
+      --dark:     #0F2027;
+      --mid:      #374151;
+      --muted:    #6B7280;
+      --border:   #E5E7EB;
+      --white:    #FFFFFF;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--mid);
+      background: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Sora', sans-serif; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 clamp(1rem, 5vw, 4rem);
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo {
+      width: 36px; height: 36px;
+      background: var(--teal);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-logo svg { width: 22px; height: 22px; color: #fff; }
+    .brand-name {
+      font-size: 1.15rem; font-weight: 700; color: var(--dark);
+      letter-spacing: -0.02em;
+    }
+    .brand-name span { color: var(--teal); }
+    .nav-links {
+      display: flex; align-items: center; gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none; font-size: 0.9rem; font-weight: 500;
+      color: var(--mid); transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--teal); }
+    .nav-actions { display: flex; gap: .75rem; align-items: center; }
+    .btn-ghost {
+      background: none; border: 1.5px solid var(--border);
+      color: var(--mid); padding: .45rem 1.1rem;
+      border-radius: 10px; font-size: .875rem; font-weight: 500;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: border-color .2s, color .2s;
+      text-decoration: none; display: inline-block;
+    }
+    .btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+    .btn-primary {
+      background: var(--teal); color: #fff;
+      border: none; padding: .48rem 1.2rem;
+      border-radius: 10px; font-size: .875rem; font-weight: 600;
+      cursor: pointer; font-family: 'Sora', sans-serif;
+      transition: background .2s, transform .15s;
+      text-decoration: none; display: inline-block;
+    }
+    .btn-primary:hover { background: #0f766e; transform: translateY(-1px); }
+    .hamburger {
+      display: none; background: none; border: none; cursor: pointer;
+      flex-direction: column; gap: 5px; padding: 4px;
+    }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--mid); border-radius: 2px; transition: .3s; }
+
+    /* ── MAIN ── */
+    main {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center;
+      padding: clamp(2rem, 6vw, 4rem) clamp(1rem, 5vw, 2rem);
+      background: linear-gradient(135deg, var(--teal-bg) 0%, #fff 60%);
+      position: relative; overflow: hidden;
+    }
+    main::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 50% 60% at 10% 50%, rgba(13,148,136,.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .blob-tl {
+      position: absolute; top: -100px; left: -100px;
+      width: 380px; height: 380px;
+      background: radial-gradient(circle, rgba(20,184,166,.15) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .blob-br {
+      position: absolute; bottom: -80px; right: -80px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(8,145,178,.1) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+
+    /* ── LAYOUT ── */
+    .login-wrap {
+      position: relative; z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      max-width: 960px; width: 100%;
+      background: #fff;
+      border-radius: 28px;
+      box-shadow: 0 24px 64px rgba(0,0,0,.09), 0 2px 8px rgba(0,0,0,.04);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      animation: fadeUp .4s cubic-bezier(.22,1,.36,1);
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* LEFT PANEL */
+    .login-panel {
+      background: linear-gradient(160deg, var(--dark) 0%, #0F3443 60%, #0a2a37 100%);
+      padding: 3rem 2.5rem;
+      display: flex; flex-direction: column; justify-content: space-between;
+      position: relative; overflow: hidden;
+    }
+    .panel-blob {
+      position: absolute; bottom: -60px; right: -60px;
+      width: 220px; height: 220px;
+      background: radial-gradient(circle, rgba(13,148,136,.35) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .panel-blob-2 {
+      position: absolute; top: -40px; left: -40px;
+      width: 160px; height: 160px;
+      background: radial-gradient(circle, rgba(8,145,178,.2) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .panel-logo {
+      display: flex; align-items: center; gap: .7rem; position: relative; z-index: 1;
+    }
+    .panel-logo-icon {
+      width: 40px; height: 40px; background: var(--teal);
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    }
+    .panel-logo-icon svg { width: 24px; height: 24px; color: #fff; }
+    .panel-logo-name {
+      font-family: 'Sora', sans-serif; font-size: 1.2rem; font-weight: 700; color: #fff;
+    }
+    .panel-logo-name span { color: var(--teal-mid); }
+
+    .panel-content { position: relative; z-index: 1; }
+    .panel-content h2 {
+      color: #fff; font-size: 1.65rem; font-weight: 800;
+      letter-spacing: -.03em; line-height: 1.2; margin-bottom: .75rem;
+    }
+    .panel-content h2 em { color: var(--teal-mid); font-style: normal; }
+    .panel-content p { color: rgba(255,255,255,.55); font-size: .9rem; line-height: 1.65; margin-bottom: 2rem; }
+
+    .panel-pills { display: flex; flex-direction: column; gap: .6rem; }
+    .pill {
+      display: flex; align-items: center; gap: .65rem;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px; padding: .7rem 1rem;
+    }
+    .pill-dot {
+      width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
+    }
+    .pill span { font-size: .83rem; color: rgba(255,255,255,.7); font-weight: 500; }
+
+    /* RIGHT PANEL — FORM */
+    .login-form-wrap {
+      padding: 3rem 2.5rem;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .form-header { margin-bottom: 2rem; }
+    .form-header .tag {
+      display: inline-block; font-size: .72rem; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: var(--teal); margin-bottom: .5rem;
+    }
+    .form-header h3 {
+      font-size: 1.6rem; font-weight: 800; color: var(--dark);
+      letter-spacing: -.03em; line-height: 1.15;
+    }
+    .form-header p { color: var(--muted); font-size: .88rem; margin-top: .35rem; }
+
+    /* TABS */
+    .tabs {
+      display: flex; gap: .4rem;
+      background: var(--teal-bg);
+      border-radius: 12px; padding: .3rem;
+      margin-bottom: 1.75rem;
+    }
+    .tab {
+      flex: 1; padding: .5rem;
+      border: none; border-radius: 9px; background: none;
+      font-family: 'Sora', sans-serif; font-size: .85rem; font-weight: 600;
+      color: var(--muted); cursor: pointer; transition: all .2s;
+    }
+    .tab.active {
+      background: #fff; color: var(--teal);
+      box-shadow: 0 2px 8px rgba(0,0,0,.07);
+    }
+
+    /* FORM */
+    .form-body { display: flex; flex-direction: column; gap: 1.1rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
+    .field { display: flex; flex-direction: column; gap: .4rem; }
+    .field label {
+      font-size: .8rem; font-weight: 600; color: var(--mid);
+    }
+    .field-input-wrap { position: relative; }
+    .field-icon {
+      position: absolute; left: .9rem; top: 50%; transform: translateY(-50%);
+      color: var(--muted); pointer-events: none;
+      display: flex; align-items: center;
+    }
+    .field-icon svg { width: 16px; height: 16px; }
+    .field input {
+      width: 100%; padding: .68rem .9rem .68rem 2.4rem;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      font-family: 'DM Sans', sans-serif; font-size: .9rem; color: var(--dark);
+      outline: none; transition: border-color .2s, box-shadow .2s;
+      background: #fff;
+    }
+    .field input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(13,148,136,.1);
+    }
+    .field input::placeholder { color: #B0BAC9; }
+    .field-hint {
+      font-size: .75rem; color: var(--muted); margin-top: .15rem;
+    }
+
+    .forgot {
+      text-align: right; margin-top: -.4rem;
+    }
+    .forgot a {
+      font-size: .8rem; color: var(--teal); text-decoration: none; font-weight: 500;
+      transition: opacity .2s;
+    }
+    .forgot a:hover { opacity: .7; }
+
+    .btn-submit {
+      width: 100%; padding: .82rem;
+      background: var(--teal); color: #fff;
+      border: none; border-radius: 12px;
+      font-family: 'Sora', sans-serif; font-weight: 700; font-size: .97rem;
+      cursor: pointer; transition: background .2s, transform .15s, box-shadow .2s;
+      display: flex; align-items: center; justify-content: center; gap: .5rem;
+      margin-top: .25rem;
+    }
+    .btn-submit:hover {
+      background: #0f766e;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(13,148,136,.28);
+    }
+    .btn-submit svg { width: 18px; height: 18px; }
+
+    .form-alt {
+      text-align: center; font-size: .83rem; color: var(--muted);
+      margin-top: .75rem;
+    }
+    .form-alt a { color: var(--teal); font-weight: 600; text-decoration: none; }
+    .form-alt a:hover { text-decoration: underline; }
+
+    .divider {
+      display: flex; align-items: center; gap: .75rem;
+      margin: .25rem 0;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .divider span { font-size: .75rem; color: var(--muted); white-space: nowrap; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark); color: rgba(255,255,255,.45);
+      padding: 2.5rem clamp(1rem, 5vw, 4rem);
+    }
+    .footer-inner {
+      max-width: 1200px; margin: auto;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-brand { display: flex; align-items: center; gap: .6rem; }
+    .footer-logo {
+      width: 28px; height: 28px; background: var(--teal);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .footer-logo svg { width: 16px; height: 16px; color: #fff; }
+    .footer-name { color: #fff; font-family: 'Sora', sans-serif; font-size: .9rem; font-weight: 700; }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { color: rgba(255,255,255,.4); font-size: .82rem; text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: var(--teal-mid); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 760px) {
+      .login-wrap { grid-template-columns: 1fr; }
+      .login-panel { display: none; }
+      .login-form-wrap { padding: 2.5rem 1.75rem; }
+      .form-row { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .nav-actions .btn-ghost { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="{% url 'core:home' %}">
+    <div class="nav-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a3 3 0 100 6 3 3 0 000-6zM12 8v12M9 14l3-2 3 2"/>
+      </svg>
+    </div>
+    <span class="brand-name">Endereza<span>2</span></span>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="{% url 'core:home' %}#actividades">Actividades</a></li>
+    <li><a href="{% url 'core:home' %}#como-funciona">Cómo funciona</a></li>
+    <li><a href="{% url 'core:home' %}#horarios">Turnos</a></li>
+  </ul>
+
+  <div class="nav-actions">
+    <a href="#" class="btn-ghost" aria-current="page">Iniciar sesión</a>
+    <a href="{% url 'accounts:register' %}" class="btn-primary">Registrarse</a>
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main>
+  <div class="blob-tl"></div>
+  <div class="blob-br"></div>
+
+  <div class="login-wrap">
+
+    <!-- LEFT: decorative panel -->
+    <div class="login-panel">
+      <div class="panel-blob"></div>
+      <div class="panel-blob-2"></div>
+
+      <div class="panel-logo">
+        <div class="panel-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a3 3 0 100 6 3 3 0 000-6zM12 8v12M9 14l3-2 3 2"/>
+          </svg>
+        </div>
+        <span class="panel-logo-name">Endereza<span>2</span></span>
+      </div>
+
+      <div class="panel-content">
+        <h2>Tu recuperación<br>empieza <em>aquí</em></h2>
+        <p>Accedé a tu cuenta para reservar clases, ver tus turnos y gestionar tus pagos de forma simple y rápida.</p>
+
+        <div class="panel-pills">
+          <div class="pill">
+            <span class="pill-dot" style="background: var(--teal-mid)"></span>
+            <span>Rehabilitación de Tren Superior</span>
+          </div>
+          <div class="pill">
+            <span class="pill-dot" style="background: #0891B2"></span>
+            <span>Rehabilitación de Zona Media</span>
+          </div>
+          <div class="pill">
+            <span class="pill-dot" style="background: #059669"></span>
+            <span>Rehabilitación de Tren Inferior</span>
+          </div>
+        </div>
+      </div>
+
+      <p style="color:rgba(255,255,255,.25); font-size:.75rem; position:relative; z-index:1;">
+        Horarios: Lun – Vie · 8:00 a 20:00 hs
+      </p>
+    </div>
+
+    <!-- RIGHT: form -->
+    <div class="login-form-wrap">
+      <div class="form-header">
+        <span class="tag">Bienvenido</span>
+        <h3 id="form-title">Iniciar sesión</h3>
+        <p id="form-subtitle">Ingresá con tu cuenta para gestionar tus turnos.</p>
+      </div>
+
+      <!-- LOGIN -->
+      {% if messages %}
+        {% for message in messages %}
+          <p style="color:red; font-size:0.8rem;">
+            {{ message }}
+          </p>
+        {% endfor %}
+      {% endif %}
+      <form method="post" action="{% url 'accounts:login' %}" class="form-body">
+        {% csrf_token %}
+        <div class="field">
+          <label for="email">Correo electrónico</label>
+          <div class="field-input-wrap">
+            <span class="field-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+            </span>
+            <input type="email" name="username" id="email" placeholder="tucorreo@email.com" required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <div class="field-input-wrap">
+            <span class="field-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </span>
+            <input type="password" name="password" id="password" placeholder="Tu contraseña" required />
+          </div>
+        </div>
+
+        <div class="forgot"><a href="#">¿Olvidaste tu contraseña?</a></div>
+
+        <button class="btn-submit" type="submit">
+          Ingresar
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+
+        <p class="form-alt">
+          ¿No tenés cuenta? <a href="{% url 'accounts:register' %}">Registrate gratis</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 100 6 3 3 0 000-6zM12 8v12M9 14l3-2 3 2"/>
+        </svg>
+      </div>
+      <span class="footer-name">Endereza2</span>
+    </div>
+    <div class="footer-links">
+      <a href="{% url 'core:home' %}#actividades">
+      <a href="index.html#como-funciona">Cómo funciona</a>
+      <a href="index.html#horarios">Horarios</a>
+      <a href="login.html">Iniciar sesión</a>
+    </div>
+    <p style="font-size:.78rem">&copy; 2026 Endereza2. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<script>
+  function switchTab(tab) {
+    const isLogin = tab === 'login';
+    document.getElementById('form-login').style.display    = isLogin ? 'flex' : 'none';
+    document.getElementById('form-register').style.display = isLogin ? 'none' : 'flex';
+    document.getElementById('tab-login').classList.toggle('active', isLogin);
+    document.getElementById('tab-register').classList.toggle('active', !isLogin);
+    document.getElementById('form-title').textContent    = isLogin ? 'Iniciar sesión' : 'Crear tu cuenta';
+    document.getElementById('form-subtitle').textContent = isLogin
+      ? 'Ingresá con tu cuenta para gestionar tus turnos.'
+      : 'Completá tus datos para unirte a Endereza2.';
+  }
+
+  function toggleMenu() {
+    const links = document.querySelector('.nav-links');
+    if (!links) return;
+    const open = links.style.display === 'flex';
+    Object.assign(links.style, {
+      display: open ? 'none' : 'flex',
+      flexDirection: 'column',
+      position: 'absolute',
+      top: '64px', left: '0', right: '0',
+      background: '#fff',
+      padding: '1rem 2rem 1.5rem',
+      borderBottom: '1px solid #E5E7EB',
+      boxShadow: '0 4px 12px rgba(0,0,0,.08)'
+    });
+    if (open) links.style.display = 'none';
+  }
+
+  // If URL hash is #registro, open register tab
+  if (window.location.hash === '#registro') switchTab('register');
+</script>
+</body>
+</html>
