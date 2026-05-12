@@ -1,0 +1,261 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nuevo Turno — Endereza2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'src/output.css' %}" />
+</head>
+<body class="bg-gray-50 min-h-screen" style="font-family:'DM Sans',sans-serif;">
+
+  <!-- ── NAV ── -->
+  <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200 px-6 md:px-16 h-16 flex items-center justify-between">
+    <a href="{% url 'core:home' %}" class="flex items-center gap-2.5 no-underline">
+      <div class="w-9 h-9 bg-teal-600 rounded-xl flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 100 6 3 3 0 000-6zM12 8v12M9 14l3-2 3 2"/>
+        </svg>
+      </div>
+      <span class="text-lg font-bold text-gray-900 tracking-tight" style="font-family:'Sora',sans-serif;">
+        Endereza<span class="text-teal-600">2</span>
+      </span>
+    </a>
+
+    <div class="flex items-center gap-3">
+      <a href="{% url 'core:home' %}"
+         class="text-sm font-medium text-gray-600 hover:text-teal-600 transition-colors hidden sm:inline">
+        Ver turnos
+      </a>
+      <span class="text-sm text-gray-400 hidden sm:inline">|</span>
+      <span class="text-sm font-semibold text-teal-700 bg-teal-50 px-3 py-1 rounded-full hidden sm:inline">
+        Staff
+      </span>
+    </div>
+  </nav>
+
+  <!-- ── CONTENT ── -->
+  <main class="max-w-2xl mx-auto px-4 py-10 md:py-16">
+
+    <!-- Header -->
+    <div class="mb-8">
+      <span class="inline-block text-xs font-bold tracking-widest uppercase text-teal-600 mb-2">
+        Panel de administración
+      </span>
+      <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight" style="font-family:'Sora',sans-serif;">
+        Crear nuevo turno
+      </h1>
+      <p class="mt-2 text-gray-500 text-sm">
+        Completá los campos para agregar un nuevo turno al sistema. Todos los campos son obligatorios.
+      </p>
+    </div>
+
+    <!-- Django messages -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="flex items-start gap-3 p-4 mb-6 rounded-xl border
+          {% if message.tags == 'success' %}bg-green-50 border-green-200 text-green-800
+          {% elif message.tags == 'error' %}bg-red-50 border-red-200 text-red-800
+          {% else %}bg-teal-50 border-teal-200 text-teal-800{% endif %}">
+          <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            {% if message.tags == 'success' %}
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            {% else %}
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            {% endif %}
+          </svg>
+          <p class="text-sm font-medium">{{ message }}</p>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Form card -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+
+      <!-- Card header -->
+      <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-6 py-5">
+        <p class="text-teal-100 text-xs font-semibold uppercase tracking-widest mb-1">Datos del turno</p>
+        <h2 class="text-white text-xl font-bold tracking-tight" style="font-family:'Sora',sans-serif;">
+          Información general
+        </h2>
+      </div>
+
+      <!-- Form body -->
+      <div class="px-6 py-7">
+
+        <!-- Non-field errors -->
+        {% if form.non_field_errors %}
+          <div class="flex items-start gap-3 p-4 mb-6 rounded-xl bg-red-50 border border-red-200">
+            <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            </svg>
+            <ul class="text-sm text-red-700 space-y-1">
+              {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+            <!-- Fecha -->
+            <div class="sm:col-span-1">
+              <label for="{{ form.fecha.id_for_label }}"
+                     class="block mb-1.5 text-sm font-semibold text-gray-700">
+                Fecha
+                <span class="text-red-500 ml-0.5">*</span>
+              </label>
+              {{ form.fecha }}
+              {% if form.fecha.errors %}
+                {% for error in form.fecha.errors %}
+                  <p class="mt-1.5 text-xs text-red-600 flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ error }}
+                  </p>
+                {% endfor %}
+              {% endif %}
+            </div>
+
+            <!-- Hora de inicio -->
+            <div class="sm:col-span-1">
+              <label for="{{ form.hora_inicio.id_for_label }}"
+                     class="block mb-1.5 text-sm font-semibold text-gray-700">
+                Hora de inicio
+                <span class="text-red-500 ml-0.5">*</span>
+              </label>
+              {{ form.hora_inicio }}
+              {% if form.hora_inicio.errors %}
+                {% for error in form.hora_inicio.errors %}
+                  <p class="mt-1.5 text-xs text-red-600 flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ error }}
+                  </p>
+                {% endfor %}
+              {% endif %}
+            </div>
+
+            <!-- Actividad -->
+            <div class="sm:col-span-2">
+              <label for="{{ form.actividad.id_for_label }}"
+                     class="block mb-1.5 text-sm font-semibold text-gray-700">
+                Actividad
+                <span class="text-red-500 ml-0.5">*</span>
+              </label>
+              {{ form.actividad }}
+              <!-- Activity legend -->
+              <div class="mt-2 flex flex-wrap gap-3">
+                <span class="inline-flex items-center gap-1.5 text-xs text-gray-500">
+                  <span class="w-2.5 h-2.5 rounded-full bg-teal-600 inline-block"></span>
+                  Tren superior
+                </span>
+                <span class="inline-flex items-center gap-1.5 text-xs text-gray-500">
+                  <span class="w-2.5 h-2.5 rounded-full bg-cyan-600 inline-block"></span>
+                  Zona media
+                </span>
+                <span class="inline-flex items-center gap-1.5 text-xs text-gray-500">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span>
+                  Tren inferior
+                </span>
+              </div>
+              {% if form.actividad.errors %}
+                {% for error in form.actividad.errors %}
+                  <p class="mt-1.5 text-xs text-red-600 flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ error }}
+                  </p>
+                {% endfor %}
+              {% endif %}
+            </div>
+
+            <!-- Cupo -->
+            <div class="sm:col-span-2">
+              <label for="{{ form.cupo.id_for_label }}"
+                     class="block mb-1.5 text-sm font-semibold text-gray-700">
+                Cupo máximo
+                <span class="text-red-500 ml-0.5">*</span>
+              </label>
+              {{ form.cupo }}
+              <p class="mt-1.5 text-xs text-gray-400">
+                Cantidad máxima de pacientes que pueden reservar este turno (mínimo 1, máximo 100).
+              </p>
+              {% if form.cupo.errors %}
+                {% for error in form.cupo.errors %}
+                  <p class="mt-1.5 text-xs text-red-600 flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ error }}
+                  </p>
+                {% endfor %}
+              {% endif %}
+            </div>
+
+          </div><!-- /grid -->
+
+          <!-- Actions -->
+          <div class="mt-8 flex flex-col sm:flex-row gap-3 pt-6 border-t border-gray-100">
+            <button type="submit"
+                    class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2
+                           bg-teal-600 hover:bg-teal-700 active:scale-[0.98]
+                           text-white font-semibold text-sm px-6 py-2.5 rounded-xl
+                           transition-all duration-150 shadow-sm hover:shadow-md"
+                    style="font-family:'Sora',sans-serif;">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+              </svg>
+              Crear turno
+            </button>
+
+            <a href="{% url 'core:home' %}"
+               class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2
+                      border border-gray-300 hover:border-teal-400 hover:text-teal-600
+                      text-gray-600 font-medium text-sm px-6 py-2.5 rounded-xl
+                      transition-all duration-150 bg-white">
+              Cancelar
+            </a>
+          </div>
+
+        </form>
+      </div><!-- /form body -->
+    </div><!-- /card -->
+
+    <!-- Helper note -->
+    <p class="mt-6 text-center text-xs text-gray-400 flex items-center justify-center gap-1.5">
+      <svg class="w-3.5 h-3.5 text-teal-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      Solo el personal autorizado puede crear o modificar turnos.
+    </p>
+
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer class="mt-16 border-t border-gray-200 bg-gray-900 text-gray-400 py-8 px-6 md:px-16">
+    <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 bg-teal-600 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a3 3 0 100 6 3 3 0 000-6zM12 8v12M9 14l3-2 3 2"/>
+          </svg>
+        </div>
+        <span class="text-white font-bold text-sm" style="font-family:'Sora',sans-serif;">Endereza2</span>
+      </div>
+      <p class="text-xs">&copy; 2026 Endereza2. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

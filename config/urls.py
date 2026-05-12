@@ -13,4 +13,7 @@ urlpatterns = [
 
     # LOGOUT (opcional acá o dentro de accounts)
     path('logout/', LogoutView.as_view(), name='logout'),
+
+    # project/urls.py
+    path("turnos/", include("apps.classes.urls", namespace="turnos")),
 ]

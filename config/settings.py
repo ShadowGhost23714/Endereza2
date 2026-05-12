@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'compressor',
     'apps.core',
     'apps.accounts',
+    'apps.classes',
     'config',
 ]
 

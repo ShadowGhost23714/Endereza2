@@ -490,10 +490,16 @@
 
   <div class="nav-actions">
     {% if user.is_authenticated %}
-
+      {% if user.is_staff or user.is_superuser %}
+        <a href="{% url 'admin:index' %}" class="btn-ghost">
+          Admin
+        </a>
+      {% endif %}
+      {% if not user.is_staff or not user.is_superuser %}
       <a href="#" class="btn-ghost">
         Mis turnos
-      </a>
+      </a> 
+      {% endif %}
 
       <a href="{% url 'accounts:profile' %}" class="btn-ghost">
         Perfil
