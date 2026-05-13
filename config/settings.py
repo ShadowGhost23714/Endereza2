@@ -134,6 +134,8 @@ STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
 # AUTH CONFIGURATION
 # =========================
 
+AUTH_USER_MODEL = 'accounts.Usuario'
+
 LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'core:home'
 LOGOUT_REDIRECT_URL = 'core:home'

@@ -4,8 +4,6 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .models import Profile
-
 
 # ───── HOME ─────
 def home(request):
