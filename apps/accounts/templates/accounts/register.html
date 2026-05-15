@@ -1,607 +1,287 @@
+{% extends "_base.html" %}
 {% load static %}
+{% block content %}
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Registrarse — Endereza2</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<section class="flex-1 flex items-center justify-center min-h-[calc(100vh-4rem)] px-4 py-14 bg-gray-50">
 
-    :root {
-      --teal:     #0D9488;
-      --teal-mid: #14B8A6;
-      --teal-lt:  #CCFBF1;
-      --teal-bg:  #F0FDFA;
-      --dark:     #0F2027;
-      --mid:      #374151;
-      --muted:    #6B7280;
-      --border:   #E5E7EB;
-      --white:    #FFFFFF;
-    }
+  <div class="w-full max-w-xl">
 
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      color: var(--mid);
-      background: var(--white);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    h1, h2, h3, h4 { font-family: 'Sora', sans-serif; }
-
-    /* ── NAV ── */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(255,255,255,0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 clamp(1rem, 5vw, 4rem);
-      height: 64px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .nav-brand {
-      display: flex; align-items: center; gap: 10px;
-      text-decoration: none;
-    }
-    .nav-logo {
-      width: 36px; height: 36px;
-      background: var(--teal);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .nav-logo svg { width: 22px; height: 22px; color: #fff; }
-    .brand-name {
-      font-size: 1.15rem; font-weight: 700; color: var(--dark);
-      letter-spacing: -0.02em;
-    }
-    .brand-name span { color: var(--teal); }
-    .nav-links {
-      display: flex; align-items: center; gap: 2rem;
-      list-style: none;
-    }
-    .nav-links a {
-      text-decoration: none; font-size: 0.9rem; font-weight: 500;
-      color: var(--mid); transition: color .2s;
-    }
-    .nav-links a:hover { color: var(--teal); }
-    .nav-actions { display: flex; gap: .75rem; align-items: center; }
-    .btn-ghost {
-      background: none; border: 1.5px solid var(--border);
-      color: var(--mid); padding: .45rem 1.1rem;
-      border-radius: 10px; font-size: .875rem; font-weight: 500;
-      cursor: pointer; font-family: 'DM Sans', sans-serif;
-      transition: border-color .2s, color .2s;
-      text-decoration: none; display: inline-block;
-    }
-    .btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
-    .btn-primary {
-      background: var(--teal); color: #fff;
-      border: none; padding: .48rem 1.2rem;
-      border-radius: 10px; font-size: .875rem; font-weight: 600;
-      cursor: pointer; font-family: 'Sora', sans-serif;
-      transition: background .2s, transform .15s;
-      text-decoration: none; display: inline-block;
-    }
-    .btn-primary:hover { background: #0f766e; transform: translateY(-1px); }
-    .hamburger {
-      display: none; background: none; border: none; cursor: pointer;
-      flex-direction: column; gap: 5px; padding: 4px;
-    }
-    .hamburger span { display: block; width: 22px; height: 2px; background: var(--mid); border-radius: 2px; transition: .3s; }
-
-    /* ── MAIN ── */
-    main {
-      flex: 1;
-      display: flex; align-items: center; justify-content: center;
-      padding: clamp(2rem, 6vw, 4rem) clamp(1rem, 5vw, 2rem);
-      background: linear-gradient(135deg, var(--teal-bg) 0%, #fff 60%);
-      position: relative; overflow: hidden;
-    }
-    main::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse 50% 60% at 90% 50%, rgba(13,148,136,.06) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .blob-tl {
-      position: absolute; top: -100px; left: -100px;
-      width: 380px; height: 380px;
-      background: radial-gradient(circle, rgba(20,184,166,.14) 0%, transparent 70%);
-      border-radius: 50%; pointer-events: none;
-    }
-    .blob-br {
-      position: absolute; bottom: -80px; right: -80px;
-      width: 320px; height: 320px;
-      background: radial-gradient(circle, rgba(8,145,178,.09) 0%, transparent 70%);
-      border-radius: 50%; pointer-events: none;
-    }
-
-    /* ── LAYOUT ── */
-    .register-wrap {
-      position: relative; z-index: 1;
-      display: grid;
-      grid-template-columns: 1fr 1.45fr;
-      max-width: 980px; width: 100%;
-      background: #fff;
-      border-radius: 28px;
-      box-shadow: 0 24px 64px rgba(0,0,0,.09), 0 2px 8px rgba(0,0,0,.04);
-      border: 1px solid var(--border);
-      overflow: hidden;
-      animation: fadeUp .4s cubic-bezier(.22,1,.36,1);
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ── LEFT PANEL ── */
-    .reg-panel {
-      background: linear-gradient(160deg, var(--dark) 0%, #0F3443 60%, #0a2a37 100%);
-      padding: 3rem 2.5rem;
-      display: flex; flex-direction: column; justify-content: space-between;
-      position: relative; overflow: hidden;
-    }
-    .panel-blob {
-      position: absolute; bottom: -60px; right: -60px;
-      width: 220px; height: 220px;
-      background: radial-gradient(circle, rgba(13,148,136,.35) 0%, transparent 70%);
-      border-radius: 50%; pointer-events: none;
-    }
-    .panel-blob-2 {
-      position: absolute; top: -40px; left: -40px;
-      width: 160px; height: 160px;
-      background: radial-gradient(circle, rgba(8,145,178,.2) 0%, transparent 70%);
-      border-radius: 50%; pointer-events: none;
-    }
-    .panel-logo {
-      display: flex; align-items: center; gap: .7rem; position: relative; z-index: 1;
-    }
-    .panel-logo-icon {
-      width: 40px; height: 40px; background: var(--teal);
-      border-radius: 12px; display: flex; align-items: center; justify-content: center;
-    }
-    .panel-logo-icon svg { width: 24px; height: 24px; color: #fff; }
-    .panel-logo-name {
-      font-family: 'Sora', sans-serif; font-size: 1.2rem; font-weight: 700; color: #fff;
-    }
-    .panel-logo-name span { color: var(--teal-mid); }
-    .panel-content { position: relative; z-index: 1; }
-    .panel-content h2 {
-      color: #fff; font-size: 1.6rem; font-weight: 800;
-      letter-spacing: -.03em; line-height: 1.2; margin-bottom: .75rem;
-    }
-    .panel-content h2 em { color: var(--teal-mid); font-style: normal; }
-    .panel-content p {
-      color: rgba(255,255,255,.55); font-size: .88rem;
-      line-height: 1.7; margin-bottom: 1.75rem;
-    }
-    .panel-pills { display: flex; flex-direction: column; gap: .6rem; }
-    .pill {
-      display: flex; align-items: center; gap: .65rem;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.1);
-      border-radius: 12px; padding: .7rem 1rem;
-    }
-    .pill-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-    .pill span { font-size: .83rem; color: rgba(255,255,255,.7); font-weight: 500; }
-
-    /* ── RIGHT: FORM ── */
-    .reg-form-wrap {
-      padding: 2.8rem 2.5rem;
-      display: flex; flex-direction: column; justify-content: center;
-      overflow-y: auto;
-    }
-
-    .form-header { margin-bottom: 1.75rem; }
-    .form-header .tag {
-      display: inline-block; font-size: .72rem; font-weight: 700;
-      letter-spacing: .08em; text-transform: uppercase;
-      color: var(--teal); margin-bottom: .45rem;
-    }
-    .form-header h3 {
-      font-size: 1.55rem; font-weight: 800; color: var(--dark);
-      letter-spacing: -.03em; line-height: 1.15;
-    }
-    .form-header p { color: var(--muted); font-size: .87rem; margin-top: .3rem; }
-
-    /* FIELDS */
-    .form-body { display: flex; flex-direction: column; gap: 1rem; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: .85rem; }
-    .field { display: flex; flex-direction: column; gap: .38rem; }
-    .field label { font-size: .8rem; font-weight: 600; color: var(--mid); }
-    .field-input-wrap { position: relative; }
-    .field-icon {
-      position: absolute; left: .9rem; top: 50%; transform: translateY(-50%);
-      color: var(--muted); pointer-events: none;
-      display: flex; align-items: center;
-    }
-    .field-icon svg { width: 16px; height: 16px; }
-    .field input {
-      width: 100%; padding: .68rem .9rem .68rem 2.4rem;
-      border: 1.5px solid var(--border); border-radius: 10px;
-      font-family: 'DM Sans', sans-serif; font-size: .9rem; color: var(--dark);
-      outline: none; transition: border-color .2s, box-shadow .2s;
-      background: #fff;
-    }
-    .field input:focus {
-      border-color: var(--teal);
-      box-shadow: 0 0 0 3px rgba(13,148,136,.1);
-    }
-    .field input::placeholder { color: #B0BAC9; }
-    .field-hint { font-size: .74rem; color: var(--muted); }
-
-    /* password strength */
-    .pass-strength { display: flex; gap: .3rem; margin-top: .35rem; }
-    .strength-bar {
-      flex: 1; height: 3px; border-radius: 999px;
-      background: var(--border); transition: background .3s;
-    }
-    .strength-bar.weak   { background: #F87171; }
-    .strength-bar.medium { background: #FBBF24; }
-    .strength-bar.strong { background: var(--teal); }
-    .strength-label { font-size: .72rem; color: var(--muted); margin-top: .2rem; }
-
-    /* terms */
-    .terms-check {
-      display: flex; align-items: flex-start; gap: .6rem; margin-top: .2rem;
-    }
-    .terms-check input[type="checkbox"] {
-      margin-top: 3px; accent-color: var(--teal); width: 16px; height: 16px;
-      flex-shrink: 0; padding: 0;
-    }
-    .terms-check label { font-size: .82rem; color: var(--muted); line-height: 1.5; }
-    .terms-check a { color: var(--teal); text-decoration: none; font-weight: 500; }
-
-    .btn-submit {
-      width: 100%; padding: .82rem;
-      background: var(--teal); color: #fff;
-      border: none; border-radius: 12px;
-      font-family: 'Sora', sans-serif; font-weight: 700; font-size: .97rem;
-      cursor: pointer; transition: background .2s, transform .15s, box-shadow .2s;
-      display: flex; align-items: center; justify-content: center; gap: .5rem;
-      margin-top: .25rem;
-    }
-    .btn-submit:hover {
-      background: #0f766e; transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(13,148,136,.28);
-    }
-    .btn-submit svg { width: 18px; height: 18px; }
-
-    .form-alt {
-      text-align: center; font-size: .83rem; color: var(--muted); margin-top: .75rem;
-    }
-    .form-alt a { color: var(--teal); font-weight: 600; text-decoration: none; }
-    .form-alt a:hover { text-decoration: underline; }
-
-    /* success */
-    .success-screen {
-      display: none; flex-direction: column; align-items: center;
-      text-align: center; gap: 1.2rem; padding: 1rem 0;
-      animation: fadeUp .4s cubic-bezier(.22,1,.36,1);
-    }
-    .success-icon {
-      width: 72px; height: 72px; border-radius: 50%;
-      background: var(--teal-lt);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .success-icon svg { width: 36px; height: 36px; color: var(--teal); }
-    .success-screen h3 { font-size: 1.5rem; font-weight: 800; color: var(--dark); }
-    .success-screen p  { font-size: .9rem; color: var(--muted); max-width: 320px; }
-    .btn-home {
-      padding: .78rem 2rem;
-      background: var(--teal); color: #fff;
-      border: none; border-radius: 12px;
-      font-family: 'Sora', sans-serif; font-weight: 700; font-size: .95rem;
-      cursor: pointer; text-decoration: none;
-      display: inline-flex; align-items: center; gap: .5rem;
-      transition: background .2s, box-shadow .2s;
-    }
-    .btn-home:hover { background: #0f766e; box-shadow: 0 8px 24px rgba(13,148,136,.28); }
-
-    /* ── FOOTER ── */
-    footer {
-      background: var(--dark); color: rgba(255,255,255,.45);
-      padding: 2.5rem clamp(1rem, 5vw, 4rem);
-    }
-    .footer-inner {
-      max-width: 1200px; margin: auto;
-      display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: 1rem;
-    }
-    .footer-brand { display: flex; align-items: center; gap: .6rem; }
-    .footer-logo {
-      width: 28px; height: 28px; background: var(--teal);
-      border-radius: 8px; display: flex; align-items: center; justify-content: center;
-    }
-    .footer-logo svg { width: 16px; height: 16px; color: #fff; }
-    .footer-name { color: #fff; font-family: 'Sora', sans-serif; font-size: .9rem; font-weight: 700; }
-    .footer-links { display: flex; gap: 1.5rem; }
-    .footer-links a { color: rgba(255,255,255,.4); font-size: .82rem; text-decoration: none; transition: color .2s; }
-    .footer-links a:hover { color: var(--teal-mid); }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 780px) {
-      .register-wrap { grid-template-columns: 1fr; }
-      .reg-panel { display: none; }
-      .reg-form-wrap { padding: 2.2rem 1.75rem; }
-      .form-row { grid-template-columns: 1fr; }
-      .nav-links { display: none; }
-      .hamburger { display: flex; }
-      .nav-actions .btn-ghost { display: none; }
-    }
-  </style>
-</head>
-<body>
-
-<!-- NAV -->
-<nav>
-  <a class="nav-brand" href="{% url 'core:home' %}">
-    <div class="nav-logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2a3 3 0 100 6 3 3 0 000-6zM12 8v12M9 14l3-2 3 2"/>
-      </svg>
-    </div>
-    <span class="brand-name">Endereza<span>2</span></span>
-  </a>
-
-  <ul class="nav-links">
-    <li><a href="index.html#actividades">Actividades</a></li>
-    <li><a href="index.html#como-funciona">Cómo funciona</a></li>
-    <li><a href="index.html#horarios">Turnos</a></li>
-  </ul>
-
-  <div class="nav-actions">
-    <a href="{% url 'accounts:login' %}" class="btn-ghost">Iniciar sesión</a>
-    <a href="#" class="btn-primary">Registrarse</a>
-    <button class="hamburger" onclick="toggleMenu()" aria-label="Menú">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
-
-<!-- MAIN -->
-<main>
-  <div class="blob-tl"></div>
-  <div class="blob-br"></div>
-
-  <div class="register-wrap">
-
-    <!-- LEFT PANEL -->
-    <div class="reg-panel">
-      <div class="panel-blob"></div>
-      <div class="panel-blob-2"></div>
-
-      <div class="panel-logo">
-        <div class="panel-logo-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2a3 3 0 100 6 3 3 0 000-6zM12 8v12M9 14l3-2 3 2"/>
-          </svg>
-        </div>
-        <span class="panel-logo-name">Endereza<span>2</span></span>
-      </div>
-
-      <div class="panel-content">
-        <h2>Empezá tu<br>camino hacia<br>el <em>bienestar</em></h2>
-        <p>Creá tu cuenta y reservá clases de rehabilitación para todas las edades, sin indicación médica obligatoria.</p>
-        <div class="panel-pills">
-          <div class="pill">
-            <span class="pill-dot" style="background: var(--teal-mid)"></span>
-            <span>Rehabilitación de Tren Superior</span>
-          </div>
-          <div class="pill">
-            <span class="pill-dot" style="background: #0891B2"></span>
-            <span>Rehabilitación de Zona Media</span>
-          </div>
-          <div class="pill">
-            <span class="pill-dot" style="background: #059669"></span>
-            <span>Rehabilitación de Tren Inferior</span>
-          </div>
-        </div>
-      </div>
-
-      <p style="color:rgba(255,255,255,.25); font-size:.75rem; position:relative; z-index:1;">
-        Lun – Vie · 8:00 a 20:00 hs · Una sola sede
-      </p>
+    <!-- Logo mark + heading above card -->
+    <div class="text-center mb-8">
+      <h1 class="text-2xl font-bold text-gray-900">Creá tu cuenta</h1>
+      <p class="text-sm text-gray-500 mt-1">Completá tus datos para unirte a Enderaza2.</p>
     </div>
 
-    <!-- RIGHT: FORM -->
-    <div class="reg-form-wrap">
+    <!-- Card -->
+    <div class="bg-white rounded-3xl shadow-lg shadow-gray-200/80 border border-gray-100 overflow-visible">
 
-      <div id="reg-form-area">
-        <div class="form-header">
-          <span class="tag">Nueva cuenta</span>
-          <h3>Crear tu cuenta</h3>
-          <p>Completá tus datos para unirte a Endereza2.</p>
-        </div>
-        
-        <form method="post">
+      <!-- Card body -->
+      <div class="px-12 py-8 sm:px-10">
+
+        <!-- Non-field errors -->
+        {% if form.non_field_errors %}
+          <div class="mb-7 flex gap-3 p-4 rounded-2xl bg-red-50 border border-red-200">
+            <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+            <div>
+              {% for error in form.non_field_errors %}
+                <p class="text-sm text-red-600">{{ error }}</p>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        <form method="post" novalidate>
           {% csrf_token %}
-          <div class="form-body">
 
-            <div class="form-row">
-              <div class="field">
-                <label for="r-nombre">Nombre</label>
-                <div class="field-input-wrap">
-                  <span class="field-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                  </span>
-                  <input type="text" name="first_name" id="r-nombre" placeholder="Tu nombre" autocomplete="given-name" />
-                </div>
+          <div class="flex flex-col gap-6">
+
+            <!-- ── Nombre / Apellido ── -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+              <div class="flex flex-col gap-1.5">
+                <label for="id_first_name" class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Nombre
+                </label>
+                <input
+                  type="text"
+                  name="first_name"
+                  id="id_first_name"
+                  value="{{ form.first_name.value|default:'' }}"
+                  placeholder="Tu nombre"
+                  autocomplete="given-name"
+                  class="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-0 ring-1 {% if form.first_name.errors %}ring-red-400 focus:ring-red-400{% else %}ring-gray-200 focus:ring-primary-500{% endif %} rounded-xl focus:outline-none focus:ring-2 focus:bg-white transition placeholder-gray-400"
+                />
+                {% if form.first_name.errors %}
+                  <p class="text-xs text-red-500 flex items-center gap-1">
+                    <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                    {{ form.first_name.errors|join:", " }}
+                  </p>
+                {% endif %}
               </div>
-              <div class="field">
-                <label for="r-apellido">Apellido</label>
-                <div class="field-input-wrap">
-                  <span class="field-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                  </span>
-                  <input type="text" name="last_name" id="r-apellido" placeholder="Tu apellido" autocomplete="family-name" />
-                </div>
+
+              <div class="flex flex-col gap-1.5">
+                <label for="id_last_name" class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Apellido
+                </label>
+                <input
+                  type="text"
+                  name="last_name"
+                  id="id_last_name"
+                  value="{{ form.last_name.value|default:'' }}"
+                  placeholder="Tu apellido"
+                  autocomplete="family-name"
+                  class="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-0 ring-1 {% if form.last_name.errors %}ring-red-400 focus:ring-red-400{% else %}ring-gray-200 focus:ring-primary-500{% endif %} rounded-xl focus:outline-none focus:ring-2 focus:bg-white transition placeholder-gray-400"
+                />
+                {% if form.last_name.errors %}
+                  <p class="text-xs text-red-500 flex items-center gap-1">
+                    <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                    {{ form.last_name.errors|join:", " }}
+                  </p>
+                {% endif %}
               </div>
+
             </div>
 
-            <div class="form-row">
-              <div class="field">
-                <label for="r-dni">DNI</label>
-                <div class="field-input-wrap">
-                  <span class="field-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-                  </span>
-                  <input type="text" name="dni" id="r-dni" placeholder="Número de DNI" inputmode="numeric" />
-                </div>
+            <!-- ── DNI / Fecha de nacimiento ── -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+              <div class="flex flex-col gap-1.5">
+                <label for="id_dni" class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  DNI
+                </label>
+                <input
+                  type="text"
+                  name="dni"
+                  id="id_dni"
+                  value="{{ form.dni.value|default:'' }}"
+                  placeholder="Número de DNI"
+                  inputmode="numeric"
+                  class="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-0 ring-1 {% if form.dni.errors %}ring-red-400 focus:ring-red-400{% else %}ring-gray-200 focus:ring-primary-500{% endif %} rounded-xl focus:outline-none focus:ring-2 focus:bg-white transition placeholder-gray-400"
+                />
+                {% if form.dni.errors %}
+                  <p class="text-xs text-red-500 flex items-center gap-1">
+                    <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                    {{ form.dni.errors|join:", " }}
+                  </p>
+                {% endif %}
               </div>
-              <div class="field">
-                <label for="r-nacimiento">Fecha de nacimiento</label>
-                <div class="field-input-wrap">
-                  <span class="field-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                  </span>
-                  <input type="date" id="r-nacimiento" autocomplete="bday" />
-                </div>
+
+              <div class="flex flex-col gap-1.5">
+                <label for="id_fecha_nacimiento" class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Fecha de nacimiento
+                </label>
+                <input
+                  type="date"
+                  name="fecha_nacimiento"
+                  id="id_fecha_nacimiento"
+                  value="{{ form.fecha_nacimiento.value|default:'' }}"
+                  autocomplete="bday"
+                  class="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-0 ring-1 {% if form.fecha_nacimiento.errors %}ring-red-400 focus:ring-red-400{% else %}ring-gray-200 focus:ring-primary-500{% endif %} rounded-xl focus:outline-none focus:ring-2 focus:bg-white transition"
+                />
+                {% if form.fecha_nacimiento.errors %}
+                  <p class="text-xs text-red-500 flex items-center gap-1">
+                    <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                    {{ form.fecha_nacimiento.errors|join:", " }}
+                  </p>
+                {% endif %}
               </div>
+
             </div>
 
-            <div class="field">
-              <label for="r-email">Correo electrónico</label>
-              <div class="field-input-wrap">
-                <span class="field-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
-                </span>
-                <input type="email" name="email" id="r-email" placeholder="tucorreo@email.com" autocomplete="email" />
-              </div>
-              <span class="field-hint">Recibirás la confirmación de tus turnos aquí.</span>
+            <!-- Divider -->
+            <div class="border-t border-gray-100"></div>
+
+            <!-- ── Email ── -->
+            <div class="flex flex-col gap-1.5">
+              <label for="id_email" class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Correo electrónico
+              </label>
+              <input
+                type="email"
+                name="email"
+                id="id_email"
+                value="{{ form.email.value|default:'' }}"
+                placeholder="tucorreo@email.com"
+                autocomplete="email"
+                class="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-0 ring-1 {% if form.email.errors %}ring-red-400 focus:ring-red-400{% else %}ring-gray-200 focus:ring-primary-500{% endif %} rounded-xl focus:outline-none focus:ring-2 focus:bg-white transition placeholder-gray-400"
+              />
+              <p class="text-xs text-gray-400">Recibirás la confirmación de tus turnos aquí.</p>
+              {% if form.email.errors %}
+                <p class="text-xs text-red-500 flex items-center gap-1">
+                  <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                  {{ form.email.errors|join:", " }}
+                </p>
+              {% endif %}
             </div>
 
-            <div class="field">
-              <label for="r-pass">Contraseña</label>
-              <div class="field-input-wrap">
-                <span class="field-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-                </span>
-                <input type="password" name="password" id="r-pass" placeholder="Elegí una contraseña segura" autocomplete="new-password" oninput="checkStrength()" />
+            <!-- ── Password 1 ── -->
+            <div class="flex flex-col gap-1.5">
+              <label for="id_password1" class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Contraseña
+              </label>
+              <input
+                type="password"
+                name="password1"
+                id="id_password1"
+                placeholder="Mínimo 8 caracteres"
+                autocomplete="new-password"
+                oninput="checkStrength()"
+                class="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-0 ring-1 {% if form.password1.errors %}ring-red-400 focus:ring-red-400{% else %}ring-gray-200 focus:ring-primary-500{% endif %} rounded-xl focus:outline-none focus:ring-2 focus:bg-white transition placeholder-gray-400"
+              />
+              <!-- Strength bars -->
+              <div class="flex gap-1.5 mt-1">
+                <div id="sb-1" class="flex-1 h-1.5 rounded-full bg-gray-200 transition-colors duration-300"></div>
+                <div id="sb-2" class="flex-1 h-1.5 rounded-full bg-gray-200 transition-colors duration-300"></div>
+                <div id="sb-3" class="flex-1 h-1.5 rounded-full bg-gray-200 transition-colors duration-300"></div>
+                <div id="sb-4" class="flex-1 h-1.5 rounded-full bg-gray-200 transition-colors duration-300"></div>
               </div>
-              <div class="pass-strength">
-                <div class="strength-bar" id="sb-1"></div>
-                <div class="strength-bar" id="sb-2"></div>
-                <div class="strength-bar" id="sb-3"></div>
-                <div class="strength-bar" id="sb-4"></div>
-              </div>
-              <span class="strength-label" id="strength-label">Mínimo 8 caracteres</span>
+              <p id="strength-label" class="text-xs text-gray-400">Mínimo 8 caracteres</p>
+              {% if form.password1.errors %}
+                <p class="text-xs text-red-500 flex items-center gap-1">
+                  <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                  {{ form.password1.errors|join:", " }}
+                </p>
+              {% endif %}
             </div>
 
-            <div class="field">
-              <label for="r-pass2">Repetir contraseña</label>
-              <div class="field-input-wrap">
-                <span class="field-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-                </span>
-                <input type="password" id="r-pass2" placeholder="Repetí la contraseña" autocomplete="new-password" />
-              </div>
+            <!-- ── Password 2 ── -->
+            <div class="flex flex-col gap-1.5">
+              <label for="id_password2" class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Repetir contraseña
+              </label>
+              <input
+                type="password"
+                name="password2"
+                id="id_password2"
+                placeholder="Repetí la contraseña"
+                autocomplete="new-password"
+                class="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-0 ring-1 {% if form.password2.errors %}ring-red-400 focus:ring-red-400{% else %}ring-gray-200 focus:ring-primary-500{% endif %} rounded-xl focus:outline-none focus:ring-2 focus:bg-white transition placeholder-gray-400"
+              />
+              {% if form.password2.errors %}
+                <p class="text-xs text-red-500 flex items-center gap-1">
+                  <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                  {{ form.password2.errors|join:", " }}
+                </p>
+              {% endif %}
             </div>
 
-            <div class="terms-check">
-              <input type="checkbox" id="terms" />
-              <label for="terms">Acepto los <a href="#">términos y condiciones</a> y la <a href="#">política de privacidad</a> de Endereza2.</label>
+            <!-- Divider -->
+            <div class="border-t border-gray-100"></div>
+
+            <!-- ── Términos ── -->
+            <div class="flex items-start gap-3">
+              <input
+                type="checkbox"
+                id="terms"
+                class="mt-0.5 w-4 h-4 shrink-0 rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
+              />
+              <label for="terms" class="text-sm text-gray-500 leading-relaxed cursor-pointer">
+                Acepto los
+                <a href="#" class="text-primary-700 font-medium hover:underline">términos y condiciones</a>
+                y la
+                <a href="#" class="text-primary-700 font-medium hover:underline">política de privacidad</a>
+                de Enderaza2.
+              </label>
             </div>
-            
-            <!-- botón -->
-            <button class="btn-submit" type="submit">
-              Crear cuenta
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+
+            <!-- ── Submit ── -->
+            <button
+              id="submitBtn" type="submit" disabled
+              class="w-full py-3 px-5 text-sm font-semibold text-white bg-primary-700 hover:bg-primary-800 active:scale-[.98] focus:outline-none focus:ring-4 focus:ring-primary-300 rounded-xl shadow-md shadow-primary-900/20 transition-all duration-150">
+              Registrarse
             </button>
-          </form>
 
-          <p class="form-alt">¿Ya tenés cuenta? <a href="{% url 'accounts:login' %}">Iniciá sesión</a></p>
+          </div><!-- /flex flex-col -->
+        </form>
 
-        </div>
-      </div>
-
-      <!-- SUCCESS -->
-      <div class="success-screen" id="success-screen">
-        <div class="success-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-        </div>
-        <h3>¡Cuenta creada!</h3>
-        <p>Tu cuenta en Endereza2 fue creada con éxito. Ya podés reservar tus clases.</p>
-        <a href="index.html" class="btn-home">
-          Ir al inicio
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-        <p style="font-size:.8rem; color:var(--muted);">
-          También podés <a href="login.html" style="color:var(--teal); font-weight:600;">iniciar sesión</a> ahora.
+        <!-- Login link -->
+        <p class="mt-7 text-center text-sm text-gray-400">
+          ¿Ya tenés cuenta?
+          <a href="{% url 'accounts:login' %}" class="text-primary-700 font-semibold hover:underline">Iniciá sesión</a>
         </p>
-      </div>
 
-    </div>
-  </div>
-</main>
+      </div><!-- /card body -->
+    </div><!-- /card -->
 
-<!-- FOOTER -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <div class="footer-logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2a3 3 0 100 6 3 3 0 000-6zM12 8v12M9 14l3-2 3 2"/>
-        </svg>
-      </div>
-      <span class="footer-name">Endereza2</span>
-    </div>
-    <div class="footer-links">
-      <a href="index.html#actividades">Actividades</a>
-      <a href="index.html#como-funciona">Cómo funciona</a>
-      <a href="index.html#horarios">Horarios</a>
-      <a href="login.html">Iniciar sesión</a>
-    </div>
-    <p style="font-size:.78rem">&copy; 2026 Endereza2. Todos los derechos reservados.</p>
-  </div>
-</footer>
+  </div><!-- /max-w-xl -->
+</section>
 
 <script>
   function checkStrength() {
-    const val = document.getElementById('r-pass').value;
-    const bars = ['sb-1','sb-2','sb-3','sb-4'].map(id => document.getElementById(id));
+    const val = document.getElementById('id_password1').value;
+    const bars = ['sb-1', 'sb-2', 'sb-3', 'sb-4'].map(id => document.getElementById(id));
     const label = document.getElementById('strength-label');
-    bars.forEach(b => b.className = 'strength-bar');
+    const base = 'flex-1 h-1.5 rounded-full transition-colors duration-300';
+
+    bars.forEach(b => {
+      b.className = base + ' bg-gray-200';
+      b.style.backgroundColor = '';
+    });
 
     let score = 0;
-    if (val.length >= 8)            score++;
-    if (/[A-Z]/.test(val))          score++;
-    if (/[0-9]/.test(val))          score++;
-    if (/[^A-Za-z0-9]/.test(val))   score++;
+    if (val.length >= 8) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
 
-    const cls    = ['weak','weak','medium','strong'];
-    const labels = ['Muy débil','Débil','Moderada','Fuerte'];
-    for (let i = 0; i < score; i++) bars[i].classList.add(cls[score - 1]);
+    const colors = ['#ef4444', '#ef4444', '#f59e0b', '#15803d'];
+    const labels = ['Muy débil', 'Débil', 'Moderada', 'Fuerte'];
+
+    for (let i = 0; i < score; i++) {
+      bars[i].className = base;
+      bars[i].style.backgroundColor = colors[score - 1];
+    }
+
     label.textContent = score === 0 ? 'Mínimo 8 caracteres' : labels[score - 1];
-    label.style.color = score >= 3 ? 'var(--teal)' : score === 2 ? '#D97706' : '#EF4444';
+    label.style.color = score === 0 ? '' : colors[score - 1];
   }
 
-  function toggleMenu() {
-    const links = document.querySelector('.nav-links');
-    if (!links) return;
-    const open = links.style.display === 'flex';
-    Object.assign(links.style, {
-      display: open ? 'none' : 'flex',
-      flexDirection: 'column',
-      position: 'absolute',
-      top: '64px', left: '0', right: '0',
-      background: '#fff',
-      padding: '1rem 2rem 1.5rem',
-      borderBottom: '1px solid #E5E7EB',
-      boxShadow: '0 4px 12px rgba(0,0,0,.08)'
-    });
-    if (open) links.style.display = 'none';
-  }
+  const form = document.querySelector("form");
+  const btn = document.getElementById("submitBtn");
+
+  form.addEventListener("input", () => {
+    btn.disabled = !form.checkValidity();
+  });
 </script>
-</body>
-</html>
+
+{% endblock content %}
