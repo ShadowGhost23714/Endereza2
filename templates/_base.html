@@ -12,30 +12,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enderaza2 - Kinesiología</title>
 
-    {% compress css %}
     <link rel="stylesheet" href="{% static 'src/output.css' %}">
-    {% endcompress %}
+
 </head>
 
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
     <!-- ===================== HEADER START ===================== -->
     <header>
-        <nav class="bg-white border-b border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
+        <nav class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
             <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
 
                 <!-- Logo -->
                 <a href="/" class="flex items-center">
-                    <img src="{% static 'images/logo.svg' %}" class="mr-3 h-6 sm:h-9" alt="Enderaza2 Logo" />
+                    <img src="{% static 'images/logo.png' %}" class="mr-3 h-6 sm:h-9" alt="Enderaza2 Logo" />
                     <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white text-teal-700">Enderaza2</span>
                 </a>
 
                 <!-- Right: CTA + hamburger -->
                 <div class="flex items-center lg:order-2 gap-2">
-                    <a href="#turnos"
+                    
+                    {% if user.is_authenticated %}
+                    {% if user.is_superuser %}
+                     
+                        <a href="{% url 'turnos:turno_create' %}"
                         class="text-white bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:ring-teal-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 focus:outline-none dark:bg-teal-600 dark:hover:bg-teal-700 dark:focus:ring-teal-800">
-                        Pedir turno
+                            crear clase
+                        </a>
+                    {% else %}
+                        <a href="#turnos"
+                            class="text-white bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:ring-teal-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 focus:outline-none dark:bg-teal-600 dark:hover:bg-teal-700 dark:focus:ring-teal-800">
+                            Pedir turno
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'accounts:profile' %}"
+                        class="text-gray-500 hover:text-gray-700 dark:hover:text-white">
+                        Mi perfil
                     </a>
+                    {% else %}
+                    <a href="{% url 'accounts:login' %}"
+                        class="text-gray-500 hover:text-gray-700 dark:hover:text-white">
+                        Iniciar sesión
+                    </a>   
+                    {% endif %}
                     <button
                         data-collapse-toggle="mobile-menu"
                         type="button"
@@ -88,11 +107,12 @@
     <!-- Main content -->
     
     {% block content %}
-    {% endblock content %}
+    {% endblock %}
+
 
 
     <!-- ===================== FOOTER START ===================== -->
-    <footer class="bg-white border-t border-gray-200 mt-12 dark:bg-gray-800 dark:border-gray-700">
+    <footer class="bg-white border-t border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <div class="mx-auto max-w-screen-xl px-4 lg:px-6 py-8">
             <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-8">
 
@@ -141,7 +161,7 @@
 
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <p class="text-sm text-gray-500 dark:text-gray-400">
-                    © 2025 <a href="/" class="hover:text-teal-600 font-medium">Enderaza2</a>. Todos los derechos reservados.
+                    © 2026 <a href="/" class="hover:text-teal-600 font-medium">Enderaza2</a>. Todos los derechos reservados.
                 </p>
                 <div class="flex gap-4">
                     <!-- WhatsApp -->
@@ -175,4 +195,3 @@
 </body>
 
 </html>
-
