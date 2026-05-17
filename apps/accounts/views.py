@@ -21,9 +21,17 @@ class CustomLoginView(LoginView):
     template_name = 'accounts/login.html'
     form_class = LoginForm
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect("core:home")
+        return super().dispatch(request, *args, **kwargs)
+
 
 # ───── REGISTER ─────
 def register(request):
+    if request.user.is_authenticated:
+        return redirect("core:home")
+
     if request.method == 'POST':
         form = RegistroForm(request.POST)
 
