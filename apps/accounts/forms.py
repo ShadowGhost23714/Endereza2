@@ -26,6 +26,9 @@ class RegistroForm(UserCreationForm):
                 "autocomplete": "email",
             }
         ),
+        error_messages={
+            "invalid": "Correo electrónico inválido."
+        }
     )
 
     first_name = forms.CharField(
@@ -67,6 +70,8 @@ class RegistroForm(UserCreationForm):
             attrs={
                 "type": "date",
                 "autocomplete": "bday",
+                "min": "1900-01-01",
+                "max": date.today().isoformat(),
             }
         ),
     )
@@ -89,26 +94,43 @@ class RegistroForm(UserCreationForm):
     # VALIDACIONES
     # ------------------------------------------------------
 
-    def clean_fecha_nacimiento(self):
+    def clean_dni(self):
+        dni = self.cleaned_data["dni"]
 
+        if Usuario.objects.filter(dni=dni).exists():
+            raise forms.ValidationError("Ya existe una cuenta con este DNI.")
+        
+        if not dni.isdigit():
+            raise forms.ValidationError("El DNI solo puede contener números.")
+
+        if len(dni) < 7 or len(dni) > 8:
+            raise forms.ValidationError("Ingrese un DNI válido.")
+        
+        return dni
+    
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+
+        if Usuario.objects.filter(email=email).exists():
+            raise forms.ValidationError("Ya existe una cuenta con este correo electrónico.")
+        
+        return email
+
+    def clean_fecha_nacimiento(self):
         fecha = self.cleaned_data["fecha_nacimiento"]
 
+        if fecha.year < 1900 or fecha > date.today():
+            raise forms.ValidationError("Fecha inválida.")
+        
         hoy = date.today()
-
         edad = (
             hoy.year
             - fecha.year
-            - (
-                (hoy.month, hoy.day)
-                < (fecha.month, fecha.day)
-            )
+            - ((hoy.month, hoy.day) < (fecha.month, fecha.day))
         )
-
         if edad < 13:
-            raise forms.ValidationError(
-                "Debes ser mayor de 13 años."
-            )
-
+            raise forms.ValidationError("Debes ser mayor de 13 años.")
+        
         return fecha
 
     # ------------------------------------------------------
@@ -144,6 +166,9 @@ class LoginForm(AuthenticationForm):
                 "autocomplete": "email",
             }
         ),
+        error_messages={
+        "invalid": "Ingrese un correo electrónico válido."
+        }
     )
 
     password = forms.CharField(
@@ -155,6 +180,12 @@ class LoginForm(AuthenticationForm):
             }
         ),
     )
+
+    error_messages = {
+        "invalid_login": (
+            "El correo o la contraseña son incorrectos."
+        ),
+    }
 
 
 # ==========================================================
