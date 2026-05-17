@@ -3,7 +3,7 @@
 {% block content %}
 
 <section class="bg-gray-50 dark:bg-gray-900">
-  <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+  <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 animate-fade-up">
       <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
           <img class="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo">
           Bienvenido    
@@ -13,7 +13,7 @@
               <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                   Iniciar sesión
               </h1>
-              <form method="post" class="space-y-4 md:space-y-6">
+              <form method="post" novalidate class="space-y-4 md:space-y-6">
                   {% csrf_token %}
 
                   {% if form.non_field_errors %}
@@ -21,35 +21,45 @@
                   {% endif %}
 
                   <!-- EMAIL -->
-                  <div>
-                      <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Correo electrónico</label>
+                  <div class="flex flex-col gap-1.5">
+                      <label for="{{ form.username.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        Correo electrónico
+                      </label>
                       <input 
                         type="email" 
-                        name="username" 
-                        id="email"
+                        name="{{ form.username.html_name }}" 
+                        id="{{ form.username.id_for_label }}"
                         value="{{ form.username.value|default:'' }}"
                         placeholder="tucorreo@email.com"
                         class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                         required
                       >
                       {% if form.username.errors %}
-                        <p class="text-red-500 text-xs">{{ form.username.errors|join:", " }}</p>
+                        <p class="text-xs text-red-500 flex items-center gap-1">
+                            <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                            {{ form.username.errors|join:", " }}
+                        </p>
                       {% endif %}
                   </div>
 
                   <!-- PASSWORD -->
-                  <div>
-                      <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Contraseña</label>
+                  <div class="flex flex-col gap-1.5">
+                      <label for="{{ form.password.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        Contraseña
+                      </label>
                       <input 
                         type="password" 
-                        name="password" 
-                        id="password" 
+                        name="{{ form.password.html_name }}" 
+                        id="{{ form.password.id_for_label }}" 
                         placeholder="••••••••" 
                         class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                         required
                         >
                       {% if form.password.errors %}
-                        <p class="text-red-500 text-xs">{{ form.password.errors|join:", " }}</p>
+                        <p class="text-xs text-red-500 flex items-center gap-1">
+                            <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                            {{ form.password.errors|join:", " }}
+                        </p>
                       {% endif %}
                   </div>
 
@@ -65,5 +75,13 @@
       </div>
   </div>
 </section>
+
+<style>
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-up { animation: fade-up .4s cubic-bezier(.22,1,.36,1); }
+</style>
 
 {% endblock content %}

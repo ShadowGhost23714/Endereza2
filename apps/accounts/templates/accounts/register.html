@@ -2,18 +2,18 @@
 {% load static %}
 {% block content %}
 
-<section class="flex-1 flex items-center justify-center min-h-[calc(100vh-4rem)] px-4 py-14 bg-gray-50">
+<section class="flex-1 flex items-center justify-center min-h-[calc(100vh-4rem)] px-4 py-14 dark:bg-gray-900">
 
-  <div class="w-full max-w-xl">
+  <div class="w-full max-w-xl animate-fade-up">
 
     <!-- Logo mark + heading above card -->
     <div class="text-center mb-8">
-      <h1 class="text-2xl font-bold text-gray-900">Creá tu cuenta</h1>
-      <p class="text-sm text-gray-500 mt-1">Completá tus datos para unirte a Enderaza2.</p>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Creá tu cuenta</h1>
+      <p class="text-sm text-gray-500 mt-1 dark:text-white">Completá tus datos para unirte a Enderaza2.</p>
     </div>
 
     <!-- Card -->
-    <div class="bg-white rounded-3xl shadow-lg shadow-gray-200/80 border border-gray-100 overflow-visible">
+    <div class="bg-white rounded-3xl shadow-lg  border border-gray-100 overflow-visible dark:bg-gray-800 dark:border-gray-700"">
 
       <!-- Card body -->
       <div class="px-12 py-8 sm:px-10">
@@ -39,17 +39,17 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
               <div class="flex flex-col gap-1.5">
-                <label for="id_first_name" class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <label for="{{ form.first_name.id_for_label }}" class="text-sm font-medium tracking-wide text-gray-500 dark:text-white">
                   Nombre
                 </label>
                 <input
                   type="text"
-                  name="first_name"
-                  id="id_first_name"
+                  name="{{ form.first_name.html_name }}"
+                  id="{{ form.first_name.id_for_label }}"
                   value="{{ form.first_name.value|default:'' }}"
                   placeholder="Tu nombre"
                   autocomplete="given-name"
-                  class="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-0 ring-1 {% if form.first_name.errors %}ring-red-400 focus:ring-red-400{% else %}ring-gray-200 focus:ring-primary-500{% endif %} rounded-xl focus:outline-none focus:ring-2 focus:bg-white transition placeholder-gray-400"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                 />
                 {% if form.first_name.errors %}
                   <p class="text-xs text-red-500 flex items-center gap-1">
@@ -60,18 +60,17 @@
               </div>
 
               <div class="flex flex-col gap-1.5">
-                <label for="id_last_name" class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <label for="{{ form.last_name.id_for_label }}" class="text-sm font-medium tracking-wide text-gray-500 dark:text-white">
                   Apellido
                 </label>
                 <input
                   type="text"
-                  name="last_name"
-                  id="id_last_name"
+                  name="{{ form.last_name.html_name }}"
+                  id="{{ form.last_name.id_for_label }}"
                   value="{{ form.last_name.value|default:'' }}"
                   placeholder="Tu apellido"
                   autocomplete="family-name"
-                  class="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-0 ring-1 {% if form.last_name.errors %}ring-red-400 focus:ring-red-400{% else %}ring-gray-200 focus:ring-primary-500{% endif %} rounded-xl focus:outline-none focus:ring-2 focus:bg-white transition placeholder-gray-400"
-                />
+                  class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"                />
                 {% if form.last_name.errors %}
                   <p class="text-xs text-red-500 flex items-center gap-1">
                     <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
@@ -86,17 +85,17 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
               <div class="flex flex-col gap-1.5">
-                <label for="id_dni" class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <label for="{{ form.dni.id_for_label }}" class="text-sm font-medium tracking-wide text-gray-500 dark:text-white">
                   DNI
                 </label>
                 <input
                   type="text"
-                  name="dni"
-                  id="id_dni"
+                  name="{{ form.dni.html_name }}"
+                  id="{{ form.dni.id_for_label }}"
                   value="{{ form.dni.value|default:'' }}"
                   placeholder="Número de DNI"
                   inputmode="numeric"
-                  class="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-0 ring-1 {% if form.dni.errors %}ring-red-400 focus:ring-red-400{% else %}ring-gray-200 focus:ring-primary-500{% endif %} rounded-xl focus:outline-none focus:ring-2 focus:bg-white transition placeholder-gray-400"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
                 {% if form.dni.errors %}
                   <p class="text-xs text-red-500 flex items-center gap-1">
@@ -107,43 +106,39 @@
               </div>
 
               <div class="flex flex-col gap-1.5">
-                <label for="id_fecha_nacimiento" class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <label for="{{ form.fecha_nacimiento.id_for_label }}" class="text-sm font-medium tracking-wide text-gray-500 dark:text-white">
                   Fecha de nacimiento
                 </label>
                 <input
                   type="date"
-                  name="fecha_nacimiento"
-                  id="id_fecha_nacimiento"
+                  name="{{ form.fecha_nacimiento.html_name }}"
+                  id="{{ form.fecha_nacimiento.id_for_label }}"
                   value="{{ form.fecha_nacimiento.value|default:'' }}"
                   autocomplete="bday"
-                  class="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-0 ring-1 {% if form.fecha_nacimiento.errors %}ring-red-400 focus:ring-red-400{% else %}ring-gray-200 focus:ring-primary-500{% endif %} rounded-xl focus:outline-none focus:ring-2 focus:bg-white transition"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
                 {% if form.fecha_nacimiento.errors %}
                   <p class="text-xs text-red-500 flex items-center gap-1">
                     <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                    {{ form.fecha_nacimiento.errors|join:", " }}
-                  </p>
+                    {{ form.fecha_nacimiento.errors|join:", " }}</p>
                 {% endif %}
               </div>
 
             </div>
 
-            <!-- Divider -->
-            <div class="border-t border-gray-100"></div>
-
             <!-- ── Email ── -->
             <div class="flex flex-col gap-1.5">
-              <label for="id_email" class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <label for="{{ form.email.id_for_label }}" class="text-sm font-medium tracking-wide text-gray-500 dark:text-white">
                 Correo electrónico
               </label>
               <input
                 type="email"
-                name="email"
-                id="id_email"
+                name="{{ form.email.html_name }}"
+                id="{{ form.email.id_for_label }}"
                 value="{{ form.email.value|default:'' }}"
                 placeholder="tucorreo@email.com"
                 autocomplete="email"
-                class="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-0 ring-1 {% if form.email.errors %}ring-red-400 focus:ring-red-400{% else %}ring-gray-200 focus:ring-primary-500{% endif %} rounded-xl focus:outline-none focus:ring-2 focus:bg-white transition placeholder-gray-400"
+                class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               />
               <p class="text-xs text-gray-400">Recibirás la confirmación de tus turnos aquí.</p>
               {% if form.email.errors %}
@@ -156,26 +151,17 @@
 
             <!-- ── Password 1 ── -->
             <div class="flex flex-col gap-1.5">
-              <label for="id_password1" class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <label for="{{ form.password1.id_for_label }}" class="text-sm font-medium tracking-wide text-gray-500 dark:text-white">
                 Contraseña
               </label>
               <input
                 type="password"
-                name="password1"
-                id="id_password1"
-                placeholder="Mínimo 8 caracteres"
+                name="{{ form.password1.html_name }}"
+                id="{{ form.password1.id_for_label }}"
+                placeholder="••••••••"
                 autocomplete="new-password"
-                oninput="checkStrength()"
-                class="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-0 ring-1 {% if form.password1.errors %}ring-red-400 focus:ring-red-400{% else %}ring-gray-200 focus:ring-primary-500{% endif %} rounded-xl focus:outline-none focus:ring-2 focus:bg-white transition placeholder-gray-400"
+                class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               />
-              <!-- Strength bars -->
-              <div class="flex gap-1.5 mt-1">
-                <div id="sb-1" class="flex-1 h-1.5 rounded-full bg-gray-200 transition-colors duration-300"></div>
-                <div id="sb-2" class="flex-1 h-1.5 rounded-full bg-gray-200 transition-colors duration-300"></div>
-                <div id="sb-3" class="flex-1 h-1.5 rounded-full bg-gray-200 transition-colors duration-300"></div>
-                <div id="sb-4" class="flex-1 h-1.5 rounded-full bg-gray-200 transition-colors duration-300"></div>
-              </div>
-              <p id="strength-label" class="text-xs text-gray-400">Mínimo 8 caracteres</p>
               {% if form.password1.errors %}
                 <p class="text-xs text-red-500 flex items-center gap-1">
                   <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
@@ -186,16 +172,16 @@
 
             <!-- ── Password 2 ── -->
             <div class="flex flex-col gap-1.5">
-              <label for="id_password2" class="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Repetir contraseña
+              <label for="{{ form.password2.id_for_label }}" class="text-sm font-medium tracking-wide text-gray-500 dark:text-white">
+                Confirmar contraseña
               </label>
               <input
                 type="password"
-                name="password2"
-                id="id_password2"
-                placeholder="Repetí la contraseña"
+                name="{{ form.password2.html_name }}"
+                id="{{ form.password2.id_for_label }}"
+                placeholder="••••••••"
                 autocomplete="new-password"
-                class="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-0 ring-1 {% if form.password2.errors %}ring-red-400 focus:ring-red-400{% else %}ring-gray-200 focus:ring-primary-500{% endif %} rounded-xl focus:outline-none focus:ring-2 focus:bg-white transition placeholder-gray-400"
+                class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               />
               {% if form.password2.errors %}
                 <p class="text-xs text-red-500 flex items-center gap-1">
@@ -205,29 +191,10 @@
               {% endif %}
             </div>
 
-            <!-- Divider -->
-            <div class="border-t border-gray-100"></div>
-
-            <!-- ── Términos ── -->
-            <div class="flex items-start gap-3">
-              <input
-                type="checkbox"
-                id="terms"
-                class="mt-0.5 w-4 h-4 shrink-0 rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
-              />
-              <label for="terms" class="text-sm text-gray-500 leading-relaxed cursor-pointer">
-                Acepto los
-                <a href="#" class="text-primary-700 font-medium hover:underline">términos y condiciones</a>
-                y la
-                <a href="#" class="text-primary-700 font-medium hover:underline">política de privacidad</a>
-                de Enderaza2.
-              </label>
-            </div>
-
             <!-- ── Submit ── -->
             <button
-              id="submitBtn" type="submit" disabled
-              class="w-full py-3 px-5 text-sm font-semibold text-white bg-primary-700 hover:bg-primary-800 active:scale-[.98] focus:outline-none focus:ring-4 focus:ring-primary-300 rounded-xl shadow-md shadow-primary-900/20 transition-all duration-150">
+              type="submit"
+              class="w-full py-3 px-5 text-sm font-semibold text-white bg-primary-700 hover:bg-primary-800 active:scale-[.98] focus:outline-none focus:ring-4 focus:ring-primary-300 rounded-xl shadow-md shadow-primary-900/20 transition-all duration-150 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
               Registrarse
             </button>
 
@@ -237,7 +204,7 @@
         <!-- Login link -->
         <p class="mt-7 text-center text-sm text-gray-400">
           ¿Ya tenés cuenta?
-          <a href="{% url 'accounts:login' %}" class="text-primary-700 font-semibold hover:underline">Iniciá sesión</a>
+          <a href="{% url 'accounts:login' %}" class="text-primary-700 font-semibold hover:underline dark:text-primary-500">Iniciá sesión</a>
         </p>
 
       </div><!-- /card body -->
@@ -246,42 +213,12 @@
   </div><!-- /max-w-xl -->
 </section>
 
-<script>
-  function checkStrength() {
-    const val = document.getElementById('id_password1').value;
-    const bars = ['sb-1', 'sb-2', 'sb-3', 'sb-4'].map(id => document.getElementById(id));
-    const label = document.getElementById('strength-label');
-    const base = 'flex-1 h-1.5 rounded-full transition-colors duration-300';
-
-    bars.forEach(b => {
-      b.className = base + ' bg-gray-200';
-      b.style.backgroundColor = '';
-    });
-
-    let score = 0;
-    if (val.length >= 8) score++;
-    if (/[A-Z]/.test(val)) score++;
-    if (/[0-9]/.test(val)) score++;
-    if (/[^A-Za-z0-9]/.test(val)) score++;
-
-    const colors = ['#ef4444', '#ef4444', '#f59e0b', '#15803d'];
-    const labels = ['Muy débil', 'Débil', 'Moderada', 'Fuerte'];
-
-    for (let i = 0; i < score; i++) {
-      bars[i].className = base;
-      bars[i].style.backgroundColor = colors[score - 1];
-    }
-
-    label.textContent = score === 0 ? 'Mínimo 8 caracteres' : labels[score - 1];
-    label.style.color = score === 0 ? '' : colors[score - 1];
+<style>
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
-
-  const form = document.querySelector("form");
-  const btn = document.getElementById("submitBtn");
-
-  form.addEventListener("input", () => {
-    btn.disabled = !form.checkValidity();
-  });
-</script>
+  .animate-fade-up { animation: fade-up .4s cubic-bezier(.22,1,.36,1); }
+</style>
 
 {% endblock content %}
