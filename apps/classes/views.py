@@ -2,7 +2,8 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
-
+from django.views.generic import ListView
+from django.utils import timezone
 from .forms import TurnoForm
 from .models import Reserva, Turno
 
@@ -54,3 +55,26 @@ class ReservaListView(LoginRequiredMixin):
 
     def get_queryset(self): # muestra solo las reservas del usuario logueado, ordenadas por fecha de reserva descendente
         return Reserva.objects.filter(id_usuario=self.request.user).order_by("-fecha_reserva")
+# Agregá esto en apps/classes/views.py
+# (importá lo necesario junto a tus imports existentes)
+
+class MisClasesView(LoginRequiredMixin, ListView):
+    """
+    Muestra las reservas activas (estado='reservado') del usuario autenticado,
+    ordenadas por fecha y hora de inicio, solo desde hoy en adelante.
+    """
+    model = Reserva
+    template_name = "classes/mis_clases.html"
+    context_object_name = "reservas"
+
+    def get_queryset(self):
+        hoy = timezone.localdate()
+        return (
+            Reserva.objects.filter(
+                id_usuario=self.request.user,
+                estado=Reserva.Estado.RESERVADO,          # ajustá si tu TextChoices tiene otro nombre
+                id_turno__fecha__gte=hoy,
+            )
+            .select_related("id_turno")
+            .order_by("id_turno__fecha", "id_turno__hora_inicio")
+        )

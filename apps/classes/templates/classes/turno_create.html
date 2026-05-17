@@ -1,5 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
+<!-- Deberia poder solo crear una clase en el horario disponible del 8 horas a 20 horas -->
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -46,10 +47,10 @@
         Panel de administración
       </span>
       <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight" style="font-family:'Sora',sans-serif;">
-        Crear nuevo turno
+        Crear nuevo clase
       </h1>
       <p class="mt-2 text-gray-500 text-sm">
-        Completá los campos para agregar un nuevo turno al sistema. Todos los campos son obligatorios.
+        Completá los campos para agregar una nueva clase al sistema. Todos los campos son obligatorios.
       </p>
     </div>
 
@@ -133,6 +134,7 @@
                 <span class="text-red-500 ml-0.5">*</span>
               </label>
               {{ form.hora_inicio }}
+          
               {% if form.hora_inicio.errors %}
                 {% for error in form.hora_inicio.errors %}
                   <p class="mt-1.5 text-xs text-red-600 flex items-center gap-1">

@@ -1,3 +1,5 @@
+from time import timezone
+
 from django.db import models
 from django.contrib.auth import get_user_model
 
@@ -36,6 +38,17 @@ class Turno(models.Model):
 
     def tiene_cupo(self):
         return self.cupos_disponibles() > 0
+    @property
+    def es_hoy(self):
+        """True si el turno es hoy."""
+        return self.fecha == timezone.localdate()
+    # Si todavía no tenés hora_fin en el modelo, podés derivarla así
+    # (asumiendo que las clases duran 1 hora; ajustá a lo que necesites):
+    @property
+    def hora_fin(self):
+        from datetime import datetime, timedelta
+        dt = datetime.combine(self.fecha, self.hora_inicio) + timedelta(hours=1)
+        return dt.time()
 
 
 class TurnoProfesional(models.Model):

@@ -1,9 +1,9 @@
 from django.urls import path
-from .views import TurnoCreateView
+from .views import MisClasesView, TurnoCreateView
 
 app_name = "turnos"
 
 urlpatterns = [
     path("nuevo/", TurnoCreateView.as_view(), name="turno_create"),
-    # Add turno_list, turno_detail, etc. here as needed.
+    path("mis-clases/", MisClasesView.as_view(), name="mis_clases"),
 ]

@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
-from django.contrib.auth.views import LoginView
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from .forms import RegistroForm, LoginForm
+from django.contrib.auth.views import LoginView
+from django.contrib.auth import logout
 
-from .models import Profile
+User = get_user_model()
 
 
 # ───── HOME ─────
@@ -18,42 +20,31 @@ def home(request):
 # ───── LOGIN ─────
 class CustomLoginView(LoginView):
     template_name = 'accounts/login.html'
+    form_class = LoginForm
 
 
 # ───── REGISTER ─────
 def register(request):
     if request.method == 'POST':
-        username = request.POST.get('email')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        dni = request.POST.get('dni')
+        form = RegistroForm(request.POST)
 
-        # Validar usuario existente
-        if User.objects.filter(username=username).exists():
-            messages.error(request, 'El usuario ya existe')
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Cuenta creada correctamente')
             return redirect('accounts:login')
+        else:
+            messages.error(request, 'Revisá los datos del formulario')
 
-        # Crear usuario
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name
-        )
+    else:
+        form = RegistroForm()
 
-        # Crear perfil
-        Profile.objects.create(user=user, dni=dni)
-
-        messages.success(request, 'Cuenta creada correctamente')
-        return redirect('accounts:login')
-
-    return render(request, 'accounts/register.html')
+    return render(request, 'accounts/register.html', {
+        'form': form
+    })
 
 
 # ───── PROFILE ─────
 @login_required
 def profile(request):
     return render(request, "accounts/profile.html")
+
