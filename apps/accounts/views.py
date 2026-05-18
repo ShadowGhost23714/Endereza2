@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib import messages
 from .forms import RegistroForm, LoginForm, CrearSecretarioForm
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, PasswordChangeView
+from django.urls import reverse_lazy
 
 
 User = get_user_model()
@@ -58,13 +59,24 @@ def register(request):
 def profile(request):
     return render(request, "accounts/profile.html")
 
-def secretario(request):
-    form = CrearSecretarioForm(request.POST)
 
-    if form.is_valid():
-        form.save()
-        messages.success(request, "Cuenta creada correctamente")
-        return redirect('accounts:login')
+# ───── REGISTER SECRETARIO ─────
+def secretario(request):
+    if request.method == 'POST':
+        form = CrearSecretarioForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Cuenta creada correctamente")
+            return redirect('accounts:login')
     else:
-        messages.error(request, "Revisá los datos del formulario")
-    return render(request, "accounts/secretario.html")
+        form = CrearSecretarioForm()
+
+    return render(request, 'accounts/secretario.html', {
+        'form': form
+    })
+
+# ───── PASSWORD CHANGE ─────
+class CustomPasswordChangeView(PasswordChangeView):
+    template_name = "accounts/change_password.html"
+    success_url = reverse_lazy("accounts:profile")
