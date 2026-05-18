@@ -16,4 +16,7 @@ urlpatterns = [
 
     # project/urls.py
     path("turnos/", include("apps.classes.urls", namespace="turnos")),
+    
+    # payments/urls.py
+    path("pagos/", include("apps.payments.urls")),
 ]

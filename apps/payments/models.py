@@ -1,16 +1,42 @@
 from django.db import models
-from django.utils import timezone
+from django.conf import settings
+from apps.classes.models import Reserva
 
-# Create your models here.
-class PagoEfectivo (models.Model): 
-    #Relaciono el pago con un turno unico
-    turno= models.OneToOneField(Turno, on_delete=models.CASCADE, related_name='pago')
 
-    #Monto pagado
-    monto= models.DecimalField(max_digits=10, decimal_places=2)
+class Pago(models.Model):
 
-    #Fecha y hora
-    fecha_pago= models.DateTimeField(default=timezone.now)
+    class MetodoPago(models.TextChoices):
+        EFECTIVO      = "efectivo",      "Efectivo"
+        TARJETA       = "tarjeta",       "Tarjeta"
+        TRANSFERENCIA = "transferencia", "Transferencia"
+
+    reserva        = models.OneToOneField(
+        Reserva,
+        on_delete=models.PROTECT,
+        related_name="pago",
+        verbose_name="Reserva",
+    )
+    metodo_pago    = models.CharField(
+        max_length=20,
+        choices=MetodoPago.choices,
+        verbose_name="Método de pago",
+    )
+    fecha_pago     = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Fecha y hora del pago",
+    )
+    registrado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="pagos_registrados",
+        verbose_name="Secretario",
+    )
+
+    class Meta:
+        verbose_name        = "Pago"
+        verbose_name_plural = "Pagos"
+        ordering            = ["-fecha_pago"]
 
     def __str__(self):
-        return f"Pago de ${self.monto} para el turno {self.turno.id} realizado el {self.fecha_pago}"
+        return f"Pago #{self.pk} — {self.reserva} [{self.metodo_pago}]"
