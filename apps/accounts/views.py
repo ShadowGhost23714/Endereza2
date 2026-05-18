@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 from django.contrib import messages
 from .forms import RegistroForm, LoginForm
 from django.contrib.auth.views import LoginView
@@ -52,5 +53,6 @@ def register(request):
 
 # ───── PROFILE ─────
 @login_required
+@never_cache
 def profile(request):
     return render(request, "accounts/profile.html")
