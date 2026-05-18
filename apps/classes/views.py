@@ -4,6 +4,11 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
 from django.views.generic import ListView
 from django.utils import timezone
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
 from .forms import TurnoForm
 from .models import Reserva, Turno
 
@@ -48,13 +53,41 @@ class TurnoCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
         ctx["page_title"] = "Nuevo turno"
         return ctx
 
-class ReservaListView(LoginRequiredMixin):
+class TurnoListView(ListView):
+    model = Turno
+    template_name = "classes/listar_clases.html"
+    context_object_name = "turnos"
+    success_url = reverse_lazy("turnos:listar_clases")
+
+    def get_queryset(self):
+        """Returns all turnos ordered by date and time."""
+        return Turno.objects.all().order_by("fecha", "hora_inicio")
+
+class ReservaListView(LoginRequiredMixin, ListView):
     model = Reserva
     template_name = "classes/reserva_list.html"
     context_object_name = "reservas"
 
     def get_queryset(self): # muestra solo las reservas del usuario logueado, ordenadas por fecha de reserva descendente
         return Reserva.objects.filter(id_usuario=self.request.user).order_by("-fecha_reserva")
+
+@login_required
+def reservar_clase(request, turno_id):
+    turno = get_object_or_404(Turno, pk=turno_id)
+    if turno.cupos_disponibles() <= 0:
+        messages.error(request, "No hay cupos disponibles para este turno.")
+        return redirect("turnos:listar_clases")
+
+    reserva, created = Reserva.objects.get_or_create(
+        id_usuario=request.user,
+        id_turno=turno,
+        defaults={"estado": Reserva.Estado.RESERVADO},
+    )
+    if created:
+        messages.success(request, "Reserva creada correctamente.")
+    else:
+        messages.info(request, "Ya tenés una reserva para este turno.")
+    return redirect("turnos:mis_clases")
 # Agregá esto en apps/classes/views.py
 # (importá lo necesario junto a tus imports existentes)
 
@@ -66,6 +99,7 @@ class MisClasesView(LoginRequiredMixin, ListView):
     model = Reserva
     template_name = "classes/mis_clases.html"
     context_object_name = "reservas"
+    success_url   = reverse_lazy("turnos:mis_clases")
 
     def get_queryset(self):
         hoy = timezone.localdate()
@@ -78,3 +112,4 @@ class MisClasesView(LoginRequiredMixin, ListView):
             .select_related("id_turno")
             .order_by("id_turno__fecha", "id_turno__hora_inicio")
         )
+

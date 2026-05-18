@@ -1,0 +1,25 @@
+{% extends "_base.html" %}
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">Clases Disponibles</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for turno in turnos %}
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-2">{{ turno.actividad }}</h2>
+            <p class="text-gray-800 font-medium">Fecha: {{ turno.fecha }}</p>
+            <p class="text-gray-800 font-medium">
+                Hora: {{ turno.hora_inicio|time:"H:i" }} - {{ turno.hora_fin|time:"H:i" }}
+            </p>
+            <p class="text-gray-600">
+                Cupos disponibles: {{ turno.cupos_disponibles }}
+            </p>
+            <button class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
+                Reservar
+              </button>
+        </div>
+        {% empty %}
+        <p class="text-gray-600">No hay clases disponibles.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
