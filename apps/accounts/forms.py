@@ -4,6 +4,7 @@ from django.contrib.auth.forms import (
     AuthenticationForm,
     UserCreationForm,
 )
+from django.core.exceptions import ValidationError
 
 from .models import Usuario
 
@@ -269,3 +270,90 @@ class PerfilForm(forms.ModelForm):
         elif usuario.es_secretario:
 
             self.fields.pop("fecha_nacimiento")
+
+class CrearSecretarioForm(UserCreationForm):
+    """
+    Formulario para que el dueño cree una cuenta de tipo Secretario.
+
+    Campos requeridos: nombre, apellido, email, DNI, contraseña x2.
+    No solicita fecha de nacimiento (el modelo la descarta para secretarios).
+    """
+
+    # ------------------------------------------------------------------
+    # CAMPOS
+    # ------------------------------------------------------------------
+
+    first_name = forms.CharField(
+        max_length=150,
+        label="Nombre",
+        widget=forms.TextInput(attrs={"placeholder": "Nombre"}),
+    )
+
+    last_name = forms.CharField(
+        max_length=150,
+        label="Apellido",
+        widget=forms.TextInput(attrs={"placeholder": "Apellido"}),
+    )
+
+    email = forms.EmailField(
+        label="Correo electrónico",
+        widget=forms.EmailInput(attrs={"placeholder": "secretario@email.com"}),
+    )
+
+    dni = forms.CharField(
+        max_length=8,
+        label="DNI",
+        widget=forms.TextInput(attrs={"placeholder": "12345678"}),
+    )
+
+    # ------------------------------------------------------------------
+    # META
+    # ------------------------------------------------------------------
+
+    class Meta:
+        model = Usuario
+        fields = ("first_name", "last_name", "email", "dni")
+
+    # ------------------------------------------------------------------
+    # VALIDACIONES DE CAMPO
+    # ------------------------------------------------------------------
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email", "").strip().lower()
+
+        if Usuario.objects.filter(email=email).exists():
+            raise ValidationError("Ya existe un usuario registrado con ese correo electrónico.")
+
+        return email
+
+    def clean_dni(self):
+        dni = self.cleaned_data.get("dni", "").strip()
+
+        if not dni.isdigit():
+            raise ValidationError("El DNI solo puede contener números.")
+
+        if not (7 <= len(dni) <= 8):
+            raise ValidationError("El DNI debe tener entre 7 y 8 dígitos.")
+
+        if Usuario.objects.filter(dni=dni).exists():
+            raise ValidationError("Ya existe un usuario registrado con ese DNI.")
+
+        return dni
+
+    # ------------------------------------------------------------------
+    # GUARDADO
+    # ------------------------------------------------------------------
+    
+    def save(self, commit=True):
+        """Fuerza el tipo a SECRETARIO antes de persistir."""
+        user = super().save(commit=False)
+        user.tipo = Usuario.TipoUsuario.SECRETARIO
+        # El modelo ya descarta fecha_nacimiento en clean() para secretarios,
+        # pero lo dejamos explícito para mayor claridad.
+        user.fecha_nacimiento = None
+
+        if commit:
+            user.save()
+
+        return user
+    

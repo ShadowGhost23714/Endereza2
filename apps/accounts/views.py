@@ -3,8 +3,9 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib import messages
-from .forms import RegistroForm, LoginForm
+from .forms import RegistroForm, LoginForm, CrearSecretarioForm
 from django.contrib.auth.views import LoginView
+
 
 User = get_user_model()
 
@@ -56,3 +57,14 @@ def register(request):
 @never_cache
 def profile(request):
     return render(request, "accounts/profile.html")
+
+def secretario(request):
+    form = CrearSecretarioForm(request.POST)
+
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Cuenta creada correctamente")
+        return redirect('accounts:login')
+    else:
+        messages.error(request, "Revisá los datos del formulario")
+    return render(request, "accounts/secretario.html")
