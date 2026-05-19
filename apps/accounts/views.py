@@ -28,6 +28,10 @@ class CustomLoginView(LoginView):
         if request.user.is_authenticated:
             return redirect("core:home")
         return super().dispatch(request, *args, **kwargs)
+    
+    def form_valid(self, form):
+        messages.success(self.request, "Bienvenido 👋")
+        return super().form_valid(form)
 
 
 # ───── REGISTER ─────
@@ -40,7 +44,7 @@ def register(request):
 
         if form.is_valid():
             form.save()
-            messages.success(request, 'Cuenta creada correctamente')
+            messages.success(request, 'Cuenta creada correctamente 🎉')
             return redirect('accounts:login')
         else:
             messages.error(request, 'Revisá los datos del formulario')
@@ -67,7 +71,7 @@ def secretario(request):
 
         if form.is_valid():
             form.save()
-            messages.success(request, "Cuenta creada correctamente")
+            messages.success(request, "Cuenta creada correctamente 🎉")
             return redirect('accounts:login')
     else:
         form = CrearSecretarioForm()
@@ -80,3 +84,7 @@ def secretario(request):
 class CustomPasswordChangeView(PasswordChangeView):
     template_name = "accounts/change_password.html"
     success_url = reverse_lazy("accounts:profile")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Contraseña actualizada correctamente 🔒")
+        return super().form_valid(form)
