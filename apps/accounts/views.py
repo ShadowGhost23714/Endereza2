@@ -59,12 +59,13 @@ def profile(request):
     return render(request, "accounts/profile.html")
 
 def secretario(request):
-    form = CrearSecretarioForm(request.POST)
-
-    if form.is_valid():
-        form.save()
-        messages.success(request, "Cuenta creada correctamente")
-        return redirect('accounts:login')
+    if request.method == 'POST':
+        form = CrearSecretarioForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Secretario creado correctamente")
+            return redirect('accounts:login')
     else:
-        messages.error(request, "Revisá los datos del formulario")
-    return render(request, "accounts/secretario.html")
+        form = CrearSecretarioForm()  # Sin argumentos — unbound
+
+    return render(request, "accounts/secretario.html", {'form': form})
