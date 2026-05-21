@@ -137,6 +137,7 @@ class Usuario(AbstractUser):
         # CLIENTE
         # -----------------------------------------------------
 
+<<<<<<< HEAD
         if self.tipo == self.TipoUsuario.CLIENTE:
 
             if not self.dni:
@@ -170,12 +171,19 @@ class Usuario(AbstractUser):
                     "fecha_nacimiento":
                         "El usuario debe ser mayor de 13 años."
                 })
+=======
+
+>>>>>>> 670999417035d5001ef784a620dd7645a47d2a1f
 
         # -----------------------------------------------------
         # SECRETARIO
         # -----------------------------------------------------
 
+<<<<<<< HEAD
         elif self.tipo == self.TipoUsuario.SECRETARIO:
+=======
+        if self.tipo == self.TipoUsuario.SECRETARIO:
+>>>>>>> 670999417035d5001ef784a620dd7645a47d2a1f
 
             # No guardamos fecha de nacimiento
             self.fecha_nacimiento = None

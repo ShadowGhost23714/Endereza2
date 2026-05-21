@@ -23,42 +23,13 @@
       <p class="text-gray-500 text-lg max-w-lg mb-8 leading-relaxed">
         En Endereza2 acompañamos tu recuperación con clases profesionales de rehabilitación para todas las edades, desde adolescentes hasta adultos mayores.
       </p>
-      <div class="flex flex-col gap-6">
-        <span class="text-xs font-bold uppercase tracking-widest text-teal-600">Horarios de hoy</span>
-        <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight mb-3">Dos turnos diarios para adaptarse a vos</h2>
-        <p class="text-gray-500 mb-7">Trabajamos de lunes a viernes en turno mañana y turno tarde. Los cupos los definen los dueños y pueden variar por horario y actividad.</p>
-
-        <div class="flex flex-col gap-3">
-          <div class="flex items-start gap-3 bg-white border border-gray-200 rounded-2xl px-5 py-4">
-            <svg class="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            <div>
-              <p class="text-sm font-semibold text-gray-900">Turno mañana</p>
-              <p class="text-xs text-gray-400">08:00 a 14:00 hs — 3 profesionales por actividad</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-3 bg-white border border-gray-200 rounded-2xl px-5 py-4">
-            <svg class="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 00-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/></svg>
-            <div>
-              <p class="text-sm font-semibold text-gray-900">Turno tarde</p>
-              <p class="text-xs text-gray-400">14:00 a 20:00 hs — 3 profesionales por actividad</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-3 bg-white border border-gray-200 rounded-2xl px-5 py-4">
-            <svg class="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-            <div>
-              <p class="text-sm font-semibold text-gray-900">Sin indicación médica obligatoria</p>
-              <p class="text-xs text-gray-400">Podés asistir por iniciativa propia</p>
-            </div>
-          </div>
-        </div>
-      
       <div class="flex flex-wrap gap-3">
-        <a href="{% url 'turnos:listar_clases' %}"
+        <a href="#horarios"
           class="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold px-6 py-3 rounded-xl text-base transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(13,148,136,0.3)]">
-          Ver todas las clases disponibles
+          Ver clases disponibles
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
-        <a href="#actividades"
+        <a href="{% url 'turnos:listar_clases' %}"
           class="inline-flex items-center gap-2 bg-white border border-teal-400 text-teal-600 font-semibold px-6 py-3 rounded-xl text-base hover:bg-teal-50 transition-colors duration-200">
           Nuestras actividades
         </a>
@@ -120,6 +91,56 @@
             
       <div class="border-t border-gray-100 px-7 py-4 text-center">
         {% if not user.is_authenticated %} 
+    <!-- Right: schedule card -->
+    <div class="bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden">
+      <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-7 py-5 text-white">
+        <p class="text-white/75 text-sm mb-1">Próximas clases disponibles</p>
+        <h3 class="text-xl font-bold tracking-tight">Hoy — Jueves 30 abr.</h3>
+      </div>
+      <div class="flex flex-col gap-3 p-5">
+        <!-- Item -->
+        <div class="flex items-center justify-between bg-teal-50 hover:bg-teal-100 rounded-xl px-4 py-3 transition-colors duration-200">
+          <div class="flex items-center gap-3">
+            <span class="w-2.5 h-2.5 rounded-full bg-teal-600 flex-shrink-0"></span>
+            <div>
+              <p class="text-sm font-semibold text-gray-900">Tren Superior</p>
+              <p class="text-xs text-gray-400">09:00 — 10:00</p>
+            </div>
+          </div>
+          <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full">Lugares disponibles</span>
+        </div>
+        <div class="flex items-center justify-between bg-teal-50 hover:bg-teal-100 rounded-xl px-4 py-3 transition-colors duration-200">
+          <div class="flex items-center gap-3">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-600 flex-shrink-0"></span>
+            <div>
+              <p class="text-sm font-semibold text-gray-900">Zona Media</p>
+              <p class="text-xs text-gray-400">11:00 — 12:00</p>
+            </div>
+          </div>
+          <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full">Lugares disponibles</span>
+        </div>
+        <div class="flex items-center justify-between bg-teal-50 hover:bg-teal-100 rounded-xl px-4 py-3 transition-colors duration-200">
+          <div class="flex items-center gap-3">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 flex-shrink-0"></span>
+            <div>
+              <p class="text-sm font-semibold text-gray-900">Tren Inferior</p>
+              <p class="text-xs text-gray-400">14:00 — 15:00</p>
+            </div>
+          </div>
+          <span class="text-xs font-semibold bg-amber-100 text-amber-700 px-2.5 py-0.5 rounded-full">Pocos lugares</span>
+        </div>
+        <div class="flex items-center justify-between bg-teal-50 hover:bg-teal-100 rounded-xl px-4 py-3 transition-colors duration-200">
+          <div class="flex items-center gap-3">
+            <span class="w-2.5 h-2.5 rounded-full bg-teal-600 flex-shrink-0"></span>
+            <div>
+              <p class="text-sm font-semibold text-gray-900">Tren Superior</p>
+              <p class="text-xs text-gray-400">16:00 — 17:00</p>
+            </div>
+          </div>
+          <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full">Lugares disponibles</span>
+        </div>
+      </div>
+      <div class="border-t border-gray-100 px-7 py-4 text-center">
         <p class="text-xs text-gray-400 mb-3">Para reservar tu lugar necesitás una cuenta</p>
         <a href="{% url 'accounts:register' %}"
           class="inline-block bg-teal-600 hover:bg-teal-700 text-white font-semibold text-sm px-5 py-2 rounded-lg transition-colors duration-200">
@@ -241,9 +262,81 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
       <!-- Left: info -->
-      
+      <div>
+        <span class="text-xs font-bold uppercase tracking-widest text-teal-600">Horarios de hoy</span>
+        <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight mb-3">Dos turnos diarios para adaptarse a vos</h2>
+        <p class="text-gray-500 mb-7">Trabajamos de lunes a viernes en turno mañana y turno tarde. Los cupos los definen los dueños y pueden variar por horario y actividad.</p>
 
-      
+        <div class="flex flex-col gap-3">
+          <div class="flex items-start gap-3 bg-white border border-gray-200 rounded-2xl px-5 py-4">
+            <svg class="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <div>
+              <p class="text-sm font-semibold text-gray-900">Turno mañana</p>
+              <p class="text-xs text-gray-400">08:00 a 14:00 hs — 3 profesionales por actividad</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 bg-white border border-gray-200 rounded-2xl px-5 py-4">
+            <svg class="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 00-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/></svg>
+            <div>
+              <p class="text-sm font-semibold text-gray-900">Turno tarde</p>
+              <p class="text-xs text-gray-400">14:00 a 20:00 hs — 3 profesionales por actividad</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 bg-white border border-gray-200 rounded-2xl px-5 py-4">
+            <svg class="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+            <div>
+              <p class="text-sm font-semibold text-gray-900">Sin indicación médica obligatoria</p>
+              <p class="text-xs text-gray-400">Podés asistir por iniciativa propia</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: table -->
+      <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+        <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr] bg-gray-900 text-white/55 text-xs font-semibold uppercase tracking-widest px-5 py-3">
+          <span>Horario</span>
+          <span>Actividad</span>
+          <span>Turno</span>
+          <span>Lugares</span>
+        </div>
+        <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr] px-5 py-3.5 border-b border-gray-100 items-center hover:bg-teal-50 transition-colors duration-150">
+          <span class="text-sm font-semibold text-gray-900">08:00 – 09:00</span>
+          <span class="text-sm text-gray-600 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-teal-600 inline-block"></span>Tren Superior</span>
+          <span class="text-xs text-gray-400">Mañana</span>
+          <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full w-fit">Disponible</span>
+        </div>
+        <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr] px-5 py-3.5 border-b border-gray-100 items-center hover:bg-teal-50 transition-colors duration-150">
+          <span class="text-sm font-semibold text-gray-900">09:00 – 10:00</span>
+          <span class="text-sm text-gray-600 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-600 inline-block"></span>Zona Media</span>
+          <span class="text-xs text-gray-400">Mañana</span>
+          <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full w-fit">Disponible</span>
+        </div>
+        <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr] px-5 py-3.5 border-b border-gray-100 items-center hover:bg-teal-50 transition-colors duration-150">
+          <span class="text-sm font-semibold text-gray-900">11:00 – 12:00</span>
+          <span class="text-sm text-gray-600 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-600 inline-block"></span>Tren Inferior</span>
+          <span class="text-xs text-gray-400">Mañana</span>
+          <span class="text-xs font-semibold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full w-fit">Pocos lugares</span>
+        </div>
+        <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr] px-5 py-3.5 border-b border-gray-100 items-center hover:bg-teal-50 transition-colors duration-150">
+          <span class="text-sm font-semibold text-gray-900">14:00 – 15:00</span>
+          <span class="text-sm text-gray-600 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-teal-600 inline-block"></span>Tren Superior</span>
+          <span class="text-xs text-gray-400">Tarde</span>
+          <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full w-fit">Disponible</span>
+        </div>
+        <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr] px-5 py-3.5 border-b border-gray-100 items-center hover:bg-teal-50 transition-colors duration-150">
+          <span class="text-sm font-semibold text-gray-900">16:00 – 17:00</span>
+          <span class="text-sm text-gray-600 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-600 inline-block"></span>Zona Media</span>
+          <span class="text-xs text-gray-400">Tarde</span>
+          <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full w-fit">Disponible</span>
+        </div>
+        <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr] px-5 py-3.5 items-center hover:bg-teal-50 transition-colors duration-150">
+          <span class="text-sm font-semibold text-gray-900">18:00 – 19:00</span>
+          <span class="text-sm text-gray-600 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-600 inline-block"></span>Tren Inferior</span>
+          <span class="text-xs text-gray-400">Tarde</span>
+          <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full w-fit">Disponible</span>
+        </div>
+      </div>
 
     </div>
   </div>
