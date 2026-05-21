@@ -10,7 +10,7 @@
       </div>
       <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <form method="post" novalidate class="space-y-4 md:space-y-6">
+              <form method="post" novalidate id="login-form" class="space-y-4 md:space-y-6">
                   {% csrf_token %}
 
                   {% if form.non_field_errors %}
@@ -82,7 +82,13 @@
                       <a href="#" class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">¿Olvidaste tu contraseña?</a>
                   </div>
                    -->
-                  <button type="submit" class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-semibold rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Ingresar</button>
+                  <button 
+                    id="submit-btn"
+                    type="submit" 
+                    disabled
+                    class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-semibold rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                    Ingresar
+                  </button>
                   <p class="text-center text-sm text-gray-500 dark:text-gray-400">
                       ¿No tenés cuenta? <a href="{% url 'accounts:register' %}" class="font-semibold text-primary-600 hover:underline dark:text-primary-500">Registrate gratis</a>
                   </p>
@@ -101,7 +107,7 @@
 </style>
 
 <script>
-  /* ── Mostrar / ocultar contraseña ── */
+/* ── Mostrar / ocultar contraseña ── */
 function togglePassword(inputId, btn) {
   const input = document.getElementById(inputId);
   const isHidden = input.type === 'password';
@@ -113,6 +119,44 @@ function togglePassword(inputId, btn) {
     svg.style.opacity = isHidden ? '0.5' : '1';
   }
 }
+
+/* ── Hablitar / Deshablitar boton de "Ingresar" ── */
+(function () {
+  const form = document.getElementById('login-form');
+  const btn = document.getElementById('submit-btn');
+  const inputs = form.querySelectorAll('input[name]');
+
+  function validarFormulario() {
+
+    // Todos completos
+    const todosCompletos = Array.from(inputs).every(input => {
+
+      // Ignorar submit/buttons
+      if (input.type === 'submit' || input.type === 'button') {
+        return true;
+      }
+      return input.value.trim() !== '';
+    });
+
+    // Resultado
+    btn.disabled = !todosCompletos;
+
+    // Estilos
+    if (todosCompletos) {
+      btn.style.opacity = '1';
+      btn.style.cursor = 'pointer';
+    } else {
+      btn.style.opacity = '0.6';
+      btn.style.cursor = 'not-allowed';
+    }
+  }
+
+  // Eventos
+  inputs.forEach(input => { input.addEventListener('input', validarFormulario); });
+
+  // Inicial
+  validarFormulario();
+})();
 </script>
 
 {% endblock content %}
