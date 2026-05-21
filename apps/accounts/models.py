@@ -137,45 +137,12 @@ class Usuario(AbstractUser):
         # CLIENTE
         # -----------------------------------------------------
 
-        if self.tipo == self.TipoUsuario.CLIENTE:
-
-            if not self.dni:
-                raise ValidationError({
-                    "dni": "El cliente debe tener DNI."
-                })
-
-            if not self.fecha_nacimiento:
-                raise ValidationError({
-                    "fecha_nacimiento":
-                        "El cliente debe tener fecha de nacimiento."
-                })
-
-            # Validación de edad mínima (13 años)
-            hoy = date.today()
-
-            edad = (
-                hoy.year
-                - self.fecha_nacimiento.year
-                - (
-                    (hoy.month, hoy.day)
-                    < (
-                        self.fecha_nacimiento.month,
-                        self.fecha_nacimiento.day
-                    )
-                )
-            )
-
-            if edad < 13:
-                raise ValidationError({
-                    "fecha_nacimiento":
-                        "El usuario debe ser mayor de 13 años."
-                })
 
         # -----------------------------------------------------
         # SECRETARIO
         # -----------------------------------------------------
 
-        elif self.tipo == self.TipoUsuario.SECRETARIO:
+        if self.tipo == self.TipoUsuario.SECRETARIO:
 
             # No guardamos fecha de nacimiento
             self.fecha_nacimiento = None

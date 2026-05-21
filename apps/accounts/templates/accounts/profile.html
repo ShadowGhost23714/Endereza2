@@ -1,207 +1,44 @@
 {% extends "_base.html" %}
 {% load static %}
-
 {% block content %}
 
-<div class="max-w-4xl mx-auto px-4 lg:px-6 py-10 flex flex-col gap-6 animate-fade-up">
+<div class="min-h-[calc(100vh-4rem)] px-4 py-14 dark:bg-gray-900">
 
-  <!-- ══ PROFILE HEADER ══ -->
-  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 via-teal-950 to-gray-900 p-8 flex flex-col sm:flex-row sm:items-center gap-5">
-    <!-- Decorative glows -->
-    <div class="pointer-events-none absolute -bottom-14 -right-14 w-56 h-56 rounded-full bg-teal-500/20 blur-2xl"></div>
-    <div class="pointer-events-none absolute -top-10 -left-10 w-40 h-40 rounded-full bg-cyan-600/15 blur-2xl"></div>
+  <div class="max-w-4xl mx-auto px-4 lg:px-6 py-10 flex flex-col gap-6 animate-fade-up">
 
-    <!-- Avatar -->
-    <div class="relative z-10 flex-shrink-0 w-16 h-16 rounded-full bg-teal-600 flex items-center justify-center text-white text-2xl font-extrabold tracking-tight border-2 border-white/15">
-      {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
-    </div>
+    <!-- ══ PROFILE HEADER ══ -->
+    <div class="relative overflow-hidden rounded-2xl bg-[linear-gradient(135deg,var(--color-primary-900),var(--color-primary-700),#111827)] p-8 flex flex-col sm:flex-row sm:items-center gap-5">
+      <!-- Decorative glows -->
+      <div class="pointer-events-none absolute -bottom-14 -right-14 w-56 h-56 rounded-full bg-[color:var(--color-primary-500)]/20 blur-2xl"></div>
+      <div class="pointer-events-none absolute -top-10 -left-10 w-40 h-40 rounded-full bg-[color:var(--color-primary-400)]/15 blur-2xl"></div>
 
-    <!-- Info -->
-    <div class="relative z-10">
-      <span class="text-xs font-bold uppercase tracking-widest text-teal-400">Mi perfil</span>
-      <h1 class="mt-0.5 text-2xl font-extrabold text-white tracking-tight leading-tight">{{ user.get_full_name }}</h1>
-      <p class="text-sm text-white/50 mt-0.5">{{ user.email }}</p>
-    </div>
-
-    <!-- Badge + logout -->
-    <div class="relative z-10 sm:ml-auto flex items-center gap-3">
-      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-teal-500/15 text-teal-300 border border-teal-500/25">
-        Cliente
-      </span>
-      <form method="post" action="{% url 'logout' %}">
-        {% csrf_token %}
-        <button type="submit"
-          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium
-                 bg-white/8 border border-white/20 text-white/80
-                 hover:bg-white/15 hover:border-white/35 transition-colors duration-200">
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
-          </svg>
-          Cerrar sesión
-        </button>
-      </form>
-    </div>
-  </div>
-
-
-  <!-- ══ DOS COLUMNAS: DATOS + ACTIVIDAD ══ -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-    <!-- Datos personales -->
-    <div class="bg-white border border-gray-200 rounded-2xl p-7">
-      <p class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-teal-600 mb-5">
-        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Datos personales
-      </p>
-
-      <div class="grid grid-cols-2 gap-x-6 gap-y-4">
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">Nombre</p>
-          <p class="text-sm font-medium text-gray-900">{{ user.first_name }}</p>
-        </div>
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">Apellido</p>
-          <p class="text-sm font-medium text-gray-900">{{ user.last_name }}</p>
-        </div>
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">DNI</p>
-          <p class="text-sm font-medium text-gray-900 font-mono tracking-wide">{{ user.profile.dni }}</p>
-        </div>
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">Fecha de nacimiento</p>
-          <p class="text-sm font-medium text-gray-900">{{ user.profile.birth_date|date:"d/m/Y" }}</p>
-        </div>
+      <!-- Avatar -->
+      <div class="relative z-10 flex-shrink-0 w-16 h-16 rounded-full bg-primary-600 flex items-center justify-center text-white text-2xl font-extrabold tracking-tight border-2 border-white/15">
+        {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
       </div>
 
-      <hr class="my-5 border-gray-100">
-
-      <div class="mb-5">
-        <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">Correo electrónico</p>
-        <p class="text-sm font-medium text-gray-900">{{ user.email }}</p>
+      <!-- Info -->
+      <div class="relative z-10">
+        <span class="text-xs font-bold uppercase tracking-widest text-primary-600">Mi perfil</span>
+        <h1 class="mt-0.5 text-2xl font-extrabold text-white tracking-tight leading-tight">{{ user.get_full_name }}</h1>
+        <p class="text-sm text-white/50 mt-0.5">{{ user.email }}</p>
       </div>
 
-      <a href="#"
-        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold
-               bg-teal-600 text-white hover:bg-teal-700 transition-colors duration-200">
-        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        Cambiar datos
-      </a>
-    </div>
-
-    <!-- Resumen de actividad -->
-    <div class="bg-white border border-gray-200 rounded-2xl p-7">
-      <p class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-teal-600 mb-5">
-        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Resumen de actividad
-      </p>
-
-      <div class="grid grid-cols-3 gap-3">
-        <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 text-center">
-          <p class="text-2xl font-extrabold text-gray-900 tracking-tight">12</p><!-- {{ stats.total_clases }} -->
-          <p class="text-xs text-gray-400 mt-1 leading-snug">Clases<br>asistidas</p>
-        </div>
-        <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 text-center">
-          <p class="text-2xl font-extrabold text-teal-600 tracking-tight">4</p><!-- {{ stats.clases_mes }} -->
-          <p class="text-xs text-gray-400 mt-1 leading-snug">Clases<br>este mes</p>
-        </div>
-        <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 text-center">
-          <p class="text-2xl font-extrabold text-gray-900 tracking-tight">1</p><!-- {{ stats.clases_favor }} -->
-          <p class="text-xs text-gray-400 mt-1 leading-snug">Clases<br>a favor</p>
-        </div>
-      </div>
-
-      <hr class="my-5 border-gray-100">
-
-      <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Estado de cuenta</p>
-      <div class="flex flex-col gap-2.5">
-        <div class="flex justify-between items-center">
-          <span class="text-sm text-gray-600">Cuenta</span>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Activa
-          </span>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="text-sm text-gray-600">Abono mensual</span>
-          {% if user.profile.tiene_abono %}
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Activo
-          </span>
-          {% else %}
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700">
-            <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>Sin abono
-          </span>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- ══ CAMBIAR CONTRASEÑA ══ -->
-  <div class="bg-white border border-gray-200 rounded-2xl p-7">
-    <div class="flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <p class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-teal-600 mb-1">
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-          Contraseña
-        </p>
-        <p class="text-sm text-gray-400">Actualizá tu contraseña de acceso.</p>
-      </div>
-      <button type="button" onclick="togglePass()"
-        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold
-               bg-teal-600 text-white hover:bg-teal-700 transition-colors duration-200">
-        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        Cambiar contraseña
-      </button>
-    </div>
-
-    <div id="pass-form" class="hidden mt-6">
-      <hr class="mb-5 border-gray-100">
-      <form method="post" action="#" class="max-w-lg flex flex-col gap-4">
-        {% csrf_token %}
-
-        <div class="flex flex-col gap-1.5">
-          <label for="pass-actual" class="text-xs font-semibold text-gray-600">Contraseña actual</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-            </span>
-            <input type="password" id="pass-actual" name="old_password" placeholder="Tu contraseña actual" autocomplete="current-password"
-              class="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900
-                     focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/15 transition-all" />
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-1.5">
-          <label for="pass-nueva" class="text-xs font-semibold text-gray-600">Nueva contraseña</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-            </span>
-            <input type="password" id="pass-nueva" name="new_password1" placeholder="Nueva contraseña" autocomplete="new-password"
-              class="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900
-                     focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/15 transition-all" />
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-1.5">
-          <label for="pass-nueva2" class="text-xs font-semibold text-gray-600">Repetir nueva contraseña</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-            </span>
-            <input type="password" id="pass-nueva2" name="new_password2" placeholder="Repetí la nueva contraseña" autocomplete="new-password"
-              class="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900
-                     focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/15 transition-all" />
-          </div>
-        </div>
-
-        <div class="flex gap-3 flex-wrap pt-1">
+      <!-- Badge + logout -->
+      <div class="relative z-10 sm:ml-auto flex items-center gap-3">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-primary-600 text-white border-2 border-white/15">
+          {{ user.get_tipo_display }}
+        </span>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
           <button type="submit"
-            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold
-                   bg-teal-600 text-white hover:bg-teal-700 transition-colors duration-200">
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-            Guardar
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold
+                  bg-white/8 border border-white/20 text-white/80
+                  hover:bg-white/15 hover:border-white/35 transition-colors duration-200">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
+            </svg>
+            Cerrar sesión
           </button>
           <button type="button" onclick="togglePass()"
             class="px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-500
@@ -211,30 +48,142 @@
         </div>
       </form>
     </div>
-  </div>
 
 
-  <!-- ══ ZONA DE PELIGRO ══ -->
-  <div class="bg-white border border-red-100 rounded-2xl p-7">
-    <div class="flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <p class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-red-600 mb-1">
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          Zona de peligro
+    <!-- ══ DOS COLUMNAS: DATOS + ACTIVIDAD ══ -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 ">
+
+      <!-- Datos personales -->
+      <div class="bg-white border border-gray-200 rounded-2xl p-7 dark:bg-gray-800 dark:border-gray-700">
+        <p class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-primary-600 mb-5">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Datos personales
         </p>
-        <p class="text-sm text-gray-400">Eliminá tu cuenta de forma permanente. Esta acción no se puede deshacer.</p>
+
+        <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+          <div>
+            <p class="text-sm font-semibold tracking-wide text-gray-400 mb-1">Nombre</p>
+            <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ user.first_name }}</p>
+          </div>
+          <div>
+            <p class="text-sm font-semibold tracking-wide text-gray-400 mb-1">Apellido</p>
+            <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ user.last_name }}</p>
+          </div>
+          <div>
+            <p class="text-sm font-semibold tracking-wide text-gray-400 mb-1">DNI</p>
+            <p class="text-sm font-semibold text-gray-900 font-mono tracking-wide dark:text-white">{{ user.dni }}</p>
+          </div>
+          <div>
+            <p class="text-sm font-semibold tracking-wide text-gray-400 mb-1">Fecha de nacimiento</p>
+            <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ user.fecha_nacimiento|date:"d/m/Y" }}</p>
+          </div>
+        </div>
+
+        <hr class="my-5 border-gray-100">
+
+        <div class="mb-5">
+          <p class="text-sm font-semibold tracking-wide text-gray-400 mb-1">Correo electrónico</p>
+          <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ user.email }}</p>
+        </div>
+        
+        <!-- Cambiar datos (en desarrollo) 
+        <a href="#"
+          class="inline-flex items-center gap-2 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-semibold rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Cambiar datos
+        </a>
+        -->
       </div>
-      <button type="button" onclick="confirmDelete()"
-        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold
-               border border-red-200 text-red-600 hover:bg-red-50 hover:border-red-400 transition-colors duration-200">
-        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
-        Eliminar cuenta
-      </button>
+
+      <!-- Resumen de actividad -->
+      <div class="bg-white border border-gray-200 rounded-2xl p-7 dark:bg-gray-800 dark:border-gray-700">
+        <p class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-primary-600 mb-5">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Resumen de actividad
+        </p>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 text-center dark:bg-gray-800 dark:border-gray-700">
+            <p class="text-2xl font-extrabold text-gray-900 tracking-tight dark:text-white">12</p><!-- {{ stats.total_clases }} -->
+            <p class="text-xs font-semibold text-gray-400 mt-1 leading-snug">Clases<br>asistidas</p>
+          </div>
+          <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 text-center dark:bg-gray-800 dark:border-gray-700">
+            <p class="text-2xl font-extrabold text-gray-900 tracking-tight dark:text-white">4</p><!-- {{ stats.clases_mes }} -->
+            <p class="text-xs font-semibold text-gray-400 mt-1 leading-snug">Clases<br>este mes</p>
+          </div>
+          <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 text-center dark:bg-gray-800 dark:border-gray-700">
+            <p class="text-2xl font-extrabold text-gray-900 tracking-tight dark:text-white">1</p><!-- {{ stats.clases_favor }} -->
+            <p class="text-xs font-semibold text-gray-400 mt-1 leading-snug">Clases<br>a favor</p>
+          </div>
+        </div>
+
+        <hr class="my-5 border-gray-100">
+
+        <p class="text-xs font-bold uppercase tracking-wide text-gray-400 mb-3">Estado de cuenta</p>
+        <div class="flex flex-col gap-2.5">
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-semibold text-gray-600 dark:text-white">Cuenta</span>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Activa
+            </span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-semibold text-gray-600 dark:text-white">Abono mensual</span>
+            {% if user.profile.tiene_abono %}
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Activo
+            </span>
+            {% else %}
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>Sin abono
+            </span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
     </div>
+
+
+    <!-- ══ CAMBIAR CONTRASEÑA ══ -->
+    <div class="bg-white border border-gray-200 rounded-2xl p-7 dark:bg-gray-800 dark:border-gray-700" >
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            Contraseña
+          </p>
+          <p class="text-sm text-gray-400">Actualizá tu contraseña de acceso.</p>
+        </div>
+        <a href="{% url 'accounts:change_password' %}"
+          class="inline-flex items-center gap-2 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-semibold rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+            Cambiar contraseña
+        </a>
+      </div>
+    </div>
+
+
+    <!-- ══ ZONA DE PELIGRO ══ (En desarrollo)
+    <div class="bg-white border border-red-100 rounded-2xl p-7">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Zona de peligro
+          </p>
+          <p class="text-sm text-gray-400">Eliminá tu cuenta de forma permanente. Esta acción no se puede deshacer.</p>
+        </div>
+        <button type="button" onclick="confirmDelete()"
+          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold
+                border border-red-200 text-red-600 hover:bg-red-50 hover:border-red-400 transition-colors duration-200">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+          Eliminar cuenta
+        </button>
+      </div>
+    </div>
+    -->
+
   </div>
-
 </div>
-
 
 <style>
   @keyframes fade-up {
@@ -243,18 +192,5 @@
   }
   .animate-fade-up { animation: fade-up .4s cubic-bezier(.22,1,.36,1); }
 </style>
-
-<script>
-  function togglePass() {
-    const f = document.getElementById('pass-form');
-    f.classList.toggle('hidden');
-  }
-
-  function confirmDelete() {
-    if (confirm('¿Estás seguro que querés eliminar tu cuenta? Esta acción es permanente y no se puede deshacer.')) {
-      window.location.href = "#";
-    }
-  }
-</script>
 
 {% endblock %}
