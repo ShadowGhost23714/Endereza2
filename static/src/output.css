@@ -47,7 +47,6 @@
     --color-teal-500: oklch(70.4% 0.14 182.503);
     --color-teal-600: oklch(60% 0.118 184.704);
     --color-teal-700: oklch(51.1% 0.096 186.391);
-    --color-teal-800: oklch(43.7% 0.078 188.216);
     --color-teal-950: oklch(27.7% 0.046 192.524);
     --color-cyan-100: oklch(95.6% 0.045 203.388);
     --color-cyan-500: oklch(71.5% 0.143 215.221);
@@ -111,7 +110,6 @@
     --text-5xl--line-height: 1;
     --text-6xl: 3.75rem;
     --text-6xl--line-height: 1;
-    --font-weight-light: 300;
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
     --font-weight-bold: 700;
@@ -133,18 +131,14 @@
     --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     --default-font-family: var(--font-sans);
     --default-mono-font-family: var(--font-mono);
-    --radius: 8px;
     --color-body: var(--color-gray-600);
-    --color-heading: var(--color-gray-900);
-    --color-neutral-secondary-medium: var(--color-gray-50);
     --color-neutral-tertiary: var(--color-gray-100);
-    --color-neutral-tertiary-medium: var(--color-gray-100);
     --color-neutral-quaternary: var(--color-gray-200);
     --color-brand: var(--color-blue-700);
     --color-dark: var(--color-gray-800);
-    --color-light: var(--color-gray-100);
     --color-default: var(--color-gray-200);
     --color-primary-300: oklch(78.0% 0.095 22);
+    --color-primary-400: oklch(67.0% 0.130 22);
     --color-primary-500: oklch(56.0% 0.160 22);
     --color-primary-600: oklch(48.0% 0.170 22);
     --color-primary-700: oklch(40.0% 0.160 22);
@@ -715,9 +709,6 @@
   .overflow-visible {
     overflow: visible;
   }
-  .rounded {
-    border-radius: var(--radius);
-  }
   .rounded-2xl {
     border-radius: var(--radius-2xl);
   }
@@ -748,54 +739,6 @@
   .border-b {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 1px;
-  }
-  .dark {
-    & .apexcharts-canvas .apexcharts-tooltip {
-      background-color: var(--color-neutral-secondary-medium) !important;
-      color: var(--color-body) !important;
-      border-color: var(--color-default) !important;
-      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
-    }
-    & .apexcharts-canvas .apexcharts-tooltip .apexcharts-tooltip-title {
-      background-color: var(--color-neutral-tertiary-medium) !important;
-      border-color: var(--color-light) !important;
-      color: var(--color-heading) !important;
-    }
-    & .apexcharts-canvas .apexcharts-xaxistooltip {
-      color: var(--color-body) !important;
-      background-color: var(--color-neutral-secondary-medium) !important;
-    }
-    & .apexcharts-canvas .apexcharts-tooltip .apexcharts-tooltip-text-y-label {
-      color: var(--color-body) !important;
-    }
-    & .apexcharts-canvas .apexcharts-tooltip .apexcharts-tooltip-text-y-value {
-      color: white !important;
-    }
-    & .apexcharts-canvas .apexcharts-tooltip-series-group.apexcharts-active {
-      background-color: var(--color-neutral-secondary-medium) !important;
-      color: var(--color-body) !important;
-    }
-    & .apexcharts-canvas .apexcharts-legend-text {
-      color: var(--color-body) !important;
-    }
-    & .apexcharts-canvas .apexcharts-legend-text:not(.apexcharts-inactive-legend):hover {
-      color: heading !important;
-    }
-    & .apexcharts-canvas .apexcharts-datalabels-group .apexcharts-text.apexcharts-datalabel-value {
-      fill: white !important;
-    }
-    & .apexcharts-canvas .apexcharts-datalabels-group .apexcharts-text.apexcharts-datalabel-label {
-      fill: var(--color-body) !important;
-    }
-    & .apexcharts-gridline {
-      stroke: var(--color-default) !important;
-    }
-    & .apexcharts-xcrosshairs {
-      stroke: var(--color-default) !important;
-    }
-    & .apexcharts-ycrosshairs {
-      stroke: var(--color-default) !important;
-    }
   }
   .border-gray-100 {
     border-color: var(--color-gray-100);
@@ -842,6 +785,18 @@
       border-color: color-mix(in oklab, var(--color-white) 30%, transparent);
     }
   }
+  .bg-\[color\:var\(--color-primary-400\)\]\/15 {
+    background-color: color-mix(in srgb, oklch(67.0% 0.130 22) 15%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-primary-400) 15%, transparent);
+    }
+  }
+  .bg-\[color\:var\(--color-primary-500\)\]\/20 {
+    background-color: color-mix(in srgb, oklch(56.0% 0.160 22) 20%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-primary-500) 20%, transparent);
+    }
+  }
   .bg-amber-50 {
     background-color: var(--color-amber-50);
   }
@@ -856,12 +811,6 @@
   }
   .bg-cyan-600 {
     background-color: var(--color-cyan-600);
-  }
-  .bg-cyan-600\/15 {
-    background-color: color-mix(in srgb, oklch(60.9% 0.126 221.723) 15%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--color-cyan-600) 15%, transparent);
-    }
   }
   .bg-emerald-50 {
     background-color: var(--color-emerald-50);
@@ -893,9 +842,6 @@
   .bg-primary-600 {
     background-color: var(--color-primary-600);
   }
-  .bg-primary-700 {
-    background-color: var(--color-primary-700);
-  }
   .bg-red-50 {
     background-color: var(--color-red-50);
   }
@@ -926,12 +872,6 @@
       background-color: color-mix(in oklab, var(--color-teal-500) 15%, transparent);
     }
   }
-  .bg-teal-500\/20 {
-    background-color: color-mix(in srgb, oklch(70.4% 0.14 182.503) 20%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--color-teal-500) 20%, transparent);
-    }
-  }
   .bg-teal-500\/25 {
     background-color: color-mix(in srgb, oklch(70.4% 0.14 182.503) 25%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -950,11 +890,6 @@
       background-color: color-mix(in oklab, var(--color-white) 8%, transparent);
     }
   }
-  .dark {
-    & .selectedCell {
-      background-color: var(--color-neutral-secondary-medium);
-    }
-  }
   .bg-gradient-to-br {
     --tw-gradient-position: to bottom right in oklab;
     background-image: linear-gradient(var(--tw-gradient-stops));
@@ -962,6 +897,9 @@
   .bg-gradient-to-r {
     --tw-gradient-position: to right in oklab;
     background-image: linear-gradient(var(--tw-gradient-stops));
+  }
+  .bg-\[linear-gradient\(135deg\,var\(--color-primary-900\)\,var\(--color-primary-700\)\,\#111827\)\] {
+    background-image: linear-gradient(135deg,var(--color-primary-900),var(--color-primary-700),#111827);
   }
   .bg-\[radial-gradient\(ellipse_60\%_50\%_at_80\%_50\%\,rgba\(13\,148\,136\,0\.07\)\,transparent\)\] {
     background-image: radial-gradient(ellipse 60% 50% at 80% 50%,rgba(13,148,136,0.07),transparent);
@@ -978,17 +916,8 @@
     --tw-gradient-from: var(--color-teal-600);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
   }
-  .via-teal-950 {
-    --tw-gradient-via: var(--color-teal-950);
-    --tw-gradient-via-stops: var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-via) var(--tw-gradient-via-position), var(--tw-gradient-to) var(--tw-gradient-to-position);
-    --tw-gradient-stops: var(--tw-gradient-via-stops);
-  }
   .to-cyan-600 {
     --tw-gradient-to: var(--color-cyan-600);
-    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
-  }
-  .to-gray-900 {
-    --tw-gradient-to: var(--color-gray-900);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
   }
   .to-teal-950 {
@@ -1166,10 +1095,6 @@
     --tw-font-weight: var(--font-weight-extrabold);
     font-weight: var(--font-weight-extrabold);
   }
-  .font-light {
-    --tw-font-weight: var(--font-weight-light);
-    font-weight: var(--font-weight-light);
-  }
   .font-medium {
     --tw-font-weight: var(--font-weight-medium);
     font-weight: var(--font-weight-medium);
@@ -1256,9 +1181,6 @@
   }
   .text-teal-300 {
     color: var(--color-teal-300);
-  }
-  .text-teal-400 {
-    color: var(--color-teal-400);
   }
   .text-teal-500 {
     color: var(--color-teal-500);
@@ -1462,13 +1384,6 @@
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-primary-700);
-      }
-    }
-  }
-  .hover\:bg-primary-800 {
-    &:hover {
-      @media (hover: hover) {
-        background-color: var(--color-primary-800);
       }
     }
   }
@@ -1838,11 +1753,6 @@
       border-width: 0px;
     }
   }
-  .lg\:bg-transparent {
-    @media (width >= 64rem) {
-      background-color: transparent;
-    }
-  }
   .lg\:p-0 {
     @media (width >= 64rem) {
       padding: calc(var(--spacing) * 0);
@@ -1864,11 +1774,6 @@
       line-height: var(--tw-leading, var(--text-6xl--line-height));
     }
   }
-  .lg\:text-primary-600 {
-    @media (width >= 64rem) {
-      color: var(--color-primary-600);
-    }
-  }
   .lg\:hover\:bg-transparent {
     @media (width >= 64rem) {
       &:hover {
@@ -1878,11 +1783,11 @@
       }
     }
   }
-  .lg\:hover\:text-teal-700 {
+  .lg\:hover\:text-primary-600 {
     @media (width >= 64rem) {
       &:hover {
         @media (hover: hover) {
-          color: var(--color-teal-700);
+          color: var(--color-primary-600);
         }
       }
     }
@@ -1890,16 +1795,6 @@
   .xl\:p-0 {
     @media (width >= 80rem) {
       padding: calc(var(--spacing) * 0);
-    }
-  }
-  .dark\:block {
-    @media (prefers-color-scheme: dark) {
-      display: block;
-    }
-  }
-  .dark\:hidden {
-    @media (prefers-color-scheme: dark) {
-      display: none;
     }
   }
   .dark\:border {
@@ -2002,6 +1897,15 @@
       &:hover {
         @media (hover: hover) {
           background-color: var(--color-primary-700);
+        }
+      }
+    }
+  }
+  .dark\:hover\:text-gray-200 {
+    @media (prefers-color-scheme: dark) {
+      &:hover {
+        @media (hover: hover) {
+          color: var(--color-gray-200);
         }
       }
     }
