@@ -72,7 +72,7 @@ def secretario(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Cuenta creada correctamente 🎉")
-            return redirect('accounts:login')
+            return redirect('accounts:secretario')
     else:
         form = CrearSecretarioForm()
 
