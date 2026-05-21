@@ -30,7 +30,7 @@
           </div>
         {% endif %}
 
-        <form method="post" novalidate>
+        <form method="post" novalidate id="registro-form">
           {% csrf_token %}
 
           <div class="flex flex-col gap-6">
@@ -223,7 +223,9 @@
 
             <!-- ── Submit ── -->
             <button
+              id="submit-btn"
               type="submit"
+              disabled
               class="w-full py-3 px-5 text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 active:scale-[.98] focus:outline-none focus:ring-4 focus:ring-primary-300 rounded-xl shadow-md shadow-primary-900/20 transition-all duration-150 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
               Registrarse
             </button>
@@ -252,7 +254,7 @@
 </style>
 
 <script>
-  /* ── Mostrar / ocultar contraseña ── */
+/* ── Mostrar / ocultar contraseña ── */
 function togglePassword(inputId, btn) {
   const input = document.getElementById(inputId);
   const isHidden = input.type === 'password';
@@ -264,6 +266,44 @@ function togglePassword(inputId, btn) {
     svg.style.opacity = isHidden ? '0.5' : '1';
   }
 }
+
+/* ── Hablitar / Deshablitar boton de "Registrarse" ── */
+(function () {
+  const form = document.getElementById('registro-form');
+  const btn = document.getElementById('submit-btn');
+  const inputs = form.querySelectorAll('input[name]');
+
+  function validarFormulario() {
+
+    // Todos completos
+    const todosCompletos = Array.from(inputs).every(input => {
+
+      // Ignorar submit/buttons
+      if (input.type === 'submit' || input.type === 'button') {
+        return true;
+      }
+      return input.value.trim() !== '';
+    });
+
+    // Resultado
+    btn.disabled = !todosCompletos;
+
+    // Estilos
+    if (todosCompletos) {
+      btn.style.opacity = '1';
+      btn.style.cursor = 'pointer';
+    } else {
+      btn.style.opacity = '0.6';
+      btn.style.cursor = 'not-allowed';
+    }
+  }
+
+  // Eventos
+  inputs.forEach(input => { input.addEventListener('input', validarFormulario); });
+
+  // Inicial
+  validarFormulario();
+})();
 </script>
 
 {% endblock content %}
