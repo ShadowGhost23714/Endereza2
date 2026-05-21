@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'apps.accounts',
     'apps.payments',
     'apps.classes',
+    "apps.turnos_view",
     'config',
 ]
 

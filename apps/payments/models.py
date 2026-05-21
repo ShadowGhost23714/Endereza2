@@ -7,8 +7,7 @@ class Pago(models.Model):
 
     class MetodoPago(models.TextChoices):
         EFECTIVO      = "efectivo",      "Efectivo"
-        TARJETA       = "tarjeta",       "Tarjeta"
-        TRANSFERENCIA = "transferencia", "Transferencia"
+        MERCADO_PAGO       = "mercado_pago",       "Mercado Pago    "
 
     reserva        = models.OneToOneField(
         Reserva,

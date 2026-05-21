@@ -19,4 +19,7 @@ urlpatterns = [
     
     # payments/urls.py
     path("pagos/", include("apps.payments.urls")),
+
+    # turnos_view/urls.py
+    path("agenda/", include("apps.turnos_view.urls")),
 ]

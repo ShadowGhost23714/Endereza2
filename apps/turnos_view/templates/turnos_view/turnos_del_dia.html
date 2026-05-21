@@ -1,0 +1,461 @@
+{% extends "_base.html" %}
+{% block content %}
+<style>
+  :root {
+    --azul:    #1a6fbf;
+    --azul-os: #145a9e;
+    --gris-bg: #f0f4f8;
+    --borde:   #d0d9e4;
+    --texto:   #2c3e50;
+    --verde:   #27ae60;
+    --rojo:    #e74c3c;
+    --amarillo:#f39c12;
+  }
+
+  .td-wrapper  { display: flex; gap: 24px; padding: 24px; min-height: 80vh; }
+  .td-lista    { flex: 1; }
+  .td-sidebar  { width: 260px; flex-shrink: 0; }
+
+  /* ── Sidebar ── */
+  .sidebar-card {
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    overflow: hidden;
+    position: sticky;
+    top: 20px;
+  }
+  .sidebar-card .sb-header {
+    background: var(--azul);
+    color: white;
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sidebar-card .sb-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .sb-body label { font-size: 13px; font-weight: 600; color: var(--texto); margin-bottom: 4px; display: block; }
+  .sb-body select,
+  .sb-body input[type=date] {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--texto);
+  }
+  .btn-filtrar {
+    background: var(--azul);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: background .2s;
+  }
+  .btn-filtrar:hover { background: var(--azul-os); }
+
+  /* ── Header lista ── */
+  .lista-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .lista-header h2 { font-size: 20px; color: var(--texto); margin: 0; }
+  .badge-total {
+    background: var(--azul);
+    color: white;
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* ── Tarjeta paciente ── */
+  .paciente-card {
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: box-shadow .2s;
+  }
+  .paciente-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.08); }
+  .pc-avatar {
+    width: 44px; height: 44px;
+    background: var(--gris-bg);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .pc-info { flex: 1; }
+  .pc-nombre  { font-weight: 600; font-size: 15px; color: var(--texto); }
+  .pc-detalle { font-size: 12px; color: #7f8c8d; margin-top: 2px; }
+  .pc-acciones { display: flex; gap: 8px; flex-shrink: 0; }
+
+  .btn-cobrar {
+    background: var(--azul);
+    color: white;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .btn-cobrar:hover { background: var(--azul-os); }
+  .btn-cancelar {
+    background: white;
+    color: var(--rojo);
+    border: 1px solid var(--rojo);
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-cancelar:hover { background: var(--rojo); color: white; }
+
+  .estado-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .estado-reservado { background: #eaf4ff; color: var(--azul); }
+  .estado-pago      { background: #eafaf1; color: var(--verde); }
+
+  /* ── Vacío ── */
+  .lista-vacia { text-align: center; padding: 60px 20px; color: #95a5a6; }
+  .lista-vacia .ico { font-size: 48px; margin-bottom: 12px; }
+
+  /* ── Botones método de pago ── */
+  .btn-metodo {
+    flex: 1;
+    padding: 28px 16px;
+    border: 2px solid var(--borde);
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--texto);
+    transition: all .2s;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 110px;
+  }
+  .btn-metodo:hover     { border-color: var(--azul); background: #eaf4ff; }
+  .btn-metodo.btn-mp:hover { border-color: #009ee3; background: #e8f7fd; }
+  .btn-metodo.seleccionado { border-color: var(--azul); background: #eaf4ff; }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.6);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-box {
+    background: white;
+    border-radius: 12px;
+    width: 420px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.3);
+    animation: slideUp .25s ease;
+    position: relative;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .modal-header {
+    background: var(--azul);
+    color: white;
+    padding: 16px 20px;
+    font-weight: 700;
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-header button {
+    background: none; border: none; color: white;
+    font-size: 20px; cursor: pointer; line-height: 1;
+  }
+  .modal-body { padding: 24px; }
+  .modal-footer { padding: 0 24px 20px; display: flex; gap: 10px; justify-content: flex-end; }
+  .btn-confirmar {
+    background: var(--verde); color: white; border: none;
+    padding: 10px 20px; border-radius: 6px; font-weight: 600;
+    font-size: 14px; cursor: pointer;
+  }
+  .btn-cancelar-modal {
+    background: white; color: #7f8c8d; border: 1px solid var(--borde);
+    padding: 10px 20px; border-radius: 6px; font-weight: 600;
+    font-size: 14px; cursor: pointer;
+  }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed; bottom: 30px; right: 30px;
+    padding: 14px 20px; border-radius: 8px;
+    color: white; font-weight: 600; font-size: 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.15);
+    z-index: 99999; display: none;
+  }
+  .toast.ok    { background: var(--verde); }
+  .toast.error { background: var(--rojo); }
+</style>
+
+<div class="td-wrapper">
+
+  {# ── Lista de pacientes ── #}
+  <div class="td-lista">
+    <div class="lista-header">
+      <h2>Pacientes agendados</h2>
+      <span class="badge-total" id="badge-total">0 turnos</span>
+    </div>
+    <div id="lista-reservas"></div>
+  </div>
+
+  {# ── Sidebar filtros ── #}
+  <div class="td-sidebar">
+    <div class="sidebar-card">
+      <div class="sb-header">🔍 Filtrar por</div>
+      <div class="sb-body">
+        <div>
+          <label>Fecha</label>
+          <input type="date" id="filtro-fecha" value="{{ fecha_default }}">
+        </div>
+        <div>
+          <label>Tipo de clase</label>
+          <select id="filtro-actividad">
+            {% for val, label in actividades %}
+              <option value="{{ val }}" {% if val == actividad_default %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label>Horario</label>
+          <select id="filtro-hora">
+            <option value="">— Todos los horarios —</option>
+            {% for hora in horas %}
+              <option value="{{ hora }}">{{ hora }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button class="btn-filtrar" onclick="filtrar()">Mostrar turnos</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{# ── Modal cobrar ── #}
+<div class="modal-overlay" id="modal-cobrar">
+  <div class="modal-box">
+    <div class="modal-header">
+      💳 Registrar pago
+      <button onclick="cerrarModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p id="modal-nombre" style="font-weight:600; margin-bottom:20px; color:var(--texto);"></p>
+
+      {# ── Paso 1: elegir método ── #}
+      <div id="paso-metodo">
+        <p style="font-size:13px; color:#7f8c8d; margin-bottom:16px;">Seleccioná el método de pago:</p>
+        <div style="display:flex; gap:12px;">
+          <button class="btn-metodo" onclick="elegirEfectivo(event)">
+            <span style="font-size:36px;">💵</span>
+            Efectivo
+          </button>
+          <button class="btn-metodo btn-mp" onclick="elegirMercadoPago()">
+            <span style="font-size:36px;">💳</span>
+            Mercado Pago
+          </button>
+        </div>
+      </div>
+
+      {# ── Paso 2: simulación Mercado Pago ── #}
+      <div id="paso-mp" style="display:none; text-align:center; padding:10px 0;">
+        <div id="mp-procesando">
+          <div style="font-size:40px; margin-bottom:12px;">⏳</div>
+          <p style="font-weight:600; color:var(--texto);">Conectando con Mercado Pago...</p>
+          <p style="font-size:13px; color:#7f8c8d;">Simulando proceso de pago</p>
+        </div>
+        <div id="mp-exitoso" style="display:none;">
+          <div style="font-size:40px; margin-bottom:12px;">✅</div>
+          <p style="font-weight:600; color:var(--verde);">¡Pago aprobado!</p>
+          <p style="font-size:13px; color:#7f8c8d;">El pago fue procesado exitosamente</p>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer" id="modal-footer">
+      <button class="btn-cancelar-modal" onclick="cerrarModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+{# ── Toast notificación ── #}
+<div class="toast" id="toast"></div>
+
+<script>
+  const CSRF         = "{{ csrf_token }}";
+  const URL_FILTRAR  = "{% url 'payments:api_filtrar' %}";
+  const URL_COBRAR   = "{% url 'payments:api_cobrar' %}";
+  const URL_CANCELAR = "{% url 'payments:api_cancelar' %}";
+  let reservaActivaId = null;
+
+  document.addEventListener("DOMContentLoaded", () => filtrar());
+
+  async function filtrar() {
+    const fecha     = document.getElementById("filtro-fecha").value;
+    const actividad = document.getElementById("filtro-actividad").value;
+    const hora      = document.getElementById("filtro-hora").value;
+
+    const fd = new FormData();
+    fd.append("fecha",               fecha);
+    fd.append("actividad",           actividad);
+    fd.append("hora",                hora);
+    fd.append("csrfmiddlewaretoken", CSRF);
+
+    const res  = await fetch(URL_FILTRAR, { method: "POST", body: fd });
+    const data = await res.json();
+    renderLista(data.reservas);
+  }
+
+  function renderLista(reservas) {
+    const cont  = document.getElementById("lista-reservas");
+    const badge = document.getElementById("badge-total");
+    badge.textContent = reservas.length + (reservas.length === 1 ? " turno" : " turnos");
+
+    if (!reservas.length) {
+      cont.innerHTML = '<div class="lista-vacia"><div class="ico">📋</div><p>No se encontraron turnos reservados</p></div>';
+      return;
+    }
+
+    cont.innerHTML = reservas.map(function(r) {
+      var acciones = r.ya_pagado
+        ? '<span class="estado-badge estado-pago" style="padding:7px 14px;">✓ Pagado</span>'
+        : '<button class="btn-cobrar" onclick="abrirModal(' + r.id + ', \'' + r.nombre + '\')">Cobrar</button>'
+          + '<button class="btn-cancelar" onclick="cancelarTurno(' + r.id + ')">Cancelar</button>';
+
+      return '<div class="paciente-card" id="card-' + r.id + '">'
+        + '<div class="pc-avatar">👤</div>'
+        + '<div class="pc-info">'
+        + '<div class="pc-nombre">' + r.nombre + '</div>'
+        + '<div class="pc-detalle">DNI: ' + r.dni + ' &nbsp;•&nbsp; ' + r.hora
+        + ' &nbsp;&nbsp;<span class="estado-badge estado-' + r.estado + '">' + r.estado + '</span></div>'
+        + '</div>'
+        + '<div class="pc-acciones">' + acciones + '</div>'
+        + '</div>';
+    }).join("");
+  }
+
+  function abrirModal(id, nombre) {
+    reservaActivaId = id;
+    document.getElementById("modal-nombre").textContent = "Paciente: " + nombre;
+    document.getElementById("paso-metodo").style.display = "block";
+    document.getElementById("paso-mp").style.display = "none";
+    document.getElementById("mp-procesando").style.display = "block";
+    document.getElementById("mp-exitoso").style.display = "none";
+    document.getElementById("modal-footer").innerHTML =
+      '<button class="btn-cancelar-modal" onclick="cerrarModal()">Cancelar</button>';
+    document.getElementById("modal-cobrar").classList.add("active");
+  }
+
+  function cerrarModal() {
+    document.getElementById("modal-cobrar").classList.remove("active");
+    reservaActivaId = null;
+  }
+
+  function elegirEfectivo(event) {
+    document.querySelectorAll(".btn-metodo").forEach(b => b.classList.remove("seleccionado"));
+    event.currentTarget.classList.add("seleccionado");
+    document.getElementById("modal-footer").innerHTML =
+      '<button class="btn-cancelar-modal" onclick="cerrarModal()">Cancelar</button>'
+      + '<button class="btn-confirmar" onclick="confirmarPago(\'efectivo\')">Confirmar pago</button>';
+  }
+
+  function elegirMercadoPago() {
+    document.getElementById("paso-metodo").style.display = "none";
+    document.getElementById("paso-mp").style.display = "block";
+    document.getElementById("modal-footer").innerHTML = "";
+
+    setTimeout(function() {
+      document.getElementById("mp-procesando").style.display = "none";
+      document.getElementById("mp-exitoso").style.display = "block";
+      document.getElementById("modal-footer").innerHTML =
+        '<button class="btn-confirmar" onclick="confirmarPago(\'mercado_pago\')">Confirmar</button>';
+    }, 2500);
+  }
+
+  async function confirmarPago(metodo) {
+    const fd = new FormData();
+    fd.append("reserva_id",          reservaActivaId);
+    fd.append("metodo_pago",         metodo);
+    fd.append("csrfmiddlewaretoken", CSRF);
+
+    const res  = await fetch(URL_COBRAR, { method: "POST", body: fd });
+    const data = await res.json();
+    cerrarModal();
+
+    if (data.ok) {
+      mostrarToast(data.mensaje, "ok");
+      filtrar();
+    } else {
+      mostrarToast(data.error, "error");
+    }
+  }
+
+  async function cancelarTurno(id) {
+    if (!confirm("¿Confirmar cancelación del turno?")) return;
+
+    const fd = new FormData();
+    fd.append("reserva_id",          id);
+    fd.append("csrfmiddlewaretoken", CSRF);
+
+    const res  = await fetch(URL_CANCELAR, { method: "POST", body: fd });
+    const data = await res.json();
+
+    if (data.ok) {
+      mostrarToast(data.mensaje, "ok");
+      filtrar();
+    } else {
+      mostrarToast(data.error, "error");
+    }
+  }
+
+  function mostrarToast(msg, tipo) {
+    const t = document.getElementById("toast");
+    t.textContent   = msg;
+    t.className     = "toast " + tipo;
+    t.style.display = "block";
+    setTimeout(() => { t.style.display = "none"; }, 3500);
+  }
+</script>
+{% endblock %}
