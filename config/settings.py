@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'compressor',
     'apps.core',
     'apps.accounts',
+    'apps.payments',
+    'apps.classes',
+    "apps.turnos_view",
     'config',
 ]
 
@@ -133,6 +136,7 @@ STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
 # =========================
 # AUTH CONFIGURATION
 # =========================
+AUTH_USER_MODEL = 'accounts.Usuario'
 
 AUTH_USER_MODEL = 'accounts.Usuario'
 

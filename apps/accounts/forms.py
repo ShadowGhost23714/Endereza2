@@ -268,7 +268,6 @@ class PerfilForm(forms.ModelForm):
         # --------------------------------------------------
 
         elif usuario.es_secretario:
-
             self.fields.pop("fecha_nacimiento")
 
 class CrearSecretarioForm(UserCreationForm):
