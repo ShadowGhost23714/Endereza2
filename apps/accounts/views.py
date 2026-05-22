@@ -28,10 +28,16 @@ class CustomLoginView(LoginView):
         if request.user.is_authenticated:
             return redirect("core:home")
         return super().dispatch(request, *args, **kwargs)
-    
+
     def form_valid(self, form):
         messages.success(self.request, "Bienvenido 👋")
         return super().form_valid(form)
+
+    def get_success_url(self):
+        user = self.request.user
+        if user.es_secretario:
+            return reverse_lazy("turnos_view:turnos_del_dia")
+        return reverse_lazy("core:home")
 
 
 # ───── REGISTER ─────

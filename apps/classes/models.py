@@ -77,8 +77,6 @@ class TurnoProfesional(models.Model):
 
 
 class Reserva(models.Model):
-    """A patient's booking for a specific Turno."""
-
     class Estado(models.TextChoices):
         RESERVADO  = "reservado",  "Reservado"
         CANCELADO  = "cancelado",  "Cancelado"
@@ -90,17 +88,21 @@ class Reserva(models.Model):
         related_name="reservas",
         verbose_name="Paciente",
     )
-    id_turno   = models.ForeignKey(
+    id_turno = models.ForeignKey(
         Turno,
         on_delete=models.CASCADE,
         related_name="reservas",
         verbose_name="Turno",
     )
-    estado     = models.CharField(
+    estado = models.CharField(
         max_length=10,
         choices=Estado.choices,
         default=Estado.RESERVADO,
         verbose_name="Estado",
+    )
+    recepcionado = models.BooleanField(
+        default=False,
+        verbose_name="Recepcionado",
     )
 
     class Meta:

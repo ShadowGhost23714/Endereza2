@@ -129,6 +129,19 @@
   }
   .btn-cancelar:hover { background: var(--rojo); color: white; }
 
+  .btn-recepcionar {
+    background: var(--verde);
+    color: white;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .btn-recepcionar:hover { background: var(--verde-os); }
+
   .estado-badge {
     display: inline-block;
     padding: 3px 10px;
@@ -331,6 +344,8 @@
   const URL_FILTRAR  = "{% url 'payments:api_filtrar' %}";
   const URL_COBRAR   = "{% url 'payments:api_cobrar' %}";
   const URL_CANCELAR = "{% url 'payments:api_cancelar' %}";
+  const URL_RECEPCIONAR = "{% url 'payments:api_recepcionar' %}";
+  const URL_CANCELAR_RECEPCION = "{% url 'payments:api_cancelar_recepcion' %}";
   let reservaActivaId = null;
 
   document.addEventListener("DOMContentLoaded", () => filtrar());
@@ -361,16 +376,23 @@
       return;
     }
 
-    cont.innerHTML = reservas.map(function(r) {
-      var acciones;
-      if (r.ya_pagado) {
-          acciones = '<span class="estado-badge estado-pago" style="padding:7px 14px;">✓ Atendido</span>';
-      } else if (r.es_pasado) {
-          acciones = '<span class="estado-badge" style="padding:7px 14px; background:#f3f4f6; color:#6b7280;">✗ Ausente</span>';
-      } else {
-          acciones = '<button class="btn-cobrar" onclick="abrirModal(' + r.id + ', \'' + r.nombre + '\')">Cobrar</button>'
-                  + '<button class="btn-cancelar" onclick="cancelarTurno(' + r.id + ')">Cancelar</button>';
-}
+  cont.innerHTML = reservas.map(function(r) {
+  var acciones;
+  if (r.ya_pagado && r.recepcionado && r.es_pasado) {
+    acciones = '<span class="estado-badge estado-pago" style="padding:7px 14px;">✓ Recepcionado</span>';
+  } else if (r.ya_pagado && r.recepcionado) {
+    acciones = '<span class="estado-badge estado-pago" style="padding:7px 14px;">✓ Recepcionado</span>'
+             + '<button class="btn-cancelar" onclick="cancelarRecepcion(' + r.id + ')" style="margin-left:6px;">Cancelar recepción</button>';
+  } else if (r.ya_pagado && !r.recepcionado && r.es_pasado) {
+    acciones = '<span class="estado-badge" style="padding:7px 14px; background:#f3f4f6; color:#6b7280;">✗ Ausente</span>';
+  } else if (r.ya_pagado && !r.recepcionado) {
+    acciones = '<button class="btn-recepcionar" onclick="recepcionarTurno(' + r.id + ')">Recepcionar</button>';
+  } else if (r.es_pasado) {
+    acciones = '<span class="estado-badge" style="padding:7px 14px; background:#f3f4f6; color:#6b7280;">✗ Ausente</span>';
+  } else {
+    acciones = '<button class="btn-cobrar" onclick="abrirModal(' + r.id + ', \'' + r.nombre + '\')">Cobrar</button>'
+             + '<button class="btn-cancelar" onclick="cancelarTurno(' + r.id + ')">Cancelar</button>';
+  }
 
       return '<div class="paciente-card" id="card-' + r.id + '">'
         + '<div class="pc-avatar">👤</div>'
@@ -465,5 +487,41 @@
     t.style.display = "block";
     setTimeout(() => { t.style.display = "none"; }, 3500);
   }
+
+  async function recepcionarTurno(id) {
+    if (!confirm("¿Confirmar recepción del paciente?")) return;
+
+    const fd = new FormData();
+    fd.append("reserva_id",          id);
+    fd.append("csrfmiddlewaretoken", CSRF);
+
+    const res  = await fetch(URL_RECEPCIONAR, { method: "POST", body: fd });
+    const data = await res.json();
+
+    if (data.ok) {
+        mostrarToast(data.mensaje, "ok");
+        filtrar();
+    } else {
+        mostrarToast(data.error, "error");
+    }
+  }
+
+  async function cancelarRecepcion(id) {
+    if (!confirm("¿Cancelar la recepción del paciente?")) return;
+
+    const fd = new FormData();
+    fd.append("reserva_id",          id);
+    fd.append("csrfmiddlewaretoken", CSRF);
+
+    const res  = await fetch(URL_CANCELAR_RECEPCION, { method: "POST", body: fd });
+    const data = await res.json();
+
+    if (data.ok) {
+        mostrarToast(data.mensaje, "ok");
+        filtrar();
+    } else {
+        mostrarToast(data.error, "error");
+    }
+}
 </script>
 {% endblock %}

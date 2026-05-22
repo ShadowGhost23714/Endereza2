@@ -12,11 +12,12 @@ from .models import Pago
 from django.utils import timezone
 
 
-class StaffRequiredMixin(UserPassesTestMixin):
+class SecretarioRequiredMixin(UserPassesTestMixin):
     def test_func(self):
-        return self.request.user.is_staff
+        user = self.request.user
+        return user.is_staff or user.es_secretario
         
-class FiltrarTurnosView(LoginRequiredMixin, StaffRequiredMixin, View):
+class FiltrarTurnosView(LoginRequiredMixin, SecretarioRequiredMixin, View):
     def post(self, request):
         fecha_str = request.POST.get("fecha")
         actividad = request.POST.get("actividad")
@@ -54,18 +55,19 @@ class FiltrarTurnosView(LoginRequiredMixin, StaffRequiredMixin, View):
         for r in reservas:
             es_pasado = r.id_turno.fecha < timezone.localdate()
             data.append({
-                "id":        r.pk,
-                "nombre":    r.id_usuario.get_full_name() or r.id_usuario.username,
-                "dni":       getattr(r.id_usuario, "dni", "—"),
-                "estado":    r.estado,
-                "hora":      r.id_turno.hora_inicio.strftime("%H:%M"),
-                "ya_pagado": r.estado == Reserva.Estado.PAGO,
-                "es_pasado": es_pasado,
+                "id":           r.pk,
+                "nombre":       r.id_usuario.get_full_name() or r.id_usuario.username,
+                "dni":          getattr(r.id_usuario, "dni", "—"),
+                "estado":       r.estado,
+                "hora":         r.id_turno.hora_inicio.strftime("%H:%M"),
+                "ya_pagado":    r.estado == Reserva.Estado.PAGO,
+                "recepcionado": r.recepcionado,
+                "es_pasado":    r.id_turno.fecha < timezone.localdate(),
             })
         return JsonResponse({"reservas": data})
 
 
-class CobrarTurnoView(LoginRequiredMixin, StaffRequiredMixin, View):
+class CobrarTurnoView(LoginRequiredMixin, SecretarioRequiredMixin, View):
     def post(self, request):
         reserva_id  = request.POST.get("reserva_id")
         metodo_pago = request.POST.get("metodo_pago")
@@ -82,11 +84,12 @@ class CobrarTurnoView(LoginRequiredMixin, StaffRequiredMixin, View):
                 registrado_por=request.user,
             )
             reserva.estado = Reserva.Estado.PAGO
-            reserva.save(update_fields=["estado"])
+            reserva.recepcionado = True
+            reserva.save(update_fields=["estado", "recepcionado"])
         return JsonResponse({"ok": True, "mensaje": "Pago registrado correctamente."})
 
 
-class CancelarTurnoView(LoginRequiredMixin, StaffRequiredMixin, View):
+class CancelarTurnoView(LoginRequiredMixin, SecretarioRequiredMixin, View):
     def post(self, request):
         reserva_id = request.POST.get("reserva_id")
         try:
@@ -96,4 +99,28 @@ class CancelarTurnoView(LoginRequiredMixin, StaffRequiredMixin, View):
         with transaction.atomic():
             reserva.estado = Reserva.Estado.CANCELADO
             reserva.save(update_fields=["estado"])
-        return JsonResponse({"ok": True, "mensaje": "Turno cancelado correctamente."})                
+        return JsonResponse({"ok": True, "mensaje": "Turno cancelado correctamente."})
+    
+class RecepcionarTurnoView(LoginRequiredMixin, SecretarioRequiredMixin, View):
+    def post(self, request):
+        reserva_id = request.POST.get("reserva_id")
+        try:
+            reserva = Reserva.objects.get(pk=reserva_id, estado=Reserva.Estado.PAGO)
+        except Reserva.DoesNotExist:
+            return JsonResponse({"ok": False, "error": "Reserva no encontrada o no está paga."})
+        with transaction.atomic():
+            reserva.recepcionado = True
+            reserva.save(update_fields=["recepcionado"])
+        return JsonResponse({"ok": True, "mensaje": "Paciente recepcionado correctamente."})
+
+class CancelarRecepcionView(LoginRequiredMixin, SecretarioRequiredMixin, View):
+    def post(self, request):
+        reserva_id = request.POST.get("reserva_id")
+        try:
+            reserva = Reserva.objects.get(pk=reserva_id, estado=Reserva.Estado.PAGO, recepcionado=True)
+        except Reserva.DoesNotExist:
+            return JsonResponse({"ok": False, "error": "Reserva no encontrada o no está recepcionada."})
+        with transaction.atomic():
+            reserva.recepcionado = False
+            reserva.save(update_fields=["recepcionado"])
+        return JsonResponse({"ok": True, "mensaje": "Recepción cancelada correctamente."})                
