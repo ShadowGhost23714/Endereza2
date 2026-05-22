@@ -364,7 +364,7 @@
     cont.innerHTML = reservas.map(function(r) {
       var acciones;
       if (r.ya_pagado) {
-          acciones = '<span class="estado-badge estado-pago" style="padding:7px 14px;">✓ Pagado</span>';
+          acciones = '<span class="estado-badge estado-pago" style="padding:7px 14px;">✓ Atendido</span>';
       } else if (r.es_pasado) {
           acciones = '<span class="estado-badge" style="padding:7px 14px; background:#f3f4f6; color:#6b7280;">✗ Ausente</span>';
       } else {
