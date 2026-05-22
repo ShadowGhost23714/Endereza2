@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib import messages
 from .forms import RegistroForm, LoginForm, CrearSecretarioForm
-from django.contrib.auth.views import LoginView, PasswordChangeView
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.urls import reverse_lazy
 
 
@@ -30,8 +30,16 @@ class CustomLoginView(LoginView):
         return super().dispatch(request, *args, **kwargs)
     
     def form_valid(self, form):
-        messages.success(self.request, "Bienvenido 👋")
+        messages.success(self.request, "Sesión iniciada correctamente 😉")
         return super().form_valid(form)
+    
+
+# ───── LOGOUT ─────
+class CustomLogoutView(LogoutView):
+
+    def post(self, request, *args, **kwargs):
+        messages.success(request, "Sesión cerrada correctamente 👋")
+        return super().post(request, *args, **kwargs)
 
 
 # ───── REGISTER ─────
