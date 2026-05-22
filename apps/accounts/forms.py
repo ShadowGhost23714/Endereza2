@@ -28,7 +28,7 @@ class RegistroForm(UserCreationForm):
             }
         ),
         error_messages={
-            "invalid": "Correo electrónico inválido."
+            "invalid": "El correo electrónico debe incluir '@' y un dominio, por ejemplo: usuario@gmail.com"
         }
     )
 
@@ -101,11 +101,8 @@ class RegistroForm(UserCreationForm):
         if Usuario.objects.filter(dni=dni).exists():
             raise forms.ValidationError("Ya existe una cuenta con este DNI.")
         
-        if not dni.isdigit():
-            raise forms.ValidationError("El DNI solo puede contener números.")
-
         if len(dni) < 7 or len(dni) > 8:
-            raise forms.ValidationError("Ingrese un DNI válido.")
+            raise forms.ValidationError("El DNI debe tener entre 7 y 8 dígitos.")
         
         return dni
     
@@ -120,10 +117,18 @@ class RegistroForm(UserCreationForm):
     def clean_fecha_nacimiento(self):
         fecha = self.cleaned_data["fecha_nacimiento"]
 
-        if fecha.year < 1900 or fecha > date.today():
-            raise forms.ValidationError("Fecha inválida.")
-        
         hoy = date.today()
+
+        if fecha > hoy:
+            raise forms.ValidationError(
+                "La fecha de nacimiento no puede ser futura."
+            )
+
+        if fecha.year < 1900:
+            raise forms.ValidationError(
+                "La fecha ingresada es demasiado antigua."
+            )
+        
         edad = (
             hoy.year
             - fecha.year
@@ -168,7 +173,7 @@ class LoginForm(AuthenticationForm):
             }
         ),
         error_messages={
-        "invalid": "Ingrese un correo electrónico válido."
+            "invalid": "El correo electrónico debe incluir '@' y un dominio, por ejemplo: usuario@gmail.com"
         }
     )
 
@@ -297,6 +302,9 @@ class CrearSecretarioForm(UserCreationForm):
     email = forms.EmailField(
         label="Correo electrónico",
         widget=forms.EmailInput(attrs={"placeholder": "secretario@email.com"}),
+        error_messages={
+            "invalid": "El correo electrónico debe incluir '@' y un dominio, por ejemplo: usuario@gmail.com"
+        }
     )
 
     dni = forms.CharField(
@@ -327,9 +335,6 @@ class CrearSecretarioForm(UserCreationForm):
 
     def clean_dni(self):
         dni = self.cleaned_data.get("dni", "").strip()
-
-        if not dni.isdigit():
-            raise ValidationError("El DNI solo puede contener números.")
 
         if not (7 <= len(dni) <= 8):
             raise ValidationError("El DNI debe tener entre 7 y 8 dígitos.")
