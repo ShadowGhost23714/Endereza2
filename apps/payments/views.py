@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from datetime import date as date_type
 from apps.classes.models import Reserva, Turno
 from .models import Pago
+from django.utils import timezone
 
 
 class StaffRequiredMixin(UserPassesTestMixin):
@@ -51,6 +52,7 @@ class FiltrarTurnosView(LoginRequiredMixin, StaffRequiredMixin, View):
 
         data = []
         for r in reservas:
+            es_pasado = r.id_turno.fecha < timezone.localdate()
             data.append({
                 "id":        r.pk,
                 "nombre":    r.id_usuario.get_full_name() or r.id_usuario.username,
@@ -58,6 +60,7 @@ class FiltrarTurnosView(LoginRequiredMixin, StaffRequiredMixin, View):
                 "estado":    r.estado,
                 "hora":      r.id_turno.hora_inicio.strftime("%H:%M"),
                 "ya_pagado": r.estado == Reserva.Estado.PAGO,
+                "es_pasado": es_pasado,
             })
         return JsonResponse({"reservas": data})
 

@@ -2,14 +2,15 @@
 {% block content %}
 <style>
   :root {
-    --azul:    #1a6fbf;
-    --azul-os: #145a9e;
-    --gris-bg: #f0f4f8;
-    --borde:   #d0d9e4;
-    --texto:   #2c3e50;
-    --verde:   #27ae60;
-    --rojo:    #e74c3c;
-    --amarillo:#f39c12;
+    --primary:       oklch(48.0% 0.170 22);
+    --primary-os:    oklch(40.0% 0.160 22);
+    --primary-light: oklch(93.0% 0.030 22);
+    --gris-bg:       oklch(96.7% 0.003 264.542);
+    --borde:         oklch(92.8% 0.006 264.531);
+    --texto:         oklch(37.3% 0.034 259.733);
+    --verde:         oklch(60% 0.118 184.704);
+    --verde-os:      oklch(51.1% 0.096 186.391);
+    --rojo:          oklch(57.7% 0.245 27.325);
   }
 
   .td-wrapper  { display: flex; gap: 24px; padding: 24px; min-height: 80vh; }
@@ -26,7 +27,7 @@
     top: 20px;
   }
   .sidebar-card .sb-header {
-    background: var(--azul);
+    background: var(--primary);
     color: white;
     padding: 12px 16px;
     font-weight: 600;
@@ -45,9 +46,10 @@
     border-radius: 6px;
     font-size: 13px;
     color: var(--texto);
+    background: white;
   }
   .btn-filtrar {
-    background: var(--azul);
+    background: var(--primary);
     color: white;
     border: none;
     padding: 10px;
@@ -58,7 +60,7 @@
     width: 100%;
     transition: background .2s;
   }
-  .btn-filtrar:hover { background: var(--azul-os); }
+  .btn-filtrar:hover { background: var(--primary-os); }
 
   /* ── Header lista ── */
   .lista-header {
@@ -69,7 +71,7 @@
   }
   .lista-header h2 { font-size: 20px; color: var(--texto); margin: 0; }
   .badge-total {
-    background: var(--azul);
+    background: var(--primary);
     color: white;
     border-radius: 20px;
     padding: 3px 12px;
@@ -99,11 +101,11 @@
   }
   .pc-info { flex: 1; }
   .pc-nombre  { font-weight: 600; font-size: 15px; color: var(--texto); }
-  .pc-detalle { font-size: 12px; color: #7f8c8d; margin-top: 2px; }
+  .pc-detalle { font-size: 12px; color: #6b7280; margin-top: 2px; }
   .pc-acciones { display: flex; gap: 8px; flex-shrink: 0; }
 
   .btn-cobrar {
-    background: var(--azul);
+    background: var(--primary);
     color: white;
     border: none;
     padding: 7px 14px;
@@ -113,7 +115,7 @@
     cursor: pointer;
     transition: background .2s;
   }
-  .btn-cobrar:hover { background: var(--azul-os); }
+  .btn-cobrar:hover { background: var(--primary-os); }
   .btn-cancelar {
     background: white;
     color: var(--rojo);
@@ -136,11 +138,11 @@
     text-transform: uppercase;
     letter-spacing: .5px;
   }
-  .estado-reservado { background: #eaf4ff; color: var(--azul); }
-  .estado-pago      { background: #eafaf1; color: var(--verde); }
+  .estado-reservado { background: var(--primary-light); color: var(--primary); }
+  .estado-pago      { background: oklch(95.3% 0.051 180.801); color: var(--verde); }
 
   /* ── Vacío ── */
-  .lista-vacia { text-align: center; padding: 60px 20px; color: #95a5a6; }
+  .lista-vacia { text-align: center; padding: 60px 20px; color: #9ca3af; }
   .lista-vacia .ico { font-size: 48px; margin-bottom: 12px; }
 
   /* ── Botones método de pago ── */
@@ -163,9 +165,9 @@
     gap: 10px;
     min-height: 110px;
   }
-  .btn-metodo:hover     { border-color: var(--azul); background: #eaf4ff; }
-  .btn-metodo.btn-mp:hover { border-color: #009ee3; background: #e8f7fd; }
-  .btn-metodo.seleccionado { border-color: var(--azul); background: #eaf4ff; }
+  .btn-metodo:hover        { border-color: var(--primary); background: var(--primary-light); }
+  .btn-metodo.btn-mp:hover { border-color: var(--primary); background: var(--primary-light); }
+  .btn-metodo.seleccionado { border-color: var(--primary); background: var(--primary-light); }
 
   /* ── Modal ── */
   .modal-overlay {
@@ -192,7 +194,7 @@
     to   { transform: translateY(0);    opacity: 1; }
   }
   .modal-header {
-    background: var(--azul);
+    background: var(--primary);
     color: white;
     padding: 16px 20px;
     font-weight: 700;
@@ -210,10 +212,11 @@
   .btn-confirmar {
     background: var(--verde); color: white; border: none;
     padding: 10px 20px; border-radius: 6px; font-weight: 600;
-    font-size: 14px; cursor: pointer;
+    font-size: 14px; cursor: pointer; transition: background .2s;
   }
+  .btn-confirmar:hover { background: var(--verde-os); }
   .btn-cancelar-modal {
-    background: white; color: #7f8c8d; border: 1px solid var(--borde);
+    background: white; color: #6b7280; border: 1px solid var(--borde);
     padding: 10px 20px; border-radius: 6px; font-weight: 600;
     font-size: 14px; cursor: pointer;
   }
@@ -286,7 +289,7 @@
 
       {# ── Paso 1: elegir método ── #}
       <div id="paso-metodo">
-        <p style="font-size:13px; color:#7f8c8d; margin-bottom:16px;">Seleccioná el método de pago:</p>
+        <p style="font-size:13px; color:#6b7280; margin-bottom:16px;">Seleccioná el método de pago:</p>
         <div style="display:flex; gap:12px;">
           <button class="btn-metodo" onclick="elegirEfectivo(event)">
             <span style="font-size:36px;">💵</span>
@@ -304,12 +307,12 @@
         <div id="mp-procesando">
           <div style="font-size:40px; margin-bottom:12px;">⏳</div>
           <p style="font-weight:600; color:var(--texto);">Conectando con Mercado Pago...</p>
-          <p style="font-size:13px; color:#7f8c8d;">Simulando proceso de pago</p>
+          <p style="font-size:13px; color:#6b7280;">Simulando proceso de pago</p>
         </div>
         <div id="mp-exitoso" style="display:none;">
           <div style="font-size:40px; margin-bottom:12px;">✅</div>
           <p style="font-weight:600; color:var(--verde);">¡Pago aprobado!</p>
-          <p style="font-size:13px; color:#7f8c8d;">El pago fue procesado exitosamente</p>
+          <p style="font-size:13px; color:#6b7280;">El pago fue procesado exitosamente</p>
         </div>
       </div>
 
@@ -359,10 +362,15 @@
     }
 
     cont.innerHTML = reservas.map(function(r) {
-      var acciones = r.ya_pagado
-        ? '<span class="estado-badge estado-pago" style="padding:7px 14px;">✓ Pagado</span>'
-        : '<button class="btn-cobrar" onclick="abrirModal(' + r.id + ', \'' + r.nombre + '\')">Cobrar</button>'
-          + '<button class="btn-cancelar" onclick="cancelarTurno(' + r.id + ')">Cancelar</button>';
+      var acciones;
+      if (r.ya_pagado) {
+          acciones = '<span class="estado-badge estado-pago" style="padding:7px 14px;">✓ Pagado</span>';
+      } else if (r.es_pasado) {
+          acciones = '<span class="estado-badge" style="padding:7px 14px; background:#f3f4f6; color:#6b7280;">✗ Ausente</span>';
+      } else {
+          acciones = '<button class="btn-cobrar" onclick="abrirModal(' + r.id + ', \'' + r.nombre + '\')">Cobrar</button>'
+                  + '<button class="btn-cancelar" onclick="cancelarTurno(' + r.id + ')">Cancelar</button>';
+}
 
       return '<div class="paciente-card" id="card-' + r.id + '">'
         + '<div class="pc-avatar">👤</div>'
