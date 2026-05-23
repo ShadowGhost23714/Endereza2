@@ -26,7 +26,7 @@ class TurnoCreateView(LoginRequiredMixin, SuperuserRequiredMixin, CreateView):
     model         = Turno
     form_class    = TurnoForm
     template_name = "classes/turno_create.html"
-    success_url   = reverse_lazy("turnos:turno_create")
+    success_url   = reverse_lazy("turnos:listar_clases")
 
     def form_valid(self, form):
         response = super().form_valid(form)

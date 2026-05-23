@@ -27,6 +27,10 @@ class Profesor(models.Model):
 
     def __str__(self):
         return f"{self.apellido}, {self.nombre} — {self.get_especialidad_display()}"
+    
+    def filtrar_especialidad(especialidad):
+        profesores = Profesor.objects.filter(especialidad=especialidad)
+        return profesores
 
     @property
     def nombre_completo(self):

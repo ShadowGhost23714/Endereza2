@@ -3,14 +3,16 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
+from apps.professor.models import Profesor
+
 User = get_user_model()
 
 
 class Turno(models.Model):
     class Actividad(models.TextChoices):
-        TREN_INFERIOR = "Tren inferior", "Tren inferior"
-        ZONA_MEDIA    = "Zona media",    "Zona media"
-        TREN_SUPERIOR = "Tren superior", "Tren superior"
+        TREN_INFERIOR = "tren_inferior", "Tren inferior"
+        ZONA_MEDIA    = "zona_media",    "Zona media"
+        TREN_SUPERIOR = "tren_superior", "Tren superior"
 
     fecha       = models.DateField(verbose_name="Fecha")
     hora_inicio = models.TimeField(verbose_name="Hora de inicio")
@@ -49,7 +51,7 @@ class Turno(models.Model):
 
 class TurnoProfesional(models.Model):
     id_turno    = models.ForeignKey(Turno, on_delete=models.CASCADE, related_name="turno_profesionales")
-    id_profesor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="turno_profesionales")
+    id_profesor = models.ForeignKey(Profesor, on_delete=models.CASCADE, related_name="turno_profesionales")
 
     class Meta:
         unique_together = ("id_turno", "id_profesor")
@@ -91,7 +93,19 @@ class Reserva(models.Model):
 class Sala(models.Model):
     numero = models.PositiveSmallIntegerField(unique=True)
     capacidad = models.PositiveIntegerField()
-
+    
+    class Meta:
+        verbose_name        = "Sala"
+        verbose_name_plural = "Salas"
+        ordering            = ["numero"]
+    
+    def get_capacidad(id: int) -> int:
+        try:
+            sala = Sala.objects.get(id=id)
+            return sala.capacidad
+        except Sala.DoesNotExist:
+            return 0  # O podrías lanzar una excepción personalizada aquí
+        
     def get_cantidad(self):
         return self.capacidad
 
