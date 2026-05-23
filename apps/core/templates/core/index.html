@@ -24,15 +24,12 @@
         En Endereza2 acompañamos tu recuperación con clases profesionales de rehabilitación para todas las edades, desde adolescentes hasta adultos mayores.
       </p>
       <div class="flex flex-wrap gap-3">
-        <a href="#horarios"
+        <a href="{% url 'turnos:listar_clases' %}"
           class="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold px-6 py-3 rounded-xl text-base transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(13,148,136,0.3)]">
           Ver clases disponibles
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
-        <a href="#actividades"
-          class="inline-flex items-center gap-2 bg-white border border-teal-400 text-teal-600 font-semibold px-6 py-3 rounded-xl text-base hover:bg-teal-50 transition-colors duration-200">
-          Nuestras actividades
-        </a>
+        
       </div>
       <p class="mt-5 text-sm text-gray-400 flex items-center gap-1.5">
         <svg class="w-4 h-4 text-teal-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
@@ -40,6 +37,11 @@
       </p>
     </div>
 
+    
+   
+            
+      <div class="border-t border-gray-100 px-7 py-4 text-center">
+        {% if not user.is_authenticated %} 
     <!-- Right: schedule card -->
     <div class="bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden">
       <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-7 py-5 text-white">
@@ -97,6 +99,7 @@
         </a>
       </div>
     </div>
+    {% endif %}
 
   </div>
 </section>
