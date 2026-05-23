@@ -118,6 +118,11 @@ class Usuario(AbstractUser):
         verbose_name="Tipo de usuario",
     )
 
+    tiene_abono_mensual = models.BooleanField(
+        default=False,
+        verbose_name="Tiene abono mensual",
+    )
+
     # ---------------------------------------------------------
     # META
     # ---------------------------------------------------------
@@ -137,15 +142,18 @@ class Usuario(AbstractUser):
         # CLIENTE
         # -----------------------------------------------------
 
+        if self.tipo == self.TipoUsuario.CLIENTE:
+            pass
 
         # -----------------------------------------------------
         # SECRETARIO
         # -----------------------------------------------------
 
-        if self.tipo == self.TipoUsuario.SECRETARIO:
+        elif self.tipo == self.TipoUsuario.SECRETARIO:
 
             # No guardamos fecha de nacimiento
             self.fecha_nacimiento = None
+            self.tiene_abono_mensual = False
 
         # -----------------------------------------------------
         # DUENO
@@ -156,6 +164,7 @@ class Usuario(AbstractUser):
             # No guardamos DNI ni fecha de nacimiento
             self.dni = None
             self.fecha_nacimiento = None
+            self.tiene_abono_mensual = False
 
     # ---------------------------------------------------------
     # SAVE
