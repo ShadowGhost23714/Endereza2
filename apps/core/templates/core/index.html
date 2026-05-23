@@ -38,57 +38,7 @@
     </div>
 
     
-    <!-- Right: image --><!-- Right: table -->
-      <div id="horarios" class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-        <table class="min-w-full border-collapse text-left">
-          <thead class="bg-gray-900 text-white/55 text-xs font-semibold uppercase tracking-widest">
-            <tr>
-              <th class="px-5 py-3">Horario</th>
-              <th class="px-5 py-3">Actividad</th>
-              <th class="px-5 py-3">Turno</th>
-              <th class="px-5 py-3">Lugares</th>
-              <th class="px-5 py-3">Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% if turnos %}
-              {% for turno in turnos %}
-                <tr class="border-b border-gray-100 hover:bg-teal-50 transition-colors duration-150">
-                  <td class="px-5 py-3 text-sm font-semibold text-gray-900">
-                    {{ turno.hora_inicio|time:"H:i" }} – {{ turno.hora_fin|time:"H:i" }}
-                  </td>
-                  <td class="px-5 py-3 text-sm text-gray-600">
-                    <div class="flex items-center gap-1.5">
-                      <span class="w-2 h-2 rounded-full bg-teal-600 inline-block"></span>
-                      {{ turno.actividad }}
-                    </div>
-                  </td>
-                  <td class="px-5 py-3 text-xs text-gray-400">{{ turno.fecha|date:"D d M" }}</td>
-                  <td class="px-5 py-3">
-                    <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full inline-flex items-center">
-                      {{ turno.cupos_disponibles }} lugares
-                    </span>
-                  </td>
-                  <td class="px-5 py-3">
-                      <form method="post" action="{% url 'turnos:reservar_clase' turno.pk %}">
-                        {% csrf_token %}
-                        <button type="submit"
-                            class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 text-sm">
-                            Reservar
-                        </button>
-                      </form>
-                  </td>
-                </tr>
-              {% endfor %}
-            {% else %}
-              <tr>
-                <td colspan="5" class="px-5 py-6 text-center text-gray-500">No hay clases disponibles por el momento.</td>
-              </tr>
-            {% endif %}
-          </tbody>
-        </table>
-      </div>
-      </div>
+   
             
       <div class="border-t border-gray-100 px-7 py-4 text-center">
         {% if not user.is_authenticated %} 
@@ -149,6 +99,7 @@
         </a>
       </div>
     </div>
+    {% endif %}
 
   </div>
 </section>
