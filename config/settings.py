@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'apps.core',
     'apps.accounts',
     'apps.professor',
+    'apps.payments',
+    'apps.classes',
+    "apps.turnos_view",
     'config',
 ]
 
@@ -108,9 +111,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-ar'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Argentina/Buenos_Aires'
 
 USE_I18N = True
 
@@ -134,6 +137,9 @@ STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
 # =========================
 # AUTH CONFIGURATION
 # =========================
+AUTH_USER_MODEL = 'accounts.Usuario'
+
+AUTH_USER_MODEL = 'accounts.Usuario'
 
 LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'core:home'
