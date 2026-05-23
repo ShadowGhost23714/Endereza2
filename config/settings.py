@@ -41,7 +41,10 @@ INSTALLED_APPS = [
     'compressor',
     'apps.core',
     'apps.accounts',
+    'apps.professor',
+    'apps.payments',
     'apps.classes',
+    "apps.turnos_view",
     'config',
 ]
 

@@ -10,10 +10,18 @@ urlpatterns = [
 
     # ACCOUNTS (login, register, profile, etc)
     path('accounts/', include('apps.accounts.urls')),  
+    
+    path('professor/', include('apps.professor.urls')),  
 
     # LOGOUT (opcional acá o dentro de accounts)
     path('logout/', LogoutView.as_view(), name='logout'),
 
     # project/urls.py
     path("turnos/", include("apps.classes.urls", namespace="turnos")),
+    
+    # payments/urls.py
+    path("pagos/", include("apps.payments.urls")),
+
+    # turnos_view/urls.py
+    path("agenda/", include("apps.turnos_view.urls")),
 ]

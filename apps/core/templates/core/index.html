@@ -147,7 +147,6 @@
           class="inline-block bg-teal-600 hover:bg-teal-700 text-white font-semibold text-sm px-5 py-2 rounded-lg transition-colors duration-200">
           Registrarse gratis
         </a>
-        {% endif %}
       </div>
     </div>
 
@@ -345,7 +344,6 @@
 
 
 <!-- ══ CTA FINAL ══ -->
- {% if not user.is_authenticated %}
 <section class="relative overflow-hidden bg-gradient-to-br from-gray-900 to-teal-950 py-20 px-4 lg:px-6">
   <div class="pointer-events-none absolute -top-16 -right-16 w-72 h-72 rounded-full bg-teal-500/25 blur-3xl"></div>
   <div class="relative z-10 max-w-2xl mx-auto text-center">
@@ -365,5 +363,4 @@
     </div>
   </div>
 </section>
-  {% endif %}
 {% endblock %}
