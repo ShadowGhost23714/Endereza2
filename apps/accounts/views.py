@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.cache import never_cache
 from django.contrib import messages
 from .forms import RegistroForm, LoginForm, CrearSecretarioForm
@@ -73,6 +73,7 @@ def profile(request):
 
 
 # ───── REGISTER SECRETARIO ─────
+@user_passes_test(lambda u: u.is_staff, login_url='accounts:login')
 def secretario(request):
     if request.method == 'POST':
         form = CrearSecretarioForm(request.POST)

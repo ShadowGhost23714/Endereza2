@@ -1,15 +1,20 @@
 # profesores/views.py
 
 from django.contrib import messages
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView
-
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import ProfesorForm
 from .models import Profesor
 
+class StaffRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff
+    def handle_no_permission(self):
+        return redirect('accounts:login')
 
-class ProfesorCreateView(CreateView):
+class ProfesorCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
     """Renders and processes the form to create a new Profesor."""
 
     model         = Profesor

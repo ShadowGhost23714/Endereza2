@@ -2,291 +2,204 @@
 
 {% block content %}
 
-<!-- ══════════════════════════════════════════════════════════════
-     HERO STRIP
-══════════════════════════════════════════════════════════════ -->
-<section class="bg-gradient-to-br from-teal-50 to-white border-b border-gray-200 py-10 px-4 lg:px-6">
-  <div class="mx-auto max-w-screen-xl">
+<section class="flex-1 flex items-center justify-center min-h-[calc(100vh-4rem)] px-4 py-14 dark:bg-gray-900">
 
-    <!-- Breadcrumb -->
-    <nav class="flex mb-4" aria-label="Breadcrumb">
-      <ol class="inline-flex items-center space-x-1 md:space-x-3 text-sm text-gray-500">
-        <li>
-          <a href="/" class="inline-flex items-center gap-1 hover:text-teal-600">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-            </svg>
-            Inicio
-          </a>
-        </li>
-        <li>
-          <div class="flex items-center gap-1">
-            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            <a href="{% url 'profesores:lista' %}" class="hover:text-teal-600">Profesores</a>
-          </div>
-        </li>
-        <li aria-current="page">
-          <div class="flex items-center gap-1">
-            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            <span class="text-teal-700 font-medium">Nuevo profesor</span>
-          </div>
-        </li>
-      </ol>
-    </nav>
+  <div class="w-full max-w-xl animate-fade-up">
 
-    <!-- Title row -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <!-- Badge -->
-        <span class="inline-flex items-center gap-1.5 bg-teal-100 text-teal-700 text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-full mb-3">
-          <span class="w-2 h-2 bg-teal-600 rounded-full"></span>
-          Staff
-        </span>
-        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white" style="font-family:'Sora',sans-serif;">
-          Registrar nuevo profesor
-        </h1>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Completá los datos del profesional. Todos los campos son obligatorios.
-        </p>
-      </div>
-      <a href="{% url 'profesores:lista' %}"
-         class="self-start sm:self-center inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-teal-600 border border-gray-300 hover:border-teal-400 px-4 py-2 rounded-lg transition-colors">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-        Ver todos
-      </a>
+    <!-- Encabezado sobre la card -->
+    <div class="text-center mb-8">
+      <span class="inline-flex items-center gap-1.5 bg-primary-100 text-primary-700 text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-full mb-3">
+        <span class="w-2 h-2 bg-primary-600 rounded-full"></span>
+        Staff
+      </span>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Registrar nuevo profesor</h1>
+      <p class="text-sm text-gray-500 mt-1 dark:text-white">Completá los datos del profesional. Todos los campos son obligatorios.</p>
     </div>
 
-  </div>
-</section>
-
-
-<!-- ══════════════════════════════════════════════════════════════
-     MESSAGES
-══════════════════════════════════════════════════════════════ -->
-{% if messages %}
-<div class="mx-auto max-w-screen-xl px-4 lg:px-6 mt-6">
-  {% for msg in messages %}
-    <div
-      class="flex items-start gap-3 p-4 mb-3 rounded-lg border text-sm
-             {% if msg.tags == 'success' %}
-               bg-teal-50 border-teal-200 text-teal-800
-             {% else %}
-               bg-red-50 border-red-200 text-red-800
-             {% endif %}"
-      role="alert">
-      {% if msg.tags == 'success' %}
-        <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-      {% else %}
-        <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-      {% endif %}
-      <span>{{ msg }}</span>
-    </div>
-  {% endfor %}
-</div>
-{% endif %}
-
-
-<!-- ══════════════════════════════════════════════════════════════
-     FORM CARD
-══════════════════════════════════════════════════════════════ -->
-<main class="mx-auto max-w-screen-xl px-4 lg:px-6 py-10">
-  <div class="flex flex-col lg:flex-row gap-8 items-start">
-
-    <!-- ── Form ── -->
-    <div class="w-full lg:max-w-2xl">
-      <div class="bg-white border border-gray-200 rounded-2xl shadow-sm dark:bg-gray-800 dark:border-gray-700">
-
-        <!-- Card header -->
-        <div class="px-6 py-5 border-b border-gray-200 dark:border-gray-700"
-             style="background:linear-gradient(135deg,#0D9488 0%,#0891B2 100%);border-radius:1rem 1rem 0 0;">
-          <p class="text-teal-100 text-xs font-medium mb-1 uppercase tracking-wider">Formulario de alta</p>
-          <h2 class="text-white text-lg font-bold" style="font-family:'Sora',sans-serif;">Datos del profesor</h2>
+    <!-- Messages -->
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="mb-4 flex items-start gap-3 p-4 rounded-2xl border text-sm
+                    {% if msg.tags == 'success' %}bg-green-50 border-green-200 text-green-800{% else %}bg-red-50 border-red-200 text-red-800{% endif %}"
+             role="alert">
+          {% if msg.tags == 'success' %}
+            <svg class="w-5 h-5 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          {% else %}
+            <svg class="w-5 h-5 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+          {% endif %}
+          <span>{{ msg }}</span>
         </div>
+      {% endfor %}
+    {% endif %}
 
-        <!-- Form body -->
-        <div class="p-6 sm:p-8">
-          <form method="post" novalidate>
-            {% csrf_token %}
+    <!-- Card -->
+    <div class="bg-white rounded-3xl shadow-lg border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <!-- Card body -->
+      <div class="px-12 py-8 sm:px-10">
 
-              <!-- Nombre -->
-              <div>
-                <label for="{{ form.nombre.id_for_label }}"
-                       class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Nombre <span class="text-red-500">*</span>
+        <!-- Non-field errors -->
+        {% if form.is_bound and form.non_field_errors %}
+          <div class="mb-7 flex gap-3 p-4 rounded-2xl bg-red-50 border border-red-200">
+            <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+            <div>
+              {% for error in form.non_field_errors %}
+                <p class="text-sm text-red-600">{{ error }}</p>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        <form method="post" novalidate id="profesor-form">
+          {% csrf_token %}
+
+          <div class="flex flex-col gap-6">
+
+            <!-- Nombre / Apellido -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+              <div class="flex flex-col gap-1.5">
+                <label for="{{ form.nombre.id_for_label }}" class="text-sm font-medium tracking-wide text-gray-500 dark:text-white">
+                  Nombre
                 </label>
-                {{ form.nombre }}
-                {% if form.nombre.errors %}
-                  <p class="mt-1.5 text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                <input
+                  type="text"
+                  name="{{ form.nombre.html_name }}"
+                  id="{{ form.nombre.id_for_label }}"
+                  value="{{ form.nombre.value|default:'' }}"
+                  placeholder="Nombre"
+                  autocomplete="given-name"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-600 dark:focus:border-primary-600"
+                />
+                {% if form.is_bound and form.nombre.errors %}
+                  <p class="text-xs text-red-500 flex items-center gap-1">
+                    <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
                     {{ form.nombre.errors|join:", " }}
                   </p>
                 {% endif %}
               </div>
 
-              <!-- Apellido -->
-              <div>
-                <label for="{{ form.apellido.id_for_label }}"
-                       class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Apellido <span class="text-red-500">*</span>
+              <div class="flex flex-col gap-1.5">
+                <label for="{{ form.apellido.id_for_label }}" class="text-sm font-medium tracking-wide text-gray-500 dark:text-white">
+                  Apellido
                 </label>
-                {{ form.apellido }}
-                {% if form.apellido.errors %}
-                  <p class="mt-1.5 text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                <input
+                  type="text"
+                  name="{{ form.apellido.html_name }}"
+                  id="{{ form.apellido.id_for_label }}"
+                  value="{{ form.apellido.value|default:'' }}"
+                  placeholder="Apellido"
+                  autocomplete="family-name"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-600 dark:focus:border-primary-600"
+                />
+                {% if form.is_bound and form.apellido.errors %}
+                  <p class="text-xs text-red-500 flex items-center gap-1">
+                    <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
                     {{ form.apellido.errors|join:", " }}
                   </p>
                 {% endif %}
               </div>
 
-              <!-- DNI -->
-              <div>
-                <label for="{{ form.dni.id_for_label }}"
-                       class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  DNI <span class="text-red-500">*</span>
-                </label>
-                {{ form.dni }}
-                <p class="mt-1 text-xs text-gray-400">7 u 8 dígitos, sin puntos ni espacios.</p>
-                {% if form.dni.errors %}
-                  <p class="mt-1.5 text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                    {{ form.dni.errors|join:", " }}
-                  </p>
-                {% endif %}
-              </div>
-
-              <!-- Especialidad -->
-              <div>
-                <label for="{{ form.especialidad.id_for_label }}"
-                       class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Especialidad <span class="text-red-500">*</span>
-                </label>
-                {{ form.especialidad }}
-                {% if form.especialidad.errors %}
-                  <p class="mt-1.5 text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                    {{ form.especialidad.errors|join:", " }}
-                  </p>
-                {% endif %}
-              </div>
-
-            </div><!-- /grid -->
-
-            <!-- Non-field errors -->
-            {% if form.non_field_errors %}
-              <div class="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                {% for error in form.non_field_errors %}
-                  <p class="text-xs text-red-600">{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-
-            <!-- Actions -->
-            <div class="flex flex-col sm:flex-row gap-3 mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
-              <button type="submit"
-                      class="flex-1 sm:flex-none inline-flex justify-center items-center gap-2
-                             text-white bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:ring-teal-300
-                             font-semibold rounded-lg text-sm px-6 py-2.5 transition-colors
-                             dark:bg-teal-600 dark:hover:bg-teal-700 dark:focus:ring-teal-800"
-                      style="font-family:'Sora',sans-serif;">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                </svg>
-                Registrar profesor
-              </button>
-              <a href="{% url 'profesores:lista' %}"
-                 class="flex-1 sm:flex-none inline-flex justify-center items-center gap-2
-                        text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 hover:border-gray-400
-                        font-medium rounded-lg text-sm px-6 py-2.5 transition-colors dark:bg-gray-700
-                        dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600">
-                Cancelar
-              </a>
             </div>
 
-          </form>
-        </div><!-- /form body -->
-      </div><!-- /card -->
-    </div><!-- /form col -->
-
-
-    <!-- ── Side info panel ── -->
-    <aside class="w-full lg:w-72 flex-shrink-0">
-
-      <!-- Especialidades reference -->
-      <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 dark:bg-gray-800 dark:border-gray-700 mb-6">
-        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2"
-            style="font-family:'Sora',sans-serif;">
-          <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          Especialidades disponibles
-        </h3>
-        <ul class="space-y-3 text-sm text-gray-600 dark:text-gray-400">
-          <li class="flex items-start gap-3">
-            <span class="mt-0.5 w-2.5 h-2.5 rounded-full bg-teal-500 flex-shrink-0"></span>
-            <div>
-              <p class="font-medium text-gray-800 dark:text-white">Tren inferior</p>
-              <p class="text-xs text-gray-400">Cadera, rodilla, tobillo y pie.</p>
+            <!-- DNI -->
+            <div class="flex flex-col gap-1.5">
+              <label for="{{ form.dni.id_for_label }}" class="text-sm font-medium tracking-wide text-gray-500 dark:text-white">
+                DNI
+              </label>
+              <input
+                type="text"
+                name="{{ form.dni.html_name }}"
+                id="{{ form.dni.id_for_label }}"
+                value="{{ form.dni.value|default:'' }}"
+                placeholder="Número de DNI"
+                inputmode="numeric"
+                maxlength="8"
+                pattern="[0-9]*"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-600 dark:focus:border-primary-600"
+              />
+              <p class="text-xs text-gray-400">7 u 8 dígitos, sin puntos ni espacios.</p>
+              {% if form.is_bound and form.dni.errors %}
+                <p class="text-xs text-red-500 flex items-center gap-1">
+                  <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                  {{ form.dni.errors|join:", " }}
+                </p>
+              {% endif %}
             </div>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="mt-0.5 w-2.5 h-2.5 rounded-full bg-cyan-500 flex-shrink-0"></span>
-            <div>
-              <p class="font-medium text-gray-800 dark:text-white">Zona media</p>
-              <p class="text-xs text-gray-400">Core, lumbar y columna vertebral.</p>
+
+            <!-- Especialidad -->
+            <div class="flex flex-col gap-1.5">
+              <label for="{{ form.especialidad.id_for_label }}" class="text-sm font-medium tracking-wide text-gray-500 dark:text-white">
+                Especialidad
+              </label>
+              {{ form.especialidad }}
+              {% if form.is_bound and form.especialidad.errors %}
+                <p class="text-xs text-red-500 flex items-center gap-1">
+                  <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                  {{ form.especialidad.errors|join:", " }}
+                </p>
+              {% endif %}
             </div>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="mt-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 flex-shrink-0"></span>
-            <div>
-              <p class="font-medium text-gray-800 dark:text-white">Tren superior</p>
-              <p class="text-xs text-gray-400">Hombro, codo, muñeca y mano.</p>
-            </div>
-          </li>
-        </ul>
+
+            <!-- Submit -->
+            <button
+              id="submit-btn"
+              type="submit"
+              disabled
+              class="w-full py-3 px-5 text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 active:scale-[.98] focus:outline-none focus:ring-4 focus:ring-primary-300 rounded-xl shadow-md shadow-primary-900/20 transition-all duration-150 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+              Registrar profesor
+            </button>
+
+          </div>
+        </form>
+
+        <!-- Volver -->
+        <p class="mt-7 text-center text-sm text-gray-400">
+          <a href="{% url 'profesores:lista' %}" class="text-primary-700 font-semibold hover:underline dark:text-primary-500">← Volver a profesores</a>
+        </p>
+
       </div>
+    </div>
 
-      <!-- Tips -->
-      <div class="bg-teal-50 border border-teal-100 rounded-2xl p-5 dark:bg-teal-900/20 dark:border-teal-800">
-        <h3 class="text-sm font-semibold text-teal-800 dark:text-teal-300 mb-3 flex items-center gap-2"
-            style="font-family:'Sora',sans-serif;">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-          </svg>
-          Ayuda
-        </h3>
-        <ul class="space-y-2 text-xs text-teal-700 dark:text-teal-400">
-          <li class="flex items-start gap-1.5">
-            <svg class="w-3.5 h-3.5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-            </svg>
-            El DNI debe ser único en el sistema.
-          </li>
-          <li class="flex items-start gap-1.5">
-            <svg class="w-3.5 h-3.5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-            </svg>
-            El nombre y apellido se guardan con mayúscula inicial automáticamente.
-          </li>
-          <li class="flex items-start gap-1.5">
-            <svg class="w-3.5 h-3.5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-            </svg>
-            Podés escribir el DNI con o sin puntos, se normaliza solo.
-          </li>
-        </ul>
-      </div>
+  </div>
+</section>
 
-    </aside>
+<style>
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-up { animation: fade-up .4s cubic-bezier(.22,1,.36,1); }
+</style>
 
-  </div><!-- /flex row -->
-</main>
+<script>
+/* ── Habilitar / Deshabilitar botón de "Registrar profesor" ── */
+(function () {
+  const form   = document.getElementById('profesor-form');
+  const btn    = document.getElementById('submit-btn');
+  const campos = form.querySelectorAll('input[name], select[name], textarea[name]');
+
+  function validarFormulario() {
+    const todosCompletos = Array.from(campos).every(campo => {
+      if (campo.type === 'submit' || campo.type === 'button' || campo.name === 'csrfmiddlewaretoken') {
+        return true;
+      }
+      return campo.value.trim() !== '';
+    });
+
+    btn.disabled = !todosCompletos;
+    btn.style.opacity = todosCompletos ? '1' : '0.6';
+    btn.style.cursor  = todosCompletos ? 'pointer' : 'not-allowed';
+  }
+
+  campos.forEach(campo => {
+    campo.addEventListener('input', validarFormulario);
+    campo.addEventListener('change', validarFormulario);
+  });
+
+  validarFormulario();
+})();
+</script>
 
 {% endblock content %}
