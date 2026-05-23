@@ -10,6 +10,8 @@ urlpatterns = [
 
     # ACCOUNTS (login, register, profile, etc)
     path('accounts/', include('apps.accounts.urls')),  
+    
+    path('professor/', include('apps.professor.urls')),  
 
     # LOGOUT (opcional acá o dentro de accounts)
     path('logout/', LogoutView.as_view(), name='logout'),
