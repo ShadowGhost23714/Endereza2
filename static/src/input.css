@@ -7,15 +7,14 @@
 @source "../..";
 
 @theme {
- /* Paleta principal (crimson / granate) */
-  --color-primary-50:  oklch(97.0% 0.012 22);
-  --color-primary-100: oklch(93.0% 0.030 22);
-  --color-primary-200: oklch(87.0% 0.060 22);
-  --color-primary-300: oklch(78.0% 0.095 22);
-  --color-primary-400: oklch(67.0% 0.130 22);
-  --color-primary-500: oklch(56.0% 0.160 22);
-  --color-primary-600: oklch(48.0% 0.170 22); /* rojo fuerte */
-  --color-primary-700: oklch(40.0% 0.160 22); /* color base logo */
-  --color-primary-800: oklch(31.0% 0.135 22);
-  --color-primary-900: oklch(22.0% 0.100 22);
+  --color-primary-50:  oklch(97.0% 0.017 216.4);
+  --color-primary-100: oklch(93.0% 0.028 216.4);
+  --color-primary-200: oklch(87.0% 0.050 216.4);
+  --color-primary-300: oklch(79.0% 0.072 216.4);
+  --color-primary-400: oklch(70.0% 0.089 216.4);
+  --color-primary-500: oklch(60.0% 0.100 216.4);
+  --color-primary-600: oklch(62.3% 0.111 216.4);  /* ← tu color base #0097B2 */
+  --color-primary-700: oklch(44.0% 0.100 216.4);
+  --color-primary-800: oklch(35.0% 0.083 216.4);
+  --color-primary-900: oklch(27.0% 0.067 216.4);
 }
