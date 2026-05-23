@@ -1,7 +1,7 @@
 {% extends "_base.html" %}
 {% load static %}
 {% block content %}
-
+<script src="{% static 'js/turno_form.js'%}"></script>
 <!-- Deberia poder solo crear una clase en el horario disponible del 8 horas a 20 horas -->
 
   <!-- ── CONTENT ── -->
@@ -213,10 +213,11 @@
           </div><!-- /grid -->
 
           <!-- Actions -->
-          <div class="mt-8 flex flex-col sm:flex-row gap-3 pt-6 border-t border-gray-100">
+          <div id="id_crear_clase" class="mt-8 flex flex-col sm:flex-row gap-3 pt-6 border-t border-gray-100">
             <button type="submit"
                     class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2
                            bg-teal-600 hover:bg-teal-700 active:scale-[0.98]
+                           bg-gray-400 hover:bg-gray-500
                            text-white font-semibold text-sm px-6 py-2.5 rounded-xl
                            transition-all duration-150 shadow-sm hover:shadow-md"
                     style="font-family:'Sora',sans-serif;">
@@ -248,6 +249,7 @@
     </p>
 
   </main>
+  <!--
   <script>
   document.addEventListener("DOMContentLoaded", function () {
 
@@ -338,6 +340,6 @@
     });
   });
 </script>
-
+-->
 
 {% endblock %}
