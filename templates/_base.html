@@ -40,16 +40,9 @@
                         class="text-white bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:ring-teal-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 focus:outline-none dark:bg-teal-600 dark:hover:bg-teal-700 dark:focus:ring-teal-800">
                             crear clase
                         </a>
-                    {% else %}
-                        <a href="#turnos"
-                            class="text-white bg-teal-600 hover:bg-teal-700 focus:ring-4 focus:ring-teal-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 focus:outline-none dark:bg-teal-600 dark:hover:bg-teal-700 dark:focus:ring-teal-800">
-                            Pedir turno
-                        </a>
+                        
                     {% endif %}
-                    <a href="{% url 'accounts:profile' %}"
-                        class="text-gray-500 hover:text-gray-700 dark:hover:text-white">
-                        Mi perfil
-                    </a>
+                    
                     {% else %}
                     <a href="{% url 'accounts:login' %}"
                         class="text-gray-500 hover:text-gray-700 dark:hover:text-white">
@@ -74,7 +67,7 @@
                     {% if user.is_authenticated %}
 
                         <!-- Mis turnos -->
-                        <a href="#"
+                        <a href="{% url 'turnos:mis_clases' %}"
                         class="inline-flex items-center gap-2 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-semibold rounded-lg px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect x="3" y="4" width="18" height="18" rx="2"/>
@@ -118,11 +111,12 @@
 
                 </div>
 
-                <!-- Nav links -->
+                <!-- No entiendo para que tendriamos esto. Para mí habria que sacarlo-->>
+                <!-- Nav links 
                 <div class="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1" id="mobile-menu">
                     <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
                         <li>
-                            <a href="#turnos"
+                            <a href="{% url 'turnos:listar_clases' %}"
                                 class="block py-2 pr-4 pl-3 text-primary-600 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:p-0 dark:text-gray-400 dark:hover:text-white">Turnos</a>
                         </li>
                         <li>
@@ -139,6 +133,7 @@
                         </li>
                     </ul>
                 </div>
+            -->
 
             </div>
         </nav>
@@ -222,8 +217,7 @@
                         <h2 class="mb-4 text-sm font-semibold text-gray-900 uppercase dark:text-white">Horarios</h2>
                         <ul class="text-sm text-gray-500 dark:text-gray-400 space-y-2">
                             <li>Lun – Vie: 8:00 – 20:00</li>
-                            <li>Sábados: 9:00 – 13:00</li>
-                            <li>Domingos: Cerrado</li>
+                            <li>Sábados y Domingos: Cerrado</li>
                         </ul>
                     </div>
                 </div>

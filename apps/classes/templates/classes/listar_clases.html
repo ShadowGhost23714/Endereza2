@@ -131,11 +131,12 @@
                     </form>
                 {% else %}
                     <form method="post" action="{% url 'turnos:lista_espera' turno.pk %}">
-                    {% csrf_token %}
-                    <button type="submit"
-                        class="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 text-sm">
+                        {% csrf_token %}
+                        <button type="submit"
+                        class="bg-yellow-100 text-yellow-700 font-semibold py-2 px-4 rounded-lg  text-sm">
                         Lista de espera
                     </button>
+                    hola
                     </form>
                 {% endif %}
                 {% endwith %}

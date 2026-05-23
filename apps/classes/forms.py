@@ -1,3 +1,5 @@
+
+from datetime import date, datetime, time
 from django import forms
 from .models import Turno
 
@@ -28,6 +30,8 @@ class TurnoForm(forms.ModelForm):
                     "rounded-lg focus:ring-primary-600 focus:border-primary-600 "
                     "block w-full p-2.5"
                 ),
+                "min": "08:00",
+                "max": "20:00",
             },
         ),
         label="Hora de inicio",
@@ -81,6 +85,16 @@ class TurnoForm(forms.ModelForm):
 
         if fecha and hora_inicio and actividad:
             # Prevent duplicate slot: same date + time + activity
+            # 1. Validar que la hora sea en punto (Minutos y Segundos == 0)
+            if hora_inicio.minute != 0 or hora_inicio.second != 0:
+                raise forms.ValidationError(
+                    "La hora de inicio debe ser en punto (ej: 08:00, 09:00)."
+                )
+            # 2. Validar rango estricto de horas (de 08:00 a 20:00)
+            if hora_inicio < time(8, 0) or hora_inicio > time(20, 0):
+                raise forms.ValidationError(
+                    "La hora de inicio debe estar entre las 08:00 y las 20:00 hs."
+                )
             qs = Turno.objects.filter(
                 fecha=fecha,
                 hora_inicio=hora_inicio,
@@ -96,5 +110,7 @@ class TurnoForm(forms.ModelForm):
                 raise forms.ValidationError("La fecha no puede ser en el pasado.")
             if fecha < Turno.objects.earliest("fecha").fecha or (fecha == Turno.objects.earliest("fecha").fecha and hora_inicio < Turno.objects.earliest("hora_inicio").hora_inicio):
                 raise forms.ValidationError("La hora de inicio no puede ser en el pasado.")
+            if hora_inicio < Turno.objects.earliest("hora_inicio").hora_inicio or hora_inicio > Turno.objects.latest("hora_inicio").hora_inicio:
+                raise forms.ValidationError("La hora de inicio debe estar entre las 08:00 y las 20:00.")
 
         return cleaned_data

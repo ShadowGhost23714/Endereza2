@@ -27,12 +27,9 @@ class RegistroForm(UserCreationForm):
                 "autocomplete": "email",
             }
         ),
-<<<<<<< HEAD
-=======
         error_messages={
             "invalid": "Correo electrónico inválido."
         }
->>>>>>> 670999417035d5001ef784a620dd7645a47d2a1f
     )
 
     first_name = forms.CharField(
@@ -74,11 +71,8 @@ class RegistroForm(UserCreationForm):
             attrs={
                 "type": "date",
                 "autocomplete": "bday",
-<<<<<<< HEAD
-=======
                 "min": "1900-01-01",
                 "max": date.today().isoformat(),
->>>>>>> 670999417035d5001ef784a620dd7645a47d2a1f
             }
         ),
     )
@@ -101,28 +95,6 @@ class RegistroForm(UserCreationForm):
     # VALIDACIONES
     # ------------------------------------------------------
 
-<<<<<<< HEAD
-    def clean_fecha_nacimiento(self):
-
-        fecha = self.cleaned_data["fecha_nacimiento"]
-
-        hoy = date.today()
-
-        edad = (
-            hoy.year
-            - fecha.year
-            - (
-                (hoy.month, hoy.day)
-                < (fecha.month, fecha.day)
-            )
-        )
-
-        if edad < 13:
-            raise forms.ValidationError(
-                "Debes ser mayor de 13 años."
-            )
-
-=======
     def clean_dni(self):
         dni = self.cleaned_data["dni"]
 
@@ -160,7 +132,6 @@ class RegistroForm(UserCreationForm):
         if edad < 13:
             raise forms.ValidationError("Debes ser mayor de 13 años.")
         
->>>>>>> 670999417035d5001ef784a620dd7645a47d2a1f
         return fecha
 
     # ------------------------------------------------------
@@ -196,12 +167,9 @@ class LoginForm(AuthenticationForm):
                 "autocomplete": "email",
             }
         ),
-<<<<<<< HEAD
-=======
         error_messages={
         "invalid": "Ingrese un correo electrónico válido."
         }
->>>>>>> 670999417035d5001ef784a620dd7645a47d2a1f
     )
 
     password = forms.CharField(
@@ -214,15 +182,12 @@ class LoginForm(AuthenticationForm):
         ),
     )
 
-<<<<<<< HEAD
-=======
     error_messages = {
         "invalid_login": (
             "El correo o la contraseña son incorrectos."
         ),
     }
 
->>>>>>> 670999417035d5001ef784a620dd7645a47d2a1f
 
 # ==========================================================
 # PERFIL
@@ -304,9 +269,6 @@ class PerfilForm(forms.ModelForm):
 
         elif usuario.es_secretario:
 
-<<<<<<< HEAD
-            self.fields.pop("fecha_nacimiento")
-=======
             self.fields.pop("fecha_nacimiento")
 
 class CrearSecretarioForm(UserCreationForm):
@@ -395,4 +357,3 @@ class CrearSecretarioForm(UserCreationForm):
 
         return user
     
->>>>>>> 670999417035d5001ef784a620dd7645a47d2a1f

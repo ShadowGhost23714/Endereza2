@@ -22,7 +22,7 @@ class SuperuserRequiredMixin(UserPassesTestMixin):
         return self.request.user.is_superuser
 
 
-class TurnoCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
+class TurnoCreateView(LoginRequiredMixin, SuperuserRequiredMixin, CreateView):
     model         = Turno
     form_class    = TurnoForm
     template_name = "classes/turno_create.html"
@@ -43,12 +43,18 @@ class TurnoCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
         return ctx
 
 
+
 class TurnoListView(ListView):
     model                = Turno
     template_name        = "classes/listar_clases.html"
     context_object_name  = "turnos"
 
     def get_queryset(self):
+        if self.request.user.is_authenticated:
+            # Mostrar solo turnos futuros para usuarios autenticados
+            return Turno.objects.filter(
+                fecha__gte=timezone.now().date()
+            ).order_by("fecha", "hora_inicio")
         return Turno.objects.all().order_by("fecha", "hora_inicio")
     
     def get_context_data(self, **kwargs):
@@ -103,19 +109,18 @@ class ReservasAsociadasView(LoginRequiredMixin, StaffRequiredMixin, ListView):
         print(f"Obteniendo reservas asociadas al turno_id={turno_id}")
         return Reserva.objects.filter(id_turno=turno_id).select_related("id_usuario").order_by("-fecha_reserva")
 
+
 class MisClasesView(LoginRequiredMixin, ListView):
     model               = Reserva
     template_name       = "classes/mis_clases.html"
     context_object_name = "reservas"
 
     def get_queryset(self):
-        hoy = timezone.localdate()
         return (
             Reserva.objects
             .filter(
                 id_usuario=self.request.user,
                 estado__in=[Reserva.Estado.RESERVADO, Reserva.Estado.LISTA_ESPERA],
-                id_turno__fecha__gte=hoy,
             )
             .select_related("id_turno")
             .order_by("id_turno__fecha", "id_turno__hora_inicio")

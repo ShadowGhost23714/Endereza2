@@ -81,7 +81,19 @@ class Reserva(models.Model):
         print(f"Notificando a {self.id_usuario} sobre la cancelación de su reserva para el turno {self.id_turno}.")
         # Aquí podrías implementar la lógica real de notificación, como enviar un email o una
         # notificación push, en lugar de solo imprimir un mensaje.
-        
+    
+    def lista_espera(self):
+        return self.estado == self.Estado.LISTA_ESPERA
 
     def __str__(self):
         return f"Reserva #{self.pk} — {self.id_usuario} | {self.id_turno} [{self.estado}]"
+
+class Sala(models.Model):
+    numero = models.PositiveSmallIntegerField(unique=True)
+    capacidad = models.PositiveIntegerField()
+
+    def get_cantidad(self):
+        return self.capacidad
+
+    def __str__(self):
+        return f"Sala {self.numero} (Capacidad: {self.capacidad})"
