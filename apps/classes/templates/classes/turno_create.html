@@ -1,7 +1,7 @@
 {% extends "_base.html" %}
 {% load static %}
 {% block content %}
-
+<script src="{% static 'js/turno_form.js'%}"></script>
 <!-- Deberia poder solo crear una clase en el horario disponible del 8 horas a 20 horas -->
 
   <!-- ── CONTENT ── -->
@@ -13,7 +13,7 @@
         Panel de administración
       </span>
       <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight" style="font-family:'Sora',sans-serif;">
-        Crear nuevo clase
+        Crear nueva clase
       </h1>
       <p class="mt-2 text-gray-500 text-sm">
         Completá los campos para agregar una nueva clase al sistema. Todos los campos son obligatorios.
@@ -44,7 +44,7 @@
 
       <!-- Card header -->
       <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-6 py-5">
-        <p class="text-teal-100 text-xs font-semibold uppercase tracking-widest mb-1">Datos del turno</p>
+        <p class="text-teal-100 text-xs font-semibold uppercase tracking-widest mb-1">Datos de la clase</p>
         <h2 class="text-white text-xl font-bold tracking-tight" style="font-family:'Sora',sans-serif;">
           Información general
         </h2>
@@ -148,7 +148,45 @@
                 {% endfor %}
               {% endif %}
             </div>
+            <!-- Profesor -->
+             <div class="sm:col-span-2">
+              <label for="{{ form.profesor.id_for_label }}"
+                     class="block mb-1.5 text-sm font-semibold text-gray-700">
+                Profesor
+                <span class="text-red-500 ml-0.5">*</span>
+              </label>
+              {{ form.profesor }}
+              {% if form.profesor.errors %}
+                {% for error in form.profesor.errors %}
+                  <p class="mt-1.5 text-xs text-red-600 flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ error }}
+                  </p>
+                {% endfor %}
+              {% endif %}
+            </div>
 
+            <!---- Sala -->
+            <div class="sm:col-span-2">
+              <label for="{{ form.sala.id_for_label }}"
+                     class="block mb-1.5 text-sm font-semibold text-gray-700">
+                Sala
+                <span class="text-red-500 ml-0.5">*</span>
+              </label>
+              {{ form.sala }}
+              {% if form.sala.errors %}
+                {% for error in form.sala.errors %}
+                  <p class="mt-1.5 text-xs text-red-600 flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ error }}
+                  </p>
+                {% endfor %}
+              {% endif %}
+            </div>
             <!-- Cupo -->
             <div class="sm:col-span-2">
               <label for="{{ form.cupo.id_for_label }}"
@@ -158,7 +196,7 @@
               </label>
               {{ form.cupo }}
               <p class="mt-1.5 text-xs text-gray-400">
-                Cantidad máxima de pacientes que pueden reservar este turno (mínimo 1, máximo 100).
+                Cantidad máxima de pacientes que pueden reservar este turno (mínimo 1, máximo <span id="capacidad-dinamica">100</span>).
               </p>
               {% if form.cupo.errors %}
                 {% for error in form.cupo.errors %}
@@ -175,10 +213,11 @@
           </div><!-- /grid -->
 
           <!-- Actions -->
-          <div class="mt-8 flex flex-col sm:flex-row gap-3 pt-6 border-t border-gray-100">
+          <div id="id_crear_clase" class="mt-8 flex flex-col sm:flex-row gap-3 pt-6 border-t border-gray-100">
             <button type="submit"
                     class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2
                            bg-teal-600 hover:bg-teal-700 active:scale-[0.98]
+                           bg-gray-400 hover:bg-gray-500
                            text-white font-semibold text-sm px-6 py-2.5 rounded-xl
                            transition-all duration-150 shadow-sm hover:shadow-md"
                     style="font-family:'Sora',sans-serif;">
@@ -210,5 +249,97 @@
     </p>
 
   </main>
+  <!--
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const selectSala      = document.getElementById("id_sala");
+    const inputCupo       = document.getElementById("id_cupo");
+    const textoMaximo     = document.getElementById("capacidad-dinamica");
+    const selectActividad = document.getElementById("id_actividad");
+    const selectProfesor  = document.getElementById("id_profesor");
+
+    // Snapshot de todas las opciones de profesor antes de cualquier filtro
+    const todasLasOpciones = Array.from(selectProfesor.options);
+
+    // ── Sala → Cupo ────────────────────────────────────────────
+    function controlarCupo() {
+      const opcion = selectSala.options[selectSala.selectedIndex];
+
+      if (opcion && opcion.value !== "") {
+        inputCupo.removeAttribute("disabled");
+        inputCupo.classList.remove("bg-gray-200");
+        const max = opcion.getAttribute("data-capacidad");
+        if (max) {
+          inputCupo.setAttribute("max", max);
+          if (textoMaximo) textoMaximo.textContent = max;
+        }
+      } else {
+        inputCupo.setAttribute("disabled", "disabled");
+        inputCupo.classList.add("bg-gray-200");
+        inputCupo.value = "";
+        inputCupo.removeAttribute("max");
+        if (textoMaximo) textoMaximo.textContent = "—";
+      }
+    }
+
+    // ── Actividad → Profesor ───────────────────────────────────
+    function controlarProfesores() {
+      const actividadElegida = selectActividad.value; // ej: "tren_inferior"
+
+      // Reconstruir el <select> desde cero para evitar el bug de display:none en Chrome/Safari
+      selectProfesor.innerHTML = "";
+
+      if (actividadElegida === "") {
+        // Sin actividad: bloquear y dejar solo la opción vacía
+        selectProfesor.setAttribute("disabled", "disabled");
+        selectProfesor.classList.add("bg-gray-200");
+        selectProfesor.appendChild(crearOpcionVacia());
+        return;
+      }
+
+      // Actividad elegida: habilitar y poblar con profesores filtrados
+      selectProfesor.removeAttribute("disabled");
+      selectProfesor.classList.remove("bg-gray-200");
+      selectProfesor.appendChild(crearOpcionVacia());
+
+      let hayCoincidencias = false;
+      todasLasOpciones.forEach(function (opcion) {
+        if (opcion.value === "") return;
+        // Comparamos data-especialidad ("tren_inferior") con el valor del select actividad
+        if (opcion.getAttribute("data-especialidad") === actividadElegida) {
+          selectProfesor.appendChild(opcion.cloneNode(true));
+          hayCoincidencias = true;
+        }
+      });
+
+      if (!hayCoincidencias) {
+        const aviso = document.createElement("option");
+        aviso.value = "";
+        aviso.disabled = true;
+        aviso.textContent = "No hay profesores para esta actividad";
+        selectProfesor.appendChild(aviso);
+      }
+    }
+
+    function crearOpcionVacia() {
+      const op = document.createElement("option");
+      op.value = "";
+      op.textContent = "---------";
+      return op;
+    }
+
+    // Inicializar (útil al editar un turno existente)
+    controlarCupo();
+    controlarProfesores();
+
+    // Listeners
+    selectSala.addEventListener("change", controlarCupo);
+    selectActividad.addEventListener("change", function () {
+      controlarProfesores();
+    });
+  });
+</script>
+-->
 
 {% endblock %}
