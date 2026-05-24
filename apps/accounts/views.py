@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.cache import never_cache
 from django.contrib import messages
 from .forms import RegistroForm, LoginForm, CrearSecretarioForm
-from django.contrib.auth.views import LoginView, PasswordChangeView
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.urls import reverse_lazy
 
 
@@ -30,8 +30,16 @@ class CustomLoginView(LoginView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        messages.success(self.request, "Bienvenido 👋")
+        messages.success(self.request, "Sesión iniciada correctamente 😉")
         return super().form_valid(form)
+    
+
+# ───── LOGOUT ─────
+class CustomLogoutView(LogoutView):
+
+    def post(self, request, *args, **kwargs):
+        messages.success(request, "Sesión cerrada correctamente 👋")
+        return super().post(request, *args, **kwargs)
 
     def get_success_url(self):
         user = self.request.user
@@ -52,8 +60,8 @@ def register(request):
             form.save()
             messages.success(request, 'Cuenta creada correctamente 🎉')
             return redirect('accounts:login')
-        else:
-            messages.error(request, 'Revisá los datos del formulario')
+        #else:
+        #    messages.error(request, 'Revisá los datos del formulario')
 
     else:
         form = RegistroForm()
@@ -71,6 +79,7 @@ def profile(request):
 
 
 # ───── REGISTER SECRETARIO ─────
+@user_passes_test(lambda u: u.is_staff, login_url='accounts:login')
 def secretario(request):
     if request.method == 'POST':
         form = CrearSecretarioForm(request.POST)
@@ -79,6 +88,9 @@ def secretario(request):
             form.save()
             messages.success(request, "Cuenta creada correctamente 🎉")
             return redirect('accounts:secretario')
+        #else:
+        #    messages.error(request, 'Revisá los datos del formulario')
+        
     else:
         form = CrearSecretarioForm()
 

@@ -29,7 +29,7 @@
         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-primary-600 text-white border-2 border-white/15">
           {{ user.get_tipo_display }}
         </span>
-        <form method="post" action="{% url 'logout' %}">
+        <form method="post" action="{% url 'accounts:logout' %}">
           {% csrf_token %}
           <button type="submit"
             class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold
@@ -40,11 +40,13 @@
             </svg>
             Cerrar sesión
           </button>
+          <!-- Lo dejo en desarrollo 
           <button type="button" onclick="togglePass()"
             class="px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-500
                    hover:border-gray-400 hover:text-gray-700 transition-colors duration-200">
             Cancelar
           </button>
+          -->
         </div>
       </form>
     </div>
@@ -143,6 +145,24 @@
       </div>
     </div>
 
+    <!-- ══ HISTORIAL DE PAGOS ══ -->
+    <div class="bg-white border border-gray-200 rounded-2xl p-7 dark:bg-gray-800 dark:border-gray-700">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+            Historial de pagos
+          </p>
+          <p class="text-sm text-gray-400">Revisá todos tus pagos confirmados.</p>
+        </div>
+        <a href="{% url 'historial_pagos:historial' %}"
+          class="inline-flex items-center gap-2 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-semibold rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+          Ver historial
+        </a>
+      </div>
+    </div>
 
     <!-- ══ CAMBIAR CONTRASEÑA ══ -->
     <div class="bg-white border border-gray-200 rounded-2xl p-7 dark:bg-gray-800 dark:border-gray-700" >

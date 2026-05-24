@@ -10,6 +10,8 @@ urlpatterns = [
 
     # ACCOUNTS (login, register, profile, etc)
     path('accounts/', include('apps.accounts.urls')),  
+    
+    path('professor/', include('apps.professor.urls')),  
 
     # LOGOUT (opcional acá o dentro de accounts)
     path('logout/', LogoutView.as_view(), name='logout'),
@@ -22,4 +24,7 @@ urlpatterns = [
 
     # turnos_view/urls.py
     path("agenda/", include("apps.turnos_view.urls")),
+
+    # historial_pagos/urls.py
+    path("historial-pagos/", include("apps.historial_pagos.urls", namespace="historial_pagos")),  # ← agregar
 ]
