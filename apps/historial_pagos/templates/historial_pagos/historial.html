@@ -1,0 +1,140 @@
+{% extends "_base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="min-h-[calc(100vh-4rem)] px-4 py-14 dark:bg-gray-900">
+  <div class="max-w-4xl mx-auto px-4 lg:px-6 py-10 flex flex-col gap-6 animate-fade-up">
+
+    <!-- ══ HEADER ══ -->
+    <div class="relative overflow-hidden rounded-2xl bg-[linear-gradient(135deg,var(--color-primary-900),var(--color-primary-700),#111827)] p-8 flex flex-col sm:flex-row sm:items-center gap-5">
+      <div class="pointer-events-none absolute -bottom-14 -right-14 w-56 h-56 rounded-full bg-[color:var(--color-primary-500)]/20 blur-2xl"></div>
+      <div class="pointer-events-none absolute -top-10 -left-10 w-40 h-40 rounded-full bg-[color:var(--color-primary-400)]/15 blur-2xl"></div>
+
+      <div class="relative z-10 flex-shrink-0 w-14 h-14 rounded-full bg-primary-600/40 border border-white/20 flex items-center justify-center">
+        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+          <line x1="1" y1="10" x2="23" y2="10"/>
+        </svg>
+      </div>
+
+      <div class="relative z-10">
+        <span class="text-xs font-bold uppercase tracking-widest text-primary-400">Mi cuenta</span>
+        <h1 class="mt-0.5 text-2xl font-extrabold text-white tracking-tight leading-tight">Historial de pagos</h1>
+        <p class="text-sm text-white/50 mt-0.5">{{ user.get_full_name }}</p>
+      </div>
+
+      <div class="relative z-10 sm:ml-auto">
+        <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold bg-white/10 border border-white/20 text-white">
+          <span class="w-1.5 h-1.5 rounded-full bg-primary-300"></span>
+          {{ pagos|length }} pago{{ pagos|length|pluralize:"s" }}
+        </span>
+      </div>
+    </div>
+
+    <!-- ══ VOLVER AL PERFIL ══ -->
+    <div>
+      <a href="{% url 'accounts:profile' %}"
+        class="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400 transition-colors duration-200">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Volver al perfil
+      </a>
+    </div>
+
+    <!-- ══ TABLA DE PAGOS ══ -->
+    {% if pagos %}
+    <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden dark:bg-gray-800 dark:border-gray-700">
+
+      <!-- Encabezado de tabla -->
+      <div class="grid grid-cols-4 px-6 py-3 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
+        <span class="text-xs font-bold uppercase tracking-widest text-gray-400">Actividad</span>
+        <span class="text-xs font-bold uppercase tracking-widest text-gray-400">Fecha de clase</span>
+        <span class="text-xs font-bold uppercase tracking-widest text-gray-400">Fecha de pago</span>
+        <span class="text-xs font-bold uppercase tracking-widest text-gray-400 text-right">Método</span>
+      </div>
+
+      <!-- Filas -->
+      <div class="divide-y divide-gray-100 dark:divide-gray-700">
+        {% for pago in pagos %}
+        <div class="grid grid-cols-4 items-center px-6 py-4 gap-x-4 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors duration-150">
+
+          <!-- Actividad + hora -->
+          <div class="flex items-center gap-3">
+            <div class="flex-shrink-0 w-9 h-9 rounded-xl bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center">
+              <svg class="w-4 h-4 text-primary-600 dark:text-primary-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-gray-900 dark:text-white capitalize">
+                {{ pago.reserva.id_turno.actividad|default:"Clase" }}
+              </p>
+              
+            </div>
+          </div>
+
+          <!-- Fecha de la clase -->
+          <div>
+            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+              {{ pago.reserva.id_turno.fecha|date:"d/m/Y" }}
+            </p>
+            <p class="text-xs text-gray-400">{{ pago.reserva.id_turno.hora_inicio|time:"H:i" }} hs</p>
+          </div>
+
+          <!-- Fecha y hora del pago -->
+          <div>
+            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+              {{ pago.fecha_pago|date:"d/m/Y" }}
+            </p>
+            <p class="text-xs text-gray-400">{{ pago.fecha_pago|time:"H:i" }} hs</p>
+          </div>
+
+          <!-- Método de pago -->
+          <div class="text-right">
+            {% if pago.metodo_pago == "efectivo" %}
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800">
+              <span class="text-base leading-none">💵</span> Efectivo
+            </span>
+            {% elif pago.metodo_pago == "mercado_pago" %}
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-sky-50 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400 border border-sky-100 dark:border-sky-800">
+              <span class="text-base leading-none">💳</span> Mercado Pago
+            </span>
+            {% else %}
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+              {{ pago.get_metodo_pago_display }}
+            </span>
+            {% endif %}
+          </div>
+
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% else %}
+    <!-- ══ ESTADO VACÍO ══ -->
+    <div class="bg-white border border-gray-200 rounded-2xl p-14 text-center dark:bg-gray-800 dark:border-gray-700">
+      <div class="mx-auto w-16 h-16 rounded-2xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center mb-5">
+        <svg class="w-7 h-7 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+          <line x1="1" y1="10" x2="23" y2="10"/>
+        </svg>
+      </div>
+      <p class="text-base font-bold text-gray-700 dark:text-white mb-1">Sin pagos registrados</p>
+      <p class="text-sm text-gray-400">Todavía no tenés ningún pago confirmado en tu cuenta.</p>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<style>
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-up { animation: fade-up .4s cubic-bezier(.22,1,.36,1); }
+</style>
+
+{% endblock %}
