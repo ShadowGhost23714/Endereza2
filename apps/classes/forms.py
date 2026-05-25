@@ -145,7 +145,7 @@ class TurnoForm(forms.ModelForm):
             if profesor.especialidad != actividad:
                 self.add_error('profesor', "El profesor seleccionado no dicta esta actividad.")
 
-        if fecha and hora_inicio and actividad:
+        if fecha and hora_inicio and actividad and sala:
             if fecha < date.today():
                 raise forms.ValidationError("La fecha no puede ser en el pasado.")
             
@@ -155,10 +155,10 @@ class TurnoForm(forms.ModelForm):
             if hora_inicio < time(8, 0) or hora_inicio > time(20, 0):
                 raise forms.ValidationError("La hora de inicio debe estar entre las 08:00 y las 20:00 hs.")
 
-            qs = Turno.objects.filter(fecha=fecha, hora_inicio=hora_inicio, actividad=actividad)
+            qs = Turno.objects.filter(fecha=fecha, hora_inicio=hora_inicio, actividad=actividad, sala=sala)
             if self.instance.pk:
                 qs = qs.exclude(pk=self.instance.pk)
             if qs.exists():
-                raise forms.ValidationError("Ya existe un turno con esa actividad, fecha y hora de inicio.")
+                raise forms.ValidationError("Ya existe un turno con esa actividad, sala, fecha y hora de inicio.")
 
         return cleaned_data
