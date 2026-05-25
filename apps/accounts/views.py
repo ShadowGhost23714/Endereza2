@@ -54,8 +54,8 @@ def register(request):
             form.save()
             messages.success(request, 'Cuenta creada correctamente 🎉')
             return redirect('accounts:login')
-        #else:
-        #    messages.error(request, 'Revisá los datos del formulario')
+        else:
+            messages.error(request, 'Revisá los datos del formulario')
 
     else:
         form = RegistroForm()
@@ -82,8 +82,8 @@ def secretario(request):
             form.save()
             messages.success(request, "Cuenta creada correctamente 🎉")
             return redirect('accounts:lista_secretarios')
-        #else:
-        #    messages.error(request, 'Revisá los datos del formulario')
+        else:
+            messages.error(request, 'Revisá los datos del formulario')
         
     else:
         form = CrearSecretarioForm()
