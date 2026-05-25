@@ -24,7 +24,4 @@ urlpatterns = [
 
     # turnos_view/urls.py
     path("agenda/", include("apps.turnos_view.urls")),
-
-    # historial_pagos/urls.py
-    path("historial-pagos/", include("apps.historial_pagos.urls", namespace="historial_pagos")),  # ← agregar
 ]

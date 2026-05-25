@@ -81,7 +81,7 @@ def secretario(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Cuenta creada correctamente 🎉")
-            return redirect('accounts:lista_secretarios')
+            return redirect('accounts:secretario')
         #else:
         #    messages.error(request, 'Revisá los datos del formulario')
         
@@ -91,26 +91,6 @@ def secretario(request):
     return render(request, 'accounts/secretario.html', {
         'form': form
     })
-
-# ───── LISTA SECRETARIOS ─────
-@user_passes_test(lambda u: u.is_staff, login_url='accounts:login')
-def lista_secretarios(request):
-    secretarios = User.objects.filter(tipo='secretario').order_by('last_name', 'first_name')
-    return render(request, 'accounts/lista_secretarios.html', {
-        'secretarios': secretarios
-    })
-
-
-# ───── ELIMINAR SECRETARIO ─────
-@user_passes_test(lambda u: u.is_staff, login_url='accounts:login')
-def eliminar_secretario(request, pk):
-    if request.method == 'POST':
-        secretario = User.objects.filter(pk=pk, tipo='secretario').first()
-        if secretario:
-            nombre = secretario.nombre_completo
-            secretario.delete()
-            messages.success(request, f"Secretario {nombre} eliminado correctamente 🗑️")
-    return redirect('accounts:lista_secretarios')
 
 # ───── PASSWORD CHANGE ─────
 class CustomPasswordChangeView(PasswordChangeView):

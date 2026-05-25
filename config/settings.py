@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'apps.payments',
     'apps.classes',
     "apps.turnos_view",
-    "apps.historial_pagos",
     'config',
 ]
 

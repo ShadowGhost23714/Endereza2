@@ -120,8 +120,7 @@ class MisClasesView(LoginRequiredMixin, ListView):
             Reserva.objects
             .filter(
                 id_usuario=self.request.user,
-                estado__in=[Reserva.Estado.RESERVADO, Reserva.Estado.LISTA_ESPERA, Reserva.Estado.PAGO],
-                id_turno__fecha__gte=timezone.now().date()
+                estado__in=[Reserva.Estado.RESERVADO, Reserva.Estado.LISTA_ESPERA],
             )
             .select_related("id_turno")
             .order_by("id_turno__fecha", "id_turno__hora_inicio")
@@ -129,7 +128,7 @@ class MisClasesView(LoginRequiredMixin, ListView):
 
 
 @login_required
-def reservar_clase(request, turno_id, efectivo):
+def reservar_clase(request, turno_id):
     """
     Escenario 1 / 2 : reserva exitosa (con o sin cupo restante).
     Escenario 4     : conflicto de horario.
@@ -173,19 +172,12 @@ def reservar_clase(request, turno_id, efectivo):
         messages.error(request, "No hay cupos disponibles para este turno.")
         return redirect("turnos:listar_clases")
 
-    if efectivo:
-        reserva = Reserva.objects.create(
-            id_usuario = request.user,
-            id_turno   = turno,
-            estado     = Reserva.Estado.RESERVADO,
-        )
-    else:
-        # ── Reserva exitosa (Escenarios 1 y 2) ───────────────────────────────────
-        reserva = Reserva.objects.create(
-            id_usuario = request.user,
-            id_turno   = turno,
-            estado     = Reserva.Estado.PAGO,
-        )
+    # ── Reserva exitosa (Escenarios 1 y 2) ───────────────────────────────────
+    reserva = Reserva.objects.create(
+        id_usuario = request.user,
+        id_turno   = turno,
+        estado     = Reserva.Estado.RESERVADO,
+    )
     enviar_confirmacion_reserva(reserva)
     messages.success(request, "¡Reserva creada correctamente! Te enviamos un mail de confirmación.")
     return redirect("turnos:mis_clases")

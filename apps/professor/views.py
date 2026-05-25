@@ -3,7 +3,7 @@
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView, DeleteView
+from django.views.generic import CreateView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import ProfesorForm
 from .models import Profesor
@@ -20,7 +20,7 @@ class ProfesorCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
     model         = Profesor
     form_class    = ProfesorForm
     template_name = "professor/profesor_form.html"
-    success_url   = reverse_lazy("profesores:lista")   # stays on the same page after success
+    success_url   = reverse_lazy("profesores:crear")   # stays on the same page after success
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -45,18 +45,3 @@ class ProfesorListView(ListView):
     template_name       = "profesores/profesor_list.html"
     context_object_name = "profesores"
     paginate_by         = 20
-
-class ProfesorDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteView):
-    model       = Profesor
-    success_url = reverse_lazy("profesores:lista")
-
-    def get(self, request, *args, **kwargs):
-        return self.delete(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        messages.success(
-            request,
-            f"Profesor {self.object.nombre_completo} eliminado correctamente.",
-        )
-        return super().delete(request, *args, **kwargs)

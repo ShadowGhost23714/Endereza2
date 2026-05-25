@@ -155,10 +155,10 @@ class TurnoForm(forms.ModelForm):
             if hora_inicio < time(8, 0) or hora_inicio > time(20, 0):
                 raise forms.ValidationError("La hora de inicio debe estar entre las 08:00 y las 20:00 hs.")
 
-            qs = Turno.objects.filter(fecha=fecha, hora_inicio=hora_inicio, actividad=actividad, sala=sala)
+            qs = Turno.objects.filter(fecha=fecha, hora_inicio=hora_inicio, actividad=actividad)
             if self.instance.pk:
                 qs = qs.exclude(pk=self.instance.pk)
             if qs.exists():
-                raise forms.ValidationError("Ya existe un turno con esa actividad, sala, fecha y hora de inicio.")
+                raise forms.ValidationError("Ya existe un turno con esa actividad, fecha y hora de inicio.")
 
         return cleaned_data
