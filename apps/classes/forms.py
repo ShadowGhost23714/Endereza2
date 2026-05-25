@@ -145,7 +145,7 @@ class TurnoForm(forms.ModelForm):
             if profesor.especialidad != actividad:
                 self.add_error('profesor', "El profesor seleccionado no dicta esta actividad.")
 
-        if fecha and hora_inicio and actividad and sala:
+        if fecha and hora_inicio and actividad:
             if fecha < date.today():
                 raise forms.ValidationError("La fecha no puede ser en el pasado.")
             
