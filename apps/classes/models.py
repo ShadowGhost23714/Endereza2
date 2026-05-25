@@ -17,6 +17,7 @@ class Turno(models.Model):
     fecha       = models.DateField(verbose_name="Fecha")
     hora_inicio = models.TimeField(verbose_name="Hora de inicio")
     cupo        = models.PositiveIntegerField(verbose_name="Cupo máximo")
+    sala       = models.ForeignKey("Sala", on_delete=models.CASCADE, related_name="turnos")
     actividad   = models.CharField(
         max_length=20,
         choices=Actividad.choices,
