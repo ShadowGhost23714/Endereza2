@@ -11,5 +11,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('profile/', views.profile, name='profile'),
     path('secretario/', views.secretario, name='secretario'),
+    path('secretario/lista/', views.lista_secretarios, name='lista_secretarios'),  # ← AGREGAR
+    path('secretario/<int:pk>/eliminar/', views.eliminar_secretario, name='eliminar_secretario'),  # ← AGREGAR
     path('change_password/', CustomPasswordChangeView.as_view(), name="change_password")
 ]
