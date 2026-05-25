@@ -19,7 +19,7 @@
 
       <!-- Info -->
       <div class="relative z-10">
-        <span class="text-xs font-bold uppercase tracking-widest text-primary-600">Mi perfil</span>
+        <span class="text-xs font-bold uppercase tracking-widest text-primary-300">Mi perfil</span>
         <h1 class="mt-0.5 text-2xl font-extrabold text-white tracking-tight leading-tight">{{ user.get_full_name }}</h1>
         <p class="text-sm text-white/50 mt-0.5">{{ user.email }}</p>
       </div>
@@ -71,14 +71,18 @@
             <p class="text-sm font-semibold tracking-wide text-gray-400 mb-1">Apellido</p>
             <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ user.last_name }}</p>
           </div>
+          {% if user.es_cliente or user.es_secretario %}
           <div>
             <p class="text-sm font-semibold tracking-wide text-gray-400 mb-1">DNI</p>
             <p class="text-sm font-semibold text-gray-900 font-mono tracking-wide dark:text-white">{{ user.dni }}</p>
           </div>
+          {% endif %}
+          {% if user.es_cliente %}
           <div>
             <p class="text-sm font-semibold tracking-wide text-gray-400 mb-1">Fecha de nacimiento</p>
             <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ user.fecha_nacimiento|date:"d/m/Y" }}</p>
           </div>
+          {% endif %}
         </div>
 
         <hr class="my-5 border-gray-100">
@@ -131,7 +135,7 @@
           </div>
           <div class="flex justify-between items-center">
             <span class="text-sm font-semibold text-gray-600 dark:text-white">Abono mensual</span>
-            {% if user.profile.tiene_abono %}
+            {% if user.profile.tiene_abono_mensual %}
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Activo
             </span>
