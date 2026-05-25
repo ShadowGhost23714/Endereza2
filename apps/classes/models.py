@@ -17,6 +17,7 @@ class Turno(models.Model):
     fecha       = models.DateField(verbose_name="Fecha")
     hora_inicio = models.TimeField(verbose_name="Hora de inicio")
     cupo        = models.PositiveIntegerField(verbose_name="Cupo máximo")
+    sala       = models.ForeignKey("Sala", on_delete=models.CASCADE, related_name="turnos")
     actividad   = models.CharField(
         max_length=20,
         choices=Actividad.choices,
@@ -79,6 +80,14 @@ class Reserva(models.Model):
     class Meta:
         unique_together = ("id_usuario", "id_turno")
 
+    @property
+    def es_lista_espera(self):
+        return self.estado == self.Estado.LISTA_ESPERA
+
+    @property
+    def es_pago_confirmado(self):
+        return self.estado == self.Estado.PAGO
+    
     def notify_cancelling_reserva(self):
         print(f"Notificando a {self.id_usuario} sobre la cancelación de su reserva para el turno {self.id_turno}.")
         # Aquí podrías implementar la lógica real de notificación, como enviar un email o una
@@ -86,6 +95,14 @@ class Reserva(models.Model):
     
     def lista_espera(self):
         return self.estado == self.Estado.LISTA_ESPERA
+    
+    def pago_hecho(self, pk):
+        reserva = Reserva.objects.filter(pk=pk).first()
+
+        devolver = reserva.estado == Reserva.Estado.PAGO
+        print(f"Verificando si la reserva #{reserva.pk} tiene el pago hecho: {devolver}.")
+        print(f"Estado actual de la reserva: {reserva.estado}.")
+        return devolver
 
     def __str__(self):
         return f"Reserva #{self.pk} — {self.id_usuario} | {self.id_turno} [{self.estado}]"
