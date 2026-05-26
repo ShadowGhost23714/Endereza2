@@ -6,10 +6,11 @@ from django.contrib.auth import logout
 app_name = "accounts"
 
 urlpatterns = [
-    path('login/', CustomLoginView.as_view(), name='login'),
-    path('logout/', CustomLogoutView.as_view(), name='logout'),
-    path('register/', views.register, name='register'),
-    path('profile/', views.profile, name='profile'),
-    path('secretario/', views.secretario, name='secretario'),
-    path('change_password/', CustomPasswordChangeView.as_view(), name="change_password")
+    path('login/',           CustomLoginView.as_view(),          name='login'),
+    path('logout/',          CustomLogoutView.as_view(),          name='logout'),
+    path('register/',        views.register,                      name='register'),
+    path('profile/',         views.profile,                       name='profile'),
+    path('secretario/',      views.secretario,                    name='secretario'),
+    path('change_password/', CustomPasswordChangeView.as_view(),  name='change_password'),
+    path('cancelar-abono/',  views.cancelar_abono,                name='cancelar_abono'),
 ]

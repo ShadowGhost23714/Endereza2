@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'apps.classes',
     "apps.turnos_view",
     "apps.historial_pagos",
+    #'apps.abonos',
     'config',
 ]
 

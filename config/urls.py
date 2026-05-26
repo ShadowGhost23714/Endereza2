@@ -27,4 +27,7 @@ urlpatterns = [
 
     # historial_pagos/urls.py
     path("historial-pagos/", include("apps.historial_pagos.urls", namespace="historial_pagos")),  # ← agregar
+
+    # abonos/urls.py
+    #path("abono/", include("apps.abonos.urls")),
 ]
