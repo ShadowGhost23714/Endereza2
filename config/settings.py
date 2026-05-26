@@ -26,6 +26,11 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# MercadoPago Credentials
+MP_PUBLIC_KEY = config("MP_PUBLIC_KEY")
+MP_ACCESS_TOKEN = config("MP_ACCESS_TOKEN")
+
+
 ALLOWED_HOSTS = []
 
 
