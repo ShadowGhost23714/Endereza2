@@ -23,6 +23,12 @@ class Turno(models.Model):
         choices=Actividad.choices,
         verbose_name="Actividad",
     )
+    precio = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        verbose_name="Precio"
+    )
 
     class Meta:
         verbose_name        = "Turno"
