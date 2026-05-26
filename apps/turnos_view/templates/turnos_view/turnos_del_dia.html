@@ -729,6 +729,9 @@
             if (data.ya_reservado) {
                 document.getElementById("esp-resultado").innerHTML =
                     '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-weight:600; font-size:13px;">⚠️ Este paciente ya tiene una reserva en este turno.</div>';
+            } else if (data.conflicto_horario) {
+                document.getElementById("esp-resultado").innerHTML =
+                    '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-weight:600; font-size:13px;">⚠️ Este paciente ya tiene un turno en ese día y horario.</div>';
             } else {
                 espUsuarioId = data.id;
                 document.getElementById("esp-resultado").innerHTML =
@@ -858,6 +861,9 @@
             if (data.ya_reservado) {
                 document.getElementById("nr-resultado").innerHTML =
                     '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-weight:600; font-size:13px;">⚠️ Este paciente ya tiene una reserva en este turno.</div>';
+            } else if (data.conflicto_horario) {
+                document.getElementById("nr-resultado").innerHTML =
+                    '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-weight:600; font-size:13px;">⚠️ Este paciente ya tiene un turno en ese día y horario.</div>';
             } else {
                 nrUsuarioId = data.id;
                 document.getElementById("nr-resultado").innerHTML =
@@ -867,12 +873,12 @@
             document.getElementById("nr-resultado").innerHTML =
                 '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-size:13px; display:flex; align-items:center; justify-content:space-between;">'
                 + '<span>✗ Paciente no encontrado</span>'
-                + '<button class="btn-cobrar" style="font-size:12px; padding:4px 10px;" onclick="abrirModalRegistrar(\'espontaneo\', \'' + dni + '\')">+ Registrar paciente</button>'
+                + '<button class="btn-cobrar" style="font-size:12px; padding:4px 10px;" onclick="abrirModalRegistrar(\'nueva-reserva\', \'' + dni + '\')">+ Registrar paciente</button>'
                 + '</div>';
         }
         actualizarBtnNuevaReserva();
     }, 500);
-  }
+}
 
 
   function seleccionarPagoNR(event, metodo) {

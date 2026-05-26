@@ -136,18 +136,33 @@ class BuscarPacientePorDniView(LoginRequiredMixin, SecretarioRequiredMixin, View
             return JsonResponse({"encontrado": False})
         try:
             usuario = User.objects.get(dni=dni)
-            ya_reservado = False
+
+            ya_reservado    = False
+            conflicto_horario = False
+
             if turno_id:
                 ya_reservado = Reserva.objects.filter(
                     id_usuario=usuario,
                     id_turno_id=turno_id
                 ).exclude(estado=Reserva.Estado.CANCELADO).exists()
 
+                if not ya_reservado:
+                    try:
+                        turno = Turno.objects.get(pk=turno_id)
+                        conflicto_horario = Reserva.objects.filter(
+                            id_usuario=usuario,
+                            id_turno__fecha=turno.fecha,
+                            id_turno__hora_inicio=turno.hora_inicio,
+                        ).exclude(estado=Reserva.Estado.CANCELADO).exists()
+                    except Turno.DoesNotExist:
+                        pass
+
             return JsonResponse({
-                "encontrado":   True,
-                "id":           usuario.pk,
-                "nombre":       usuario.get_full_name() or usuario.email,
-                "ya_reservado": ya_reservado,
+                "encontrado":       True,
+                "id":               usuario.pk,
+                "nombre":           usuario.get_full_name() or usuario.email,
+                "ya_reservado":     ya_reservado,
+                "conflicto_horario": conflicto_horario,
             })
         except User.DoesNotExist:
             return JsonResponse({"encontrado": False})
@@ -166,9 +181,9 @@ class TurnoEspontaneoView(LoginRequiredMixin, SecretarioRequiredMixin, View):
         for t in turnos:
             if t.tiene_cupo():
                 data.append({
-                    "id":        t.pk,
-                    "label":     f"{t.get_actividad_display()} — {t.hora_inicio.strftime('%H:%M')} a {t.hora_fin.strftime('%H:%M')}",
-                    "cupos":     t.cupos_disponibles(),
+                    "id":    t.pk,
+                    "label": f"{t.get_actividad_display()} — {t.hora_inicio.strftime('%H:%M')} a {t.hora_fin.strftime('%H:%M')}",
+                    "cupos": t.cupos_disponibles(),
                 })
         return JsonResponse({"turnos": data})
 
@@ -182,7 +197,7 @@ class TurnoEspontaneoView(LoginRequiredMixin, SecretarioRequiredMixin, View):
             from django.contrib.auth import get_user_model
             User    = get_user_model()
             usuario = User.objects.get(pk=usuario_id)
-        except (Turno.DoesNotExist, Exception):
+        except Exception:
             return JsonResponse({"ok": False, "error": "Turno o paciente no encontrado."})
 
         if not turno.tiene_cupo():
@@ -191,11 +206,20 @@ class TurnoEspontaneoView(LoginRequiredMixin, SecretarioRequiredMixin, View):
         if Reserva.objects.filter(id_usuario=usuario, id_turno=turno).exists():
             return JsonResponse({"ok": False, "error": "El paciente ya tiene una reserva para este turno."})
 
+        conflicto = Reserva.objects.filter(
+            id_usuario=usuario,
+            id_turno__fecha=turno.fecha,
+            id_turno__hora_inicio=turno.hora_inicio,
+        ).exclude(estado=Reserva.Estado.CANCELADO).exists()
+
+        if conflicto:
+            return JsonResponse({"ok": False, "error": "El paciente ya tiene un turno reservado en ese día y horario."})
+
         with transaction.atomic():
             reserva = Reserva.objects.create(
-                id_usuario = usuario,
-                id_turno   = turno,
-                estado     = Reserva.Estado.PAGO,
+                id_usuario   = usuario,
+                id_turno     = turno,
+                estado       = Reserva.Estado.PAGO,
                 recepcionado = True,
             )
             Pago.objects.create(
@@ -228,8 +252,8 @@ class ClasesPorActividadView(LoginRequiredMixin, SecretarioRequiredMixin, View):
 
 class NuevaReservaView(LoginRequiredMixin, SecretarioRequiredMixin, View):
     def post(self, request):
-        turno_id    = request.POST.get("turno_id")
-        usuario_id  = request.POST.get("usuario_id")
+        turno_id     = request.POST.get("turno_id")
+        usuario_id   = request.POST.get("usuario_id")
         cobrar_ahora = request.POST.get("cobrar_ahora") == "true"
         metodo_pago  = request.POST.get("metodo_pago", "")
 
@@ -246,6 +270,15 @@ class NuevaReservaView(LoginRequiredMixin, SecretarioRequiredMixin, View):
 
         if Reserva.objects.filter(id_usuario=usuario, id_turno=turno).exists():
             return JsonResponse({"ok": False, "error": "El paciente ya tiene una reserva para este turno."})
+
+        conflicto = Reserva.objects.filter(
+            id_usuario=usuario,
+            id_turno__fecha=turno.fecha,
+            id_turno__hora_inicio=turno.hora_inicio,
+        ).exclude(estado=Reserva.Estado.CANCELADO).exists()
+
+        if conflicto:
+            return JsonResponse({"ok": False, "error": "El paciente ya tiene un turno reservado en ese día y horario."})
 
         with transaction.atomic():
             if cobrar_ahora:
@@ -270,7 +303,7 @@ class NuevaReservaView(LoginRequiredMixin, SecretarioRequiredMixin, View):
                 mensaje = f"Reserva creada correctamente para {usuario.get_full_name()}."
 
         return JsonResponse({"ok": True, "mensaje": mensaje})
-
+    
 class RegistrarPacienteView(LoginRequiredMixin, SecretarioRequiredMixin, View):
     def post(self, request):
         from django.contrib.auth import get_user_model
