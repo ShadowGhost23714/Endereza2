@@ -14,3 +14,7 @@ def profile(request):
 
 def turnos(request):
     return render(request, 'turnos.html')
+
+def dueño(request):
+    usuarios = User.objects.all()
+    return render(request, 'core/dueño.html', {'usuarios': usuarios})
