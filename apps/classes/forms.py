@@ -94,7 +94,7 @@ class TurnoForm(forms.ModelForm):
                 "class": (
                     "bg-gray-50 border border-gray-300 text-gray-900 text-sm "
                     "rounded-lg focus:ring-primary-600 focus:border-primary-600 "
-                    "block w-full p-2.5 bg-gray-200"
+                    "block w-full p-2.5"
                 ),
                 "id": "id_cupo",
                 "disabled": "disabled",
@@ -116,8 +116,16 @@ class TurnoForm(forms.ModelForm):
 
     # IGUAL A SALA: Usamos el nuevo widget personalizado
     profesor = forms.ModelChoiceField(
-        queryset=Profesor.objects.all(),  
-        widget=SelectWithActivities(attrs={"class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-200", "id": "id_profesor", "disabled": "disabled"}),
+    queryset=Profesor.objects.all(),
+        widget=SelectWithActivities(attrs={
+            "class": (
+                "bg-gray-900 border border-gray-300 text-gray-900 text-sm "
+                "rounded-lg focus:ring-primary-600 focus:border-primary-600 "
+                "block w-full p-2.5 transition-colors duration-200 "
+            ),
+            "id": "id_profesor",
+            "disabled": "disabled",
+        }),
         label="Profesor",
     )
 
