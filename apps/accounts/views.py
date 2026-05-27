@@ -33,10 +33,10 @@ class CustomLoginView(LoginView):
         messages.success(self.request, "Sesión iniciada correctamente 😉")
         return super().form_valid(form)
     
-    def get_success_url(self):
-        if self.request.user.is_superuser:
-            return reverse_lazy("core:home")
-        return reverse_lazy("core:home")
+    #def get_success_url(self):
+        #if self.request.user.is_superuser:
+            #return reverse_lazy("core:home")
+        #return reverse_lazy("core:home")
     
 
 # ───── LOGOUT ─────
