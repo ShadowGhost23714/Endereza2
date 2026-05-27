@@ -150,6 +150,7 @@
       </div>
     </div>
 
+    {% if user.es_cliente %}
     <!-- ══ HISTORIAL DE PAGOS ══ -->
     <div class="bg-white border border-gray-200 rounded-2xl p-7 dark:bg-gray-800 dark:border-gray-700">
       <div class="flex flex-wrap items-center justify-between gap-4">
@@ -168,6 +169,7 @@
         </a>
       </div>
     </div>
+    {% endif %}
 
     <!-- ══ CAMBIAR CONTRASEÑA ══ -->
     <div class="bg-white border border-gray-200 rounded-2xl p-7 dark:bg-gray-800 dark:border-gray-700" >
