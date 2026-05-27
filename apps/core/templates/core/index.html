@@ -3,315 +3,829 @@
 
 {% block content %}
 
-<!-- ══ HERO ══ -->
-<section class="relative overflow-hidden bg-gradient-to-br from-teal-50 to-white min-h-[calc(100vh-64px)] flex items-center py-20 px-4 lg:px-6">
-  <!-- Decorative blobs -->
-  <div class="pointer-events-none absolute -top-20 -right-20 w-[420px] h-[420px] rounded-full bg-teal-400/15 blur-3xl"></div>
-  <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_80%_50%,rgba(13,148,136,0.07),transparent)]"></div>
+<!-- ════════════════ VISTA: INVITADO  (usuario no autenticado) ════════════════ -->
 
-  <div class="relative z-10 max-w-screen-xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+{% if not user.is_authenticated %}
 
-    <!-- Left: copy -->
-    <div>
-      <span class="inline-flex items-center gap-1.5 bg-teal-100 text-teal-700 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-6">
-        <span class="w-2 h-2 rounded-full bg-teal-600"></span>
-        Centro de rehabilitación
-      </span>
-      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-[1.1] tracking-tight mb-5">
-        Movimiento que <em class="not-italic text-teal-600">restaura</em> tu bienestar
-      </h1>
-      <p class="text-gray-500 text-lg max-w-lg mb-8 leading-relaxed">
-        En Endereza2 acompañamos tu recuperación con clases profesionales de rehabilitación para todas las edades, desde adolescentes hasta adultos mayores.
-      </p>
-      <div class="flex flex-wrap gap-3">
-        <a href="{% url 'turnos:listar_clases' %}"
-          class="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold px-6 py-3 rounded-xl text-base transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(13,148,136,0.3)]">
-          Ver clases disponibles
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-        
-      </div>
-      <p class="mt-5 text-sm text-gray-400 flex items-center gap-1.5">
-        <svg class="w-4 h-4 text-teal-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-        Clases de 1 hora · Lunes a viernes · 8:00 a 20:00 h
-      </p>
-    </div>
+  <!-- ── HERO ── -->
+  <section class="relative overflow-hidden bg-gradient-to-br from-primary-50 via-white to-white
+                  min-h-[calc(100vh-4rem)] flex items-center py-20 px-4 lg:px-6" id="inicio">
 
-    
-   
-            
-      <div class="border-t border-gray-100 px-7 py-4 text-center">
-        {% if not user.is_authenticated %} 
-    <!-- Right: schedule card -->
-    <div class="bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden">
-      <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-7 py-5 text-white">
-        <p class="text-white/75 text-sm mb-1">Próximas clases disponibles</p>
-        <h3 class="text-xl font-bold tracking-tight">Hoy — Jueves 30 abr.</h3>
-      </div>
-      <div class="flex flex-col gap-3 p-5">
-        <!-- Item -->
-        <div class="flex items-center justify-between bg-teal-50 hover:bg-teal-100 rounded-xl px-4 py-3 transition-colors duration-200">
-          <div class="flex items-center gap-3">
-            <span class="w-2.5 h-2.5 rounded-full bg-teal-600 flex-shrink-0"></span>
-            <div>
-              <p class="text-sm font-semibold text-gray-900">Tren Superior</p>
-              <p class="text-xs text-gray-400">09:00 — 10:00</p>
-            </div>
-          </div>
-          <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full">Lugares disponibles</span>
-        </div>
-        <div class="flex items-center justify-between bg-teal-50 hover:bg-teal-100 rounded-xl px-4 py-3 transition-colors duration-200">
-          <div class="flex items-center gap-3">
-            <span class="w-2.5 h-2.5 rounded-full bg-cyan-600 flex-shrink-0"></span>
-            <div>
-              <p class="text-sm font-semibold text-gray-900">Zona Media</p>
-              <p class="text-xs text-gray-400">11:00 — 12:00</p>
-            </div>
-          </div>
-          <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full">Lugares disponibles</span>
-        </div>
-        <div class="flex items-center justify-between bg-teal-50 hover:bg-teal-100 rounded-xl px-4 py-3 transition-colors duration-200">
-          <div class="flex items-center gap-3">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 flex-shrink-0"></span>
-            <div>
-              <p class="text-sm font-semibold text-gray-900">Tren Inferior</p>
-              <p class="text-xs text-gray-400">14:00 — 15:00</p>
-            </div>
-          </div>
-          <span class="text-xs font-semibold bg-amber-100 text-amber-700 px-2.5 py-0.5 rounded-full">Pocos lugares</span>
-        </div>
-        <div class="flex items-center justify-between bg-teal-50 hover:bg-teal-100 rounded-xl px-4 py-3 transition-colors duration-200">
-          <div class="flex items-center gap-3">
-            <span class="w-2.5 h-2.5 rounded-full bg-teal-600 flex-shrink-0"></span>
-            <div>
-              <p class="text-sm font-semibold text-gray-900">Tren Superior</p>
-              <p class="text-xs text-gray-400">16:00 — 17:00</p>
-            </div>
-          </div>
-          <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full">Lugares disponibles</span>
-        </div>
-      </div>
-      <div class="border-t border-gray-100 px-7 py-4 text-center">
-        <p class="text-xs text-gray-400 mb-3">Para reservar tu lugar necesitás una cuenta</p>
-        <a href="{% url 'accounts:register' %}"
-          class="inline-block bg-teal-600 hover:bg-teal-700 text-white font-semibold text-sm px-5 py-2 rounded-lg transition-colors duration-200">
-          Registrarse gratis
-        </a>
-      </div>
-    </div>
-    {% endif %}
+    <div class="pointer-events-none absolute -top-24 -right-24 w-[440px] h-[440px] rounded-full
+                bg-primary-300/20 blur-3xl"></div>
+    <div class="pointer-events-none absolute bottom-0 left-0 w-72 h-72 rounded-full
+                bg-primary-200/15 blur-3xl"></div>
 
-  </div>
-</section>
+    <div class="relative z-10 max-w-screen-xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2
+                gap-14 items-center animate-fade-up">
 
-
-<!-- ══ ACTIVIDADES ══ -->
-<section class="bg-teal-50 py-20 px-4 lg:px-6" id="actividades">
-  <div class="max-w-screen-xl mx-auto">
-    <div class="text-center mb-14">
-      <span class="text-xs font-bold uppercase tracking-widest text-teal-600">Nuestras actividades</span>
-      <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight">Tres disciplinas, un mismo objetivo</h2>
-      <p class="mt-3 text-gray-500 max-w-xl mx-auto">Trabajamos el cuerpo de manera integral. Cada actividad está diseñada para la rehabilitación y el bienestar, sin importar tu edad ni condición física.</p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-      <!-- Tren Superior -->
-      <div class="group relative bg-white rounded-2xl border border-gray-200 p-8 flex flex-col gap-5 overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
-        <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-600 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300"></div>
-        <div class="w-13 h-13 rounded-2xl bg-teal-100 flex items-center justify-center w-14 h-14">
-          <svg class="w-7 h-7 text-teal-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 4h12M8 4v4a4 4 0 008 0V4M12 12v8M9 16h6"/>
-          </svg>
-        </div>
-        <div>
-          <span class="inline-block text-xs font-semibold bg-teal-100 text-teal-700 px-2.5 py-0.5 rounded-full mb-3">Tren Superior</span>
-          <h3 class="text-lg font-bold text-gray-900 leading-snug">Rehabilitación<br>de Tren Superior</h3>
-        </div>
-        <p class="text-sm text-gray-500 leading-relaxed flex-1">Trabajamos hombros, brazos, pecho y espalda alta. Ideal para recuperarse de lesiones de cuello, columna cervical, codo o muñeca.</p>
-      </div>
-
-      <!-- Zona Media -->
-      <div class="group relative bg-white rounded-2xl border border-gray-200 p-8 flex flex-col gap-5 overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
-        <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-600 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300"></div>
-        <div class="w-14 h-14 rounded-2xl bg-cyan-100 flex items-center justify-center">
-          <svg class="w-7 h-7 text-cyan-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="10" width="18" height="4" rx="2"/>
-            <path d="M7 10V7m10 3V7M7 14v3m10-3v3"/>
-          </svg>
-        </div>
-        <div>
-          <span class="inline-block text-xs font-semibold bg-cyan-100 text-cyan-700 px-2.5 py-0.5 rounded-full mb-3">Zona Media</span>
-          <h3 class="text-lg font-bold text-gray-900 leading-snug">Rehabilitación<br>de Zona Media</h3>
-        </div>
-        <p class="text-sm text-gray-500 leading-relaxed flex-1">Fortalecemos el core y la columna lumbar. Enfocado en el alivio de dolor lumbar, problemas posturales y recuperación abdominal.</p>
-      </div>
-
-      <!-- Tren Inferior -->
-      <div class="group relative bg-white rounded-2xl border border-gray-200 p-8 flex flex-col gap-5 overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.1)]">
-        <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300"></div>
-        <div class="w-14 h-14 rounded-2xl bg-emerald-100 flex items-center justify-center">
-          <svg class="w-7 h-7 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2v10M8 12l-3 8M16 12l3 8M5 20h14"/>
-            <circle cx="12" cy="5" r="2"/>
-          </svg>
-        </div>
-        <div>
-          <span class="inline-block text-xs font-semibold bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full mb-3">Tren Inferior</span>
-          <h3 class="text-lg font-bold text-gray-900 leading-snug">Rehabilitación<br>de Tren Inferior</h3>
-        </div>
-        <p class="text-sm text-gray-500 leading-relaxed flex-1">Rodillas, caderas, tobillos y musculatura de piernas. Perfecta para recuperar movilidad, fuerza y estabilidad después de lesiones.</p>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-
-<!-- ══ CÓMO FUNCIONA ══ -->
-<section class="bg-white py-20 px-4 lg:px-6" id="como-funciona">
-  <div class="max-w-screen-xl mx-auto">
-    <div class="text-center mb-14">
-      <span class="text-xs font-bold uppercase tracking-widest text-teal-600">Cómo funciona</span>
-      <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight">Reservar es muy sencillo</h2>
-      <p class="mt-3 text-gray-500 max-w-xl mx-auto">Podés explorar todas las clases disponibles sin tener cuenta. Para reservar, solo necesitás registrarte.</p>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-      <!-- Steps -->
-      <div class="flex flex-col gap-3 relative">
-        <div class="hidden lg:block absolute top-5 left-[calc(100%-1rem)] w-8 h-0.5 bg-gray-200"></div>
-        <div class="w-11 h-11 rounded-xl bg-teal-100 text-teal-600 font-extrabold text-base flex items-center justify-center flex-shrink-0">1</div>
-        <h4 class="text-sm font-bold text-gray-900">Explorá las clases</h4>
-        <p class="text-sm text-gray-500 leading-relaxed">Mirá los turnos disponibles, horarios y actividades sin necesidad de registrarte.</p>
-      </div>
-      <div class="flex flex-col gap-3 relative">
-        <div class="hidden lg:block absolute top-5 left-[calc(100%-1rem)] w-8 h-0.5 bg-gray-200"></div>
-        <div class="w-11 h-11 rounded-xl bg-teal-100 text-teal-600 font-extrabold text-base flex items-center justify-center flex-shrink-0">2</div>
-        <h4 class="text-sm font-bold text-gray-900">Creá tu cuenta</h4>
-        <p class="text-sm text-gray-500 leading-relaxed">Registrate con tu nombre, email y DNI. Es gratuito y solo te lleva un minuto.</p>
-      </div>
-      <div class="flex flex-col gap-3 relative">
-        <div class="hidden lg:block absolute top-5 left-[calc(100%-1rem)] w-8 h-0.5 bg-gray-200"></div>
-        <div class="w-11 h-11 rounded-xl bg-teal-100 text-teal-600 font-extrabold text-base flex items-center justify-center flex-shrink-0">3</div>
-        <h4 class="text-sm font-bold text-gray-900">Elegí tu turno</h4>
-        <p class="text-sm text-gray-500 leading-relaxed">Seleccioná la actividad, el día y el horario que mejor se adapte a tu rutina.</p>
-      </div>
-      <div class="flex flex-col gap-3">
-        <div class="w-11 h-11 rounded-xl bg-teal-100 text-teal-600 font-extrabold text-base flex items-center justify-center flex-shrink-0">4</div>
-        <h4 class="text-sm font-bold text-gray-900">Abonás y listo</h4>
-        <p class="text-sm text-gray-500 leading-relaxed">Pagá con Mercado Pago, efectivo o transferencia. Recibís confirmación por email.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- ══ HORARIOS ══ -->
-<section class="bg-teal-50 py-20 px-4 lg:px-6" id="horarios">
-  <div class="max-w-screen-xl mx-auto">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-
-      <!-- Left: info -->
+      <!-- Copy -->
       <div>
-        <span class="text-xs font-bold uppercase tracking-widest text-teal-600">Horarios de hoy</span>
-        <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight mb-3">Dos turnos diarios para adaptarse a vos</h2>
-        <p class="text-gray-500 mb-7">Trabajamos de lunes a viernes en turno mañana y turno tarde. Los cupos los definen los dueños y pueden variar por horario y actividad.</p>
-
-        <div class="flex flex-col gap-3">
-          <div class="flex items-start gap-3 bg-white border border-gray-200 rounded-2xl px-5 py-4">
-            <svg class="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            <div>
-              <p class="text-sm font-semibold text-gray-900">Turno mañana</p>
-              <p class="text-xs text-gray-400">08:00 a 14:00 hs — 3 profesionales por actividad</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-3 bg-white border border-gray-200 rounded-2xl px-5 py-4">
-            <svg class="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 00-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/></svg>
-            <div>
-              <p class="text-sm font-semibold text-gray-900">Turno tarde</p>
-              <p class="text-xs text-gray-400">14:00 a 20:00 hs — 3 profesionales por actividad</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-3 bg-white border border-gray-200 rounded-2xl px-5 py-4">
-            <svg class="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-            <div>
-              <p class="text-sm font-semibold text-gray-900">Sin indicación médica obligatoria</p>
-              <p class="text-xs text-gray-400">Podés asistir por iniciativa propia</p>
-            </div>
-          </div>
+        <span class="inline-flex items-center gap-1.5 bg-primary-100 text-primary-700
+                     text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-6">
+          <span class="w-2 h-2 rounded-full bg-primary-600"></span>
+          Centro de rehabilitación
+        </span>
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900
+                   leading-[1.1] tracking-tight mb-5">
+          Movimiento <br> que te 
+          <em class="not-italic text-primary-600">alinea</em>
+        </h1>
+        <p class="text-gray-500 text-lg max-w-lg mb-8 leading-relaxed">
+          En Endereza2 acompañamos tu recuperación con clases profesionales de
+          rehabilitación para todas las edades, sin indicación médica obligatoria.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a href="#horarios"
+             class="inline-flex items-center gap-2 bg-primary-700 hover:bg-primary-800
+                    text-white font-semibold px-6 py-3 rounded-xl text-base
+                    transition-all duration-200 hover:-translate-y-0.5
+                    hover:shadow-[0_8px_24px_oklch(40%_.160_22/.35)]">
+            Ver clases disponibles
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+          <a href="#actividades"
+             class="inline-flex items-center gap-2 bg-white border border-primary-300
+                    text-primary-700 font-semibold px-6 py-3 rounded-xl text-base
+                    hover:bg-primary-50 transition-colors duration-200">
+            Nuestras actividades
+          </a>
         </div>
+        <p class="mt-5 text-sm text-gray-400 flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-primary-500 shrink-0" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+          </svg>
+          Clases de 1 hora · Lunes a viernes · 8:00 a 20:00 h
+        </p>
       </div>
 
-      <!-- Right: table -->
-      <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-        <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr] bg-gray-900 text-white/55 text-xs font-semibold uppercase tracking-widest px-5 py-3">
-          <span>Horario</span>
-          <span>Actividad</span>
-          <span>Turno</span>
-          <span>Lugares</span>
+      <!-- Schedule preview card -->
+      <div class="bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04)]
+                  border border-gray-100 overflow-hidden">
+        <div class="px-7 py-5 text-white"
+             style="background:linear-gradient(135deg,oklch(40% .160 22),oklch(48% .170 22))">
+          <p class="text-white/70 text-sm mb-1">Próximas clases disponibles</p>
+          <h3 class="text-xl font-bold tracking-tight">Hoy — clases de hoy</h3>
         </div>
-        <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr] px-5 py-3.5 border-b border-gray-100 items-center hover:bg-teal-50 transition-colors duration-150">
-          <span class="text-sm font-semibold text-gray-900">08:00 – 09:00</span>
-          <span class="text-sm text-gray-600 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-teal-600 inline-block"></span>Tren Superior</span>
-          <span class="text-xs text-gray-400">Mañana</span>
-          <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full w-fit">Disponible</span>
+
+        <div class="flex flex-col gap-3 p-5">
+          <div class="flex items-center justify-between bg-primary-50 hover:bg-primary-100
+                      rounded-xl px-4 py-3 transition-colors duration-200">
+            <div class="flex items-center gap-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-primary-600 shrink-0"></span>
+              <div>
+                <p class="text-sm font-semibold text-gray-900">Tren Superior</p>
+                <p class="text-xs text-gray-400">09:00 — 10:00 · Turno mañana</p>
+              </div>
+            </div>
+            <span class="text-xs font-semibold bg-emerald-100 text-emerald-700
+                         px-2.5 py-0.5 rounded-full">Disponible</span>
+          </div>
+          <div class="flex items-center justify-between bg-primary-50 hover:bg-primary-100
+                      rounded-xl px-4 py-3 transition-colors duration-200">
+            <div class="flex items-center gap-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-primary-400 shrink-0"></span>
+              <div>
+                <p class="text-sm font-semibold text-gray-900">Zona Media</p>
+                <p class="text-xs text-gray-400">11:00 — 12:00 · Turno mañana</p>
+              </div>
+            </div>
+            <span class="text-xs font-semibold bg-emerald-100 text-emerald-700
+                         px-2.5 py-0.5 rounded-full">Disponible</span>
+          </div>
+          <div class="flex items-center justify-between bg-primary-50 hover:bg-primary-100
+                      rounded-xl px-4 py-3 transition-colors duration-200">
+            <div class="flex items-center gap-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-primary-300 shrink-0"></span>
+              <div>
+                <p class="text-sm font-semibold text-gray-900">Tren Inferior</p>
+                <p class="text-xs text-gray-400">14:00 — 15:00 · Turno tarde</p>
+              </div>
+            </div>
+            <span class="text-xs font-semibold bg-amber-100 text-amber-700
+                         px-2.5 py-0.5 rounded-full">Pocos lugares</span>
+          </div>
+          <div class="flex items-center justify-between bg-primary-50 hover:bg-primary-100
+                      rounded-xl px-4 py-3 transition-colors duration-200">
+            <div class="flex items-center gap-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-primary-600 shrink-0"></span>
+              <div>
+                <p class="text-sm font-semibold text-gray-900">Tren Superior</p>
+                <p class="text-xs text-gray-400">16:00 — 17:00 · Turno tarde</p>
+              </div>
+            </div>
+            <span class="text-xs font-semibold bg-emerald-100 text-emerald-700
+                         px-2.5 py-0.5 rounded-full">Disponible</span>
+          </div>
         </div>
-        <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr] px-5 py-3.5 border-b border-gray-100 items-center hover:bg-teal-50 transition-colors duration-150">
-          <span class="text-sm font-semibold text-gray-900">09:00 – 10:00</span>
-          <span class="text-sm text-gray-600 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-600 inline-block"></span>Zona Media</span>
-          <span class="text-xs text-gray-400">Mañana</span>
-          <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full w-fit">Disponible</span>
-        </div>
-        <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr] px-5 py-3.5 border-b border-gray-100 items-center hover:bg-teal-50 transition-colors duration-150">
-          <span class="text-sm font-semibold text-gray-900">11:00 – 12:00</span>
-          <span class="text-sm text-gray-600 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-600 inline-block"></span>Tren Inferior</span>
-          <span class="text-xs text-gray-400">Mañana</span>
-          <span class="text-xs font-semibold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full w-fit">Pocos lugares</span>
-        </div>
-        <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr] px-5 py-3.5 border-b border-gray-100 items-center hover:bg-teal-50 transition-colors duration-150">
-          <span class="text-sm font-semibold text-gray-900">14:00 – 15:00</span>
-          <span class="text-sm text-gray-600 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-teal-600 inline-block"></span>Tren Superior</span>
-          <span class="text-xs text-gray-400">Tarde</span>
-          <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full w-fit">Disponible</span>
-        </div>
-        <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr] px-5 py-3.5 border-b border-gray-100 items-center hover:bg-teal-50 transition-colors duration-150">
-          <span class="text-sm font-semibold text-gray-900">16:00 – 17:00</span>
-          <span class="text-sm text-gray-600 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-600 inline-block"></span>Zona Media</span>
-          <span class="text-xs text-gray-400">Tarde</span>
-          <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full w-fit">Disponible</span>
-        </div>
-        <div class="grid grid-cols-[1.5fr_1fr_1fr_1fr] px-5 py-3.5 items-center hover:bg-teal-50 transition-colors duration-150">
-          <span class="text-sm font-semibold text-gray-900">18:00 – 19:00</span>
-          <span class="text-sm text-gray-600 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-600 inline-block"></span>Tren Inferior</span>
-          <span class="text-xs text-gray-400">Tarde</span>
-          <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full w-fit">Disponible</span>
+
+        <div class="border-t border-gray-100 px-7 py-4 text-center">
+          <p class="text-xs text-gray-400 mb-3">Para reservar tu lugar necesitás una cuenta</p>
+          <a href="{% url 'accounts:register' %}"
+             class="inline-block bg-primary-700 hover:bg-primary-800 text-white
+                    font-semibold text-sm px-5 py-2 rounded-lg transition-colors duration-200">
+            Registrarse gratis
+          </a>
         </div>
       </div>
 
     </div>
-  </div>
-</section>
+  </section>
 
+  <!-- ── ACTIVIDADES ── -->
+  <section class="bg-primary-50 py-20 px-4 lg:px-6" id="actividades">
+    <div class="max-w-screen-xl mx-auto animate-fade-up">
+      <div class="text-center mb-14">
+        <span class="text-xs font-bold uppercase tracking-widest text-primary-600">
+          Nuestras actividades
+        </span>
+        <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight">
+          Tres disciplinas, un mismo objetivo
+        </h2>
+        <p class="mt-3 text-gray-500 max-w-xl mx-auto">
+          Trabajamos el cuerpo de manera integral. Cada actividad está diseñada para la
+          rehabilitación y el bienestar, sin importar tu edad ni condición física.
+        </p>
+      </div>
 
-<!-- ══ CTA FINAL ══ -->
-<section class="relative overflow-hidden bg-gradient-to-br from-gray-900 to-teal-950 py-20 px-4 lg:px-6">
-  <div class="pointer-events-none absolute -top-16 -right-16 w-72 h-72 rounded-full bg-teal-500/25 blur-3xl"></div>
-  <div class="relative z-10 max-w-2xl mx-auto text-center">
-    <span class="text-xs font-bold uppercase tracking-widest text-white/40">¿Listo para empezar?</span>
-    <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">Tu rehabilitación empieza con un turno</h2>
-    <p class="text-white/60 text-base mb-8 leading-relaxed">Creá tu cuenta gratis, explorá las clases y reservá el horario que mejor se adapte a tu vida. Sin indicación médica obligatoria.</p>
-    <div class="flex flex-wrap gap-3 justify-center">
-      <a href="{% url 'accounts:register' %}"
-        class="inline-flex items-center gap-2 bg-white text-gray-900 font-bold px-7 py-3 rounded-xl text-base hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] transition-all duration-200">
-        Crear cuenta gratis
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-      <a href="#horarios"
-        class="inline-flex items-center gap-2 border border-white/30 text-white/85 font-semibold px-7 py-3 rounded-xl text-base hover:border-white/60 hover:bg-white/7 transition-all duration-200">
-        Ver turnos disponibles
-      </a>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Tren Superior -->
+        <div class="group relative bg-white rounded-2xl border border-gray-200 p-8
+                    flex flex-col gap-5 overflow-hidden
+                    transition-all duration-300 hover:-translate-y-1.5
+                    hover:shadow-[0_16px_48px_rgba(0,0,0,0.10)]">
+          <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-700
+                      scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300"></div>
+          <div class="w-12 h-12 rounded-2xl bg-primary-100 flex items-center justify-center">
+            <svg class="w-6 h-6 text-primary-700" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 4v6a6 6 0 0012 0V4M4 20h16"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-extrabold text-gray-900 mb-2">Tren Superior</h3>
+            <p class="text-sm text-gray-500 leading-relaxed">
+              Hombros, brazos, pecho y espalda. Ideal para recuperar movilidad y
+              fortalecer la musculatura del tren superior del cuerpo.
+            </p>
+          </div>
+        </div>
+
+        <!-- Zona Media -->
+        <div class="group relative bg-white rounded-2xl border border-gray-200 p-8
+                    flex flex-col gap-5 overflow-hidden
+                    transition-all duration-300 hover:-translate-y-1.5
+                    hover:shadow-[0_16px_48px_rgba(0,0,0,0.10)]">
+          <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500
+                      scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300"></div>
+          <div class="w-12 h-12 rounded-2xl bg-primary-100 flex items-center justify-center">
+            <svg class="w-6 h-6 text-primary-600" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="12" cy="12" rx="10" ry="5"/><path d="M2 12c0 4 4.5 7 10 7s10-3 10-7"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-extrabold text-gray-900 mb-2">Zona Media</h3>
+            <p class="text-sm text-gray-500 leading-relaxed">
+              Core, abdomen y zona lumbar. Trabajamos la estabilidad y el equilibrio
+              del centro del cuerpo para mejorar tu postura y prevenir lesiones.
+            </p>
+          </div>
+        </div>
+
+        <!-- Tren Inferior -->
+        <div class="group relative bg-white rounded-2xl border border-gray-200 p-8
+                    flex flex-col gap-5 overflow-hidden
+                    transition-all duration-300 hover:-translate-y-1.5
+                    hover:shadow-[0_16px_48px_rgba(0,0,0,0.10)]">
+          <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-400
+                      scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300"></div>
+          <div class="w-12 h-12 rounded-2xl bg-primary-100 flex items-center justify-center">
+            <svg class="w-6 h-6 text-primary-500" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v20M5 7l7-5 7 5M5 17l7 5 7-5"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-extrabold text-gray-900 mb-2">Tren Inferior</h3>
+            <p class="text-sm text-gray-500 leading-relaxed">
+              Piernas, rodillas, caderas y pies. Recuperá la funcionalidad y la fuerza
+              de la parte inferior del cuerpo con ejercicios guiados.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CÓMO FUNCIONA ── -->
+  <section class="bg-white py-20 px-4 lg:px-6" id="como-funciona">
+    <div class="max-w-screen-xl mx-auto animate-fade-up">
+      <div class="text-center mb-14">
+        <span class="text-xs font-bold uppercase tracking-widest text-primary-600">
+          Cómo funciona
+        </span>
+        <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
+          Reservar es muy simple
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        <!-- Paso 1 -->
+        <div class="flex flex-col items-start gap-4 p-6 bg-gray-50 rounded-2xl border border-gray-100">
+          <div class="w-10 h-10 rounded-xl bg-primary-700 text-white flex items-center
+                      justify-center text-sm font-extrabold">1</div>
+          <h4 class="text-sm font-bold text-gray-900">Creá tu cuenta</h4>
+          <p class="text-sm text-gray-500 leading-relaxed">
+            Ingresá tus datos: nombre, apellido, DNI, fecha de nacimiento y correo. Es gratis.
+          </p>
+        </div>
+
+        <!-- Paso 2 -->
+        <div class="flex flex-col items-start gap-4 p-6 bg-gray-50 rounded-2xl border border-gray-100">
+          <div class="w-10 h-10 rounded-xl bg-primary-600 text-white flex items-center
+                      justify-center text-sm font-extrabold">2</div>
+          <h4 class="text-sm font-bold text-gray-900">Elegí tu clase</h4>
+          <p class="text-sm text-gray-500 leading-relaxed">
+            Buscá la actividad y el horario que más te convenga en el calendario de turnos.
+          </p>
+        </div>
+
+        <!-- Paso 3 -->
+        <div class="flex flex-col items-start gap-4 p-6 bg-gray-50 rounded-2xl border border-gray-100">
+          <div class="w-10 h-10 rounded-xl bg-primary-700 text-white flex items-center
+                      justify-center text-sm font-extrabold">3</div>
+          <h4 class="text-sm font-bold text-gray-900">Pagá tu turno</h4>
+          <p class="text-sm text-gray-500 leading-relaxed">
+            Abonás con Mercado Pago, tarjeta, efectivo o transferencia. Recibís comprobante por email.
+          </p>
+        </div>
+
+        <!-- Paso 4 -->
+        <div class="flex flex-col items-start gap-4 p-6 bg-gray-50 rounded-2xl border border-gray-100">
+          <div class="w-10 h-10 rounded-xl bg-primary-700 text-white flex items-center
+                      justify-center text-sm font-extrabold">4</div>
+          <h4 class="text-sm font-bold text-gray-900">Presentá tu QR</h4>
+          <p class="text-sm text-gray-500 leading-relaxed">
+            Al llegar al centro mostrá el QR de tu reserva y presentá tu DNI para registrar asistencia.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HORARIOS ── -->
+  <section class="bg-primary-50 py-20 px-4 lg:px-6" id="horarios">
+    <div class="max-w-lg mx-auto animate-fade-up">
+      <div class="grid gap-12 items-center">
+
+        <!-- Info -->
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest text-primary-600">Horarios</span>
+          <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight
+                     leading-tight mb-3">
+            Dos turnos diarios
+          </h2>
+          <p class="text-gray-500 mb-7">
+            Trabajamos de lunes a viernes en turno mañana y turno tarde. Los cupos los
+            definen los dueños y pueden variar por horario y actividad.
+          </p>
+
+          <div class="flex flex-col gap-3">
+            <div class="flex items-start gap-3 bg-white border border-gray-200 rounded-2xl px-5 py-4">
+              <svg class="w-5 h-5 text-primary-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+              </svg>
+              <div>
+                <p class="text-sm font-semibold text-gray-900">Turno mañana</p>
+                <p class="text-xs text-gray-400">08:00 a 14:00 hs · 3 profesionales por actividad</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 bg-white border border-gray-200 rounded-2xl px-5 py-4">
+              <svg class="w-5 h-5 text-primary-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 18a5 5 0 00-10 0"/>
+                <line x1="12" y1="9" x2="12" y2="2"/>
+                <line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/>
+                <line x1="1" y1="18" x2="3" y2="18"/>
+                <line x1="21" y1="18" x2="23" y2="18"/>
+                <line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/>
+              </svg>
+              <div>
+                <p class="text-sm font-semibold text-gray-900">Turno tarde</p>
+                <p class="text-xs text-gray-400">14:00 a 20:00 hs · 3 profesionales por actividad</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 bg-white border border-gray-200 rounded-2xl px-5 py-4">
+              <svg class="w-5 h-5 text-primary-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+              </svg>
+              <div>
+                <p class="text-sm font-semibold text-gray-900">Sin indicación médica obligatoria</p>
+                <p class="text-xs text-gray-400">Podés asistir por iniciativa propia</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA FINAL ── -->
+  <section class="relative overflow-hidden py-20 px-4 lg:px-6 bg-[linear-gradient(135deg,var(--color-primary-900),var(--color-primary-700),#111827)]">
+    <div class="pointer-events-none absolute -top-16 -right-16 w-72 h-72 rounded-full
+                bg-primary-500/20 blur-3xl"></div>
+    <div class="pointer-events-none absolute -bottom-16 -left-16 w-72 h-72 rounded-full
+                bg-primary-400/15 blur-3xl"></div>
+    <div class="relative z-10 max-w-lg mx-auto text-center animate-fade-up">
+      <span class="text-xs font-bold uppercase tracking-widest text-white/40">¿Listo para empezar?</span>
+      <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
+        Tu rehabilitación empieza con un turno
+      </h2>
+      <p class="text-white/60 text-base mb-8 leading-relaxed">
+        Creá tu cuenta gratis, explorá las clases y reservá el horario que mejor se
+        adapte a tu vida. Sin indicación médica obligatoria.
+      </p>
+      <div class="flex flex-wrap gap-3 justify-center">
+        <a href="{% url 'accounts:register' %}"
+           class="inline-flex items-center gap-2 bg-white text-gray-900 font-bold px-7 py-3
+                  rounded-xl text-base hover:-translate-y-0.5
+                  hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] transition-all duration-200">
+          Crear cuenta gratis
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+<!-- ════════════════ VISTA: CLIENTE autenticado ════════════════ -->
+
+{% elif user.es_cliente %}
+
+  <div class="max-w-screen-xl mx-auto px-4 lg:px-6 py-10 flex flex-col gap-8 animate-fade-up">
+
+    <!-- Bienvenida -->
+    <div class="relative overflow-hidden rounded-2xl bg-[linear-gradient(135deg,var(--color-primary-900),var(--color-primary-700),#111827)] p-8 flex flex-col sm:flex-row sm:items-center gap-5">
+      <div class="pointer-events-none absolute -bottom-12 -right-12 w-52 h-52 rounded-full
+                  bg-primary-500/25 blur-2xl"></div>
+      <div class="relative z-10">
+        <p class="text-xs font-bold uppercase tracking-widest text-primary-300 mb-1">Mi panel</p>
+        <h1 class="text-2xl font-extrabold text-white tracking-tight">
+          Hola, {{ user.first_name }} 👋
+        </h1>
+        <p class="text-white/50 text-sm mt-0.5">
+          Reservá clases, revisá tus turnos y gestioná tu cuenta.
+        </p>
+      </div>
+      <div class="relative z-10 sm:ml-auto flex gap-2 flex-wrap">
+        <a href="{% url 'turnos/clases/' % }"
+           class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold
+                  bg-primary-600 hover:bg-primary-700 text-white transition-colors">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <path d="M16 2v4M8 2v4M3 10h18"/>
+          </svg>
+          Reservar clase
+        </a>
+      </div>
+    </div>
+
+    {# ── Cards de resumen ── #}
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+    {# Próximo turno #}
+    <div class="bg-white border border-gray-200 rounded-2xl p-5 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center shrink-0">
+        <svg class="w-5 h-5 text-primary-700" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2"/>
+          <path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+      </div>
+      <div class="min-w-0">
+        <p class="text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">Próximo turno</p>
+        {% if proximo_turno %}
+          <p class="text-sm font-semibold text-gray-900 truncate">
+            {{ proximo_turno.actividad }}
+          </p>
+          <p class="text-xs text-gray-400 mt-0.5">
+            {{ proximo_turno.fecha|date:"D d/m" }} · {{ proximo_turno.hora_inicio }}
+          </p>
+        {% else %}
+          <p class="text-sm text-gray-500">Sin turnos próximos</p>
+          <p class="text-xs text-gray-400 mt-0.5">Reservá una clase</p>
+        {% endif %}
+      </div>
+    </div>
+
+    {# Clases a favor #}
+    <div class="bg-white border border-gray-200 rounded-2xl p-5 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center shrink-0">
+        <svg class="w-5 h-5 text-primary-700" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="7"/>
+          <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+        </svg>
+      </div>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">Clases a favor</p>
+        <p class="text-sm font-semibold text-gray-900">
+          {{ clases_a_favor|default:"0" }} clase{% if clases_a_favor != 1 %}s{% endif %}
+        </p>
+        <p class="text-xs text-gray-400 mt-0.5">Sin vencimiento</p>
+      </div>
+    </div>
+
+    {# Abono / pago pendiente #}
+    <div class="bg-white border border-gray-200 rounded-2xl p-5 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center shrink-0">
+        <svg class="w-5 h-5 text-primary-700"
+             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="4" width="22" height="16" rx="2"/>
+          <path d="M1 10h22"/>
+        </svg>
+      </div>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">Abono mensual</p>
+        {% if pago_pendiente %}
+          <p class="text-sm font-semibold text-amber-700">
+            Vence en {{ pago_pendiente.dias_restantes }} día{% if pago_pendiente.dias_restantes != 1 %}s{% endif %}
+          </p>
+          <p class="text-xs text-gray-400 mt-0.5">{{ pago_pendiente.actividad }}</p>
+        {% else %}
+          <p class="text-sm font-semibold text-gray-900">Al día</p>
+          <p class="text-xs text-gray-400 mt-0.5">Sin pagos pendientes</p>
+        {% endif %}
+      </div>
     </div>
   </div>
-</section>
+  {# ── Layout principal: calendario + panel lateral ── #}
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 items-start">
+
+    {# ── Calendario ── #}
+    <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden" id="cal-block">
+
+      {# Header del calendario #}
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h2 class="text-base font-semibold text-gray-900" id="cal-month-label">—</h2>
+        <div class="flex items-center gap-2">
+          <button id="btn-prev"
+                  class="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200
+                         text-gray-500 hover:bg-gray-50 transition-colors"
+                  aria-label="Mes anterior">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+          <button id="btn-today"
+                  class="px-3 h-8 text-xs font-semibold rounded-lg border border-gray-200
+                         text-gray-600 hover:bg-gray-50 transition-colors">
+            Hoy
+          </button>
+          <button id="btn-next"
+                  class="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200
+                         text-gray-500 hover:bg-gray-50 transition-colors"
+                  aria-label="Mes siguiente">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {# Cabecera días #}
+      <div class="grid grid-cols-7 border-b border-gray-100 bg-gray-50" id="cal-days-header"></div>
+
+      {# Grilla días #}
+      <div class="grid grid-cols-7" id="cal-grid"></div>
+
+    </div>
+
+
+    {# ── Panel lateral: clases del día seleccionado ── #}
+    <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden" id="detail-panel">
+
+      <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+        <p class="text-sm font-semibold text-gray-900">Clases del día</p>
+        <p class="text-xs text-gray-400" id="dp-date">—</p>
+      </div>
+
+      <div id="class-cards-container" class="flex flex-col gap-3 p-4">
+        <div class="flex flex-col items-center justify-center py-10 text-center gap-2">
+          <svg class="w-8 h-8 text-gray-300" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <path d="M16 2v4M8 2v4M3 10h18"/>
+          </svg>
+          <p class="text-sm text-gray-400">Seleccioná un día</p>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script id="clases-data" type="application/json">
+  {{ clases_json|safe }}
+</script>
+
+<script>
+(function () {
+
+  /* ── Constantes ── */
+  const DAYS_SHORT = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const MONTHS     = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                      'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+  /* Colores por actividad (Tailwind inline) */
+  const ACT_COLORS = {
+    'Tren Superior': { dot: 'bg-blue-500',    badge: 'bg-blue-50 text-blue-700',    bar: '#3b82f6' },
+    'Zona Media':    { dot: 'bg-emerald-500',  badge: 'bg-emerald-50 text-emerald-700', bar: '#10b981' },
+    'Tren Inferior': { dot: 'bg-primary-600',  badge: 'bg-primary-50 text-primary-700', bar: 'oklch(48% .170 22)' },
+  };
+  function actColor(name) {
+    return ACT_COLORS[name] || { dot: 'bg-gray-400', badge: 'bg-gray-100 text-gray-600', bar: '#9ca3af' };
+  }
+
+  /* ── Estado ── */
+  const today        = new Date(); today.setHours(0,0,0,0);
+  let   currentMonth = today.getMonth();
+  let   currentYear  = today.getFullYear();
+  let   selectedDate = new Date(today);
+
+  /* ── Datos del servidor ── */
+  let clasesData = {};
+  try {
+    const raw = document.getElementById('clases-data');
+    if (raw) clasesData = JSON.parse(raw.textContent);
+  } catch(e) {}
+
+  /* Helper: "YYYY-MM-DD" → clave del objeto */
+  function dateKey(d) {
+    const yyyy = d.getFullYear();
+    const mm   = String(d.getMonth()+1).padStart(2,'0');
+    const dd   = String(d.getDate()).padStart(2,'0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  /* ── Renderizar el calendario ── */
+  function renderCalendar() {
+    document.getElementById('cal-month-label').textContent =
+      `${MONTHS[currentMonth]} ${currentYear}`;
+
+    /* Cabecera días */
+    const hdr = document.getElementById('cal-days-header');
+    hdr.innerHTML = DAYS_SHORT.map(d =>
+      `<div class="text-center py-2 text-xs font-semibold text-gray-400
+                   uppercase tracking-wider">${d}</div>`
+    ).join('');
+
+    /* Grilla */
+    const grid       = document.getElementById('cal-grid');
+    const firstDay   = new Date(currentYear, currentMonth, 1).getDay();
+    const daysInMonth= new Date(currentYear, currentMonth+1, 0).getDate();
+    const prevDays   = new Date(currentYear, currentMonth, 0).getDate();
+    const TOTAL_CELLS= 42;
+
+    let html = '';
+
+    for (let i = 0; i < TOTAL_CELLS; i++) {
+      let day, month, year, otherMonth = false;
+
+      if (i < firstDay) {
+        day = prevDays - firstDay + 1 + i;
+        month = currentMonth - 1; year = currentYear;
+        if (month < 0) { month = 11; year--; }
+        otherMonth = true;
+      } else if (i >= firstDay + daysInMonth) {
+        day = i - firstDay - daysInMonth + 1;
+        month = currentMonth + 1; year = currentYear;
+        if (month > 11) { month = 0; year++; }
+        otherMonth = true;
+      } else {
+        day = i - firstDay + 1;
+        month = currentMonth; year = currentYear;
+      }
+
+      const cellDate = new Date(year, month, day); cellDate.setHours(0,0,0,0);
+      const isToday  = cellDate.getTime() === today.getTime();
+      const isSel    = cellDate.getTime() === selectedDate.getTime();
+      const isWeekend= cellDate.getDay() === 0 || cellDate.getDay() === 6;
+      const key      = dateKey(cellDate);
+      const clases   = clasesData[key] || [];
+
+      /* Dots de actividades únicas */
+      const acts = [...new Set(clases.map(c => c.actividad))];
+      const dots = acts.map(a => {
+        const col = actColor(a);
+        return `<span class="inline-block w-1.5 h-1.5 rounded-full ${col.dot}"></span>`;
+      }).join('');
+
+      /* Clases CSS de la celda */
+      let cellCls = `
+        min-h-[68px] p-1.5 border-b border-r border-gray-100 last:border-r-0
+        transition-colors duration-150
+      `;
+      if (otherMonth) cellCls += ' opacity-35';
+      if (isWeekend)  cellCls += ' bg-gray-50/60 cursor-default';
+      else            cellCls += ' cursor-pointer hover:bg-primary-50/60';
+      if (isSel && !isWeekend) cellCls += ' bg-primary-50';
+
+      /* Número del día */
+      let dateCls = `
+        w-7 h-7 mx-auto mb-1 flex items-center justify-center rounded-full
+        text-xs font-semibold
+      `;
+      if (isToday && isSel)  dateCls += ' bg-primary-600 text-white';
+      else if (isToday)      dateCls += ' bg-primary-600 text-white';
+      else if (isSel)        dateCls += ' bg-primary-100 text-primary-800';
+      else                   dateCls += ' text-gray-700';
+
+      const ts = cellDate.getTime();
+
+      html += `
+        <div class="${cellCls}" ${!isWeekend ? `data-ts="${ts}"` : ''}>
+          <div class="${dateCls}">${day}</div>
+          <div class="flex flex-wrap gap-0.5 justify-center">${dots}</div>
+        </div>`;
+    }
+
+    grid.innerHTML = html;
+
+    /* Eventos click en celdas */
+    grid.querySelectorAll('[data-ts]').forEach(cell => {
+      cell.addEventListener('click', () => {
+        selectedDate = new Date(parseInt(cell.dataset.ts));
+        renderCalendar();
+        renderDetail();
+      });
+    });
+  }
+
+  /* ── Renderizar panel lateral ── */
+  function renderDetail() {
+    const d   = selectedDate;
+    const key = dateKey(d);
+    document.getElementById('dp-date').textContent =
+      `${DAYS_SHORT[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()].slice(0,3)}`;
+
+    const container = document.getElementById('class-cards-container');
+    const clases    = clasesData[key] || [];
+
+    if (!clases.length) {
+      const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+      container.innerHTML = `
+        <div class="flex flex-col items-center justify-center py-10 text-center gap-2">
+          <svg class="w-8 h-8 text-gray-300" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <path d="M16 2v4M8 2v4M3 10h18"/>
+          </svg>
+          <p class="text-sm text-gray-400">
+            ${isWeekend ? 'No hay clases los fines de semana' : 'Sin clases este día'}
+          </p>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = clases.map(c => {
+      const col   = actColor(c.actividad);
+      const pct   = Math.round((c.reservados / c.cupo) * 100);
+      const libres= c.cupo - c.reservados;
+
+      /* Color de la barra según ocupación */
+      const barColor = pct >= 90 ? '#ef4444' : pct >= 70 ? '#f59e0b' : col.bar;
+
+      /* Estado del botón */
+      let btn = '';
+      if (c.reservado_por_mi) {
+        btn = `<span class="inline-flex items-center gap-1 text-xs font-semibold
+                            bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg">
+                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                   <path d="M20 6L9 17l-5-5"/>
+                 </svg>
+                 Reservado
+               </span>`;
+      } else if (c.reservados >= c.cupo) {
+        btn = `<a href="/reservar/${c.pk}/espera/"
+                  class="inline-flex items-center gap-1 text-xs font-semibold
+                         bg-amber-50 border border-amber-200 text-amber-700
+                         px-3 py-1.5 rounded-lg hover:bg-amber-100 transition-colors">
+                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                   <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
+                 </svg>
+                 Lista de espera
+               </a>`;
+      } else {
+        btn = `<a href="/reservar/${c.pk}/"
+                  class="inline-flex items-center gap-1 text-xs font-semibold
+                         bg-primary-700 hover:bg-primary-800 text-white
+                         px-3 py-1.5 rounded-lg transition-colors">
+                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                   <path d="M12 5v14M5 12h14"/>
+                 </svg>
+                 Reservar
+               </a>`;
+      }
+
+      return `
+        <div class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3
+                    hover:border-gray-300 transition-colors">
+
+          <div class="flex items-center gap-2.5">
+            <span class="w-2.5 h-2.5 rounded-full shrink-0 ${col.dot}"></span>
+            <span class="text-sm font-semibold text-gray-900 flex-1">${c.actividad}</span>
+            <span class="text-xs font-medium text-gray-500 flex items-center gap-1">
+              <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+              </svg>
+              ${c.hora}
+            </span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <div class="h-full rounded-full transition-all duration-300"
+                   style="width:${pct}%;background:${barColor}"></div>
+            </div>
+            <span class="text-xs text-gray-400 shrink-0">
+              ${c.reservados >= c.cupo ? 'Lleno' : `${libres} libre${libres !== 1 ? 's' : ''}`} / ${c.cupo}
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-medium px-2 py-0.5 rounded-full ${col.badge}">
+              ${c.actividad}
+            </span>
+            ${btn}
+          </div>
+
+        </div>`;
+    }).join('');
+  }
+
+  /* ── Navegación ── */
+  document.getElementById('btn-prev').addEventListener('click', () => {
+    currentMonth--;
+    if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+    renderCalendar();
+    renderDetail();
+  });
+  document.getElementById('btn-next').addEventListener('click', () => {
+    currentMonth++;
+    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    renderCalendar();
+    renderDetail();
+  });
+  document.getElementById('btn-today').addEventListener('click', () => {
+    currentMonth = today.getMonth();
+    currentYear  = today.getFullYear();
+    selectedDate = new Date(today);
+    renderCalendar();
+    renderDetail();
+  });
+
+  /* ── Init ── */
+  renderCalendar();
+  renderDetail();
+
+})();
+</script>
+
+{% endif %}
+
+<!-- ════════════════ VISTA: SECRETARIO ════════════════ -->
+
+<style>
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-up { animation: fade-up .4s cubic-bezier(.22,1,.36,1); }
+</style>
+
 {% endblock %}

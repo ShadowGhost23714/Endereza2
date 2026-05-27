@@ -94,7 +94,7 @@ class TurnoForm(forms.ModelForm):
                 "class": (
                     "bg-gray-50 border border-gray-300 text-gray-900 text-sm "
                     "rounded-lg focus:ring-primary-600 focus:border-primary-600 "
-                    "block w-full p-2.5 bg-gray-200"
+                    "block w-full p-2.5"
                 ),
                 "id": "id_cupo",
                 "disabled": "disabled",
@@ -116,14 +116,38 @@ class TurnoForm(forms.ModelForm):
 
     # IGUAL A SALA: Usamos el nuevo widget personalizado
     profesor = forms.ModelChoiceField(
-        queryset=Profesor.objects.all(),  
-        widget=SelectWithActivities(attrs={"class": "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-200", "id": "id_profesor", "disabled": "disabled"}),
+    queryset=Profesor.objects.all(),
+        widget=SelectWithActivities(attrs={
+            "class": (
+                "bg-gray-900 border border-gray-300 text-gray-900 text-sm "
+                "rounded-lg focus:ring-primary-600 focus:border-primary-600 "
+                "block w-full p-2.5 transition-colors duration-200 "
+            ),
+            "id": "id_profesor",
+            "disabled": "disabled",
+        }),
         label="Profesor",
+    )
+
+    precio = forms.DecimalField(
+        min_value=0,
+        decimal_places=2,
+        widget=forms.NumberInput(
+            attrs={
+                "class": (
+                    "bg-gray-50 border border-gray-300 text-gray-900 text-sm "
+                    "rounded-lg focus:ring-primary-600 focus:border-primary-600 "
+                    "block w-full p-2.5"
+                ),
+                "placeholder": "Ej: 15000",
+            }
+        ),
+        label="Precio",
     )
 
     class Meta:
         model  = Turno
-        fields = ["fecha", "hora_inicio", "sala", "cupo", "actividad", "profesor"]
+        fields = ["fecha", "hora_inicio", "sala", "cupo", "actividad", "profesor", "precio"]
 
     
     
@@ -155,10 +179,10 @@ class TurnoForm(forms.ModelForm):
             if hora_inicio < time(8, 0) or hora_inicio > time(20, 0):
                 raise forms.ValidationError("La hora de inicio debe estar entre las 08:00 y las 20:00 hs.")
 
-            qs = Turno.objects.filter(fecha=fecha, hora_inicio=hora_inicio, actividad=actividad)
+            qs = Turno.objects.filter(fecha=fecha, hora_inicio=hora_inicio, actividad=actividad, sala=sala)
             if self.instance.pk:
                 qs = qs.exclude(pk=self.instance.pk)
             if qs.exists():
-                raise forms.ValidationError("Ya existe un turno con esa actividad, fecha y hora de inicio.")
+                raise forms.ValidationError("Ya existe un turno con esa actividad, sala, fecha y hora de inicio.")
 
         return cleaned_data

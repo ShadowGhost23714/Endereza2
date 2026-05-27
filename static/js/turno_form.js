@@ -14,6 +14,25 @@ document.addEventListener("DOMContentLoaded", function () {
   const hoy = new Date();
   hoy.setHours(0, 0, 0, 0);
 
+  // ── Clases de estado visual ────────────────────────────────────────────────
+/**"bg-gray-50 border border-gray-300 text-gray-900 text-sm "
+                    "rounded-lg focus:ring-primary-600 focus:border-primary-600 "
+                    "block w-full p-2.5"*/
+  const CLASES_BLOQUEADO  = ["bg-gray-900"];
+  const CLASES_HABILITADO = ["bg-gray-50"];
+
+  function bloquearCampo(campo) {
+    campo.setAttribute("disabled", "disabled");
+    campo.classList.add("bg-gray-900");
+    campo.classList.remove("bg-gray-50");
+  }
+
+  function habilitarCampo(campo) {
+    campo.removeAttribute("disabled");
+    campo.classList.remove("bg-gray-900");
+    campo.classList.add("bg-gray-50");
+  }
+
   // ── Helpers de error ───────────────────────────────────────────────────────
 
   function mostrarError(campo, mensaje) {
@@ -131,11 +150,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (todoCompleto) {
       btnSubmit.removeAttribute("disabled");
       btnSubmit.classList.remove("opacity-50", "cursor-not-allowed");
-      btnSubmit.classList.remove("bg-gray-400", "hover:bg-gray-500");
     } else {
       btnSubmit.setAttribute("disabled", "disabled");
       btnSubmit.classList.add("opacity-50", "cursor-not-allowed");
-      btnSubmit.classList.add("bg-gray-400", "hover:bg-gray-500");
     }
   }
 
@@ -144,16 +161,14 @@ document.addEventListener("DOMContentLoaded", function () {
   function controlarCupo() {
     const opcion = selectSala.options[selectSala.selectedIndex];
     if (opcion && opcion.value !== "") {
-      inputCupo.removeAttribute("disabled");
-      inputCupo.classList.remove("bg-gray-200");
+      habilitarCampo(inputCupo);
       const max = opcion.getAttribute("data-capacidad");
       if (max) {
         inputCupo.setAttribute("max", max);
         if (textoMaximo) textoMaximo.textContent = max;
       }
     } else {
-      inputCupo.setAttribute("disabled", "disabled");
-      inputCupo.classList.add("bg-gray-200");
+      bloquearCampo(inputCupo);
       inputCupo.value = "";
       inputCupo.removeAttribute("max");
       if (textoMaximo) textoMaximo.textContent = "—";
@@ -169,46 +184,50 @@ document.addEventListener("DOMContentLoaded", function () {
     return op;
   }
 
-  function controlarProfesores() {
-    const actividadElegida = selectActividad.value;
-    selectProfesor.innerHTML = "";
+ function controlarProfesores() {
+  const actividadElegida = selectActividad.value;
+  
+  // 1. Limpiar el contenido actual
+  selectProfesor.innerHTML = "";
 
-    if (actividadElegida === "") {
-      selectProfesor.setAttribute("disabled", "disabled");
-      selectProfesor.classList.add("bg-gray-200");
-      selectProfesor.appendChild(crearOpcionVacia());
-      return;
-    }
-
-    selectProfesor.removeAttribute("disabled");
-    selectProfesor.classList.remove("bg-gray-200");
+  if (actividadElegida === "") {
     selectProfesor.appendChild(crearOpcionVacia());
-
-    let hayCoincidencias = false;
-    todasLasOpciones.forEach(function (opcion) {
-      if (opcion.value === "") return;
-      if (opcion.getAttribute("data-especialidad") === actividadElegida) {
-        selectProfesor.appendChild(opcion.cloneNode(true));
-        hayCoincidencias = true;
-      }
-    });
-
-    if (!hayCoincidencias) {
-      const aviso = document.createElement("option");
-      aviso.value = "";
-      aviso.disabled = true;
-      aviso.textContent = "No hay profesores para esta actividad";
-      selectProfesor.appendChild(aviso);
-    }
+    bloquearCampo(selectProfesor); // <-- Bloquear al final de armar el DOM
+    return;
   }
+
+  // 2. Insertar la opción por defecto
+  selectProfesor.appendChild(crearOpcionVacia());
+
+  let hayCoincidencias = false;
+  todasLasOpciones.forEach(function (opcion) {
+    if (opcion.value === "") return;
+    if (opcion.getAttribute("data-especialidad") === actividadElegida) {
+      selectProfesor.appendChild(opcion.cloneNode(true));
+      hayCoincidencias = true;
+    }
+  });
+
+  if (!hayCoincidencias) {
+    const aviso = document.createElement("option");
+    aviso.value = "";
+    aviso.disabled = true;
+    aviso.textContent = "No hay profesores para esta actividad";
+    selectProfesor.appendChild(aviso);
+  }
+
+  // 3. HABILITAR EL CAMPO AL FINAL 
+  // Ejecutarlo al final garantiza que las clases CSS se apliquen sobre el DOM ya renderizado
+  habilitarCampo(selectProfesor); 
+}
 
   // ── Listeners ──────────────────────────────────────────────────────────────
 
-  inputFecha.addEventListener("blur", () => { validarFecha(); actualizarBoton(); });
-  inputFecha.addEventListener("change", () => { validarFecha(); actualizarBoton(); });
+  inputFecha.addEventListener("blur",   () => { validarFecha();   actualizarBoton(); });
+  inputFecha.addEventListener("change", () => { validarFecha();   actualizarBoton(); });
 
-  inputHora.addEventListener("blur", () => { validarHora(); actualizarBoton(); });
-  inputHora.addEventListener("change", () => { validarHora(); actualizarBoton(); });
+  inputHora.addEventListener("blur",    () => { validarHora();    actualizarBoton(); });
+  inputHora.addEventListener("change",  () => { validarHora();    actualizarBoton(); });
 
   selectActividad.addEventListener("change", () => {
     limpiarError(selectActividad);
@@ -228,7 +247,7 @@ document.addEventListener("DOMContentLoaded", function () {
     actualizarBoton();
   });
 
-  inputCupo.addEventListener("blur", () => { validarCupo(); actualizarBoton(); });
+  inputCupo.addEventListener("blur",  () => { validarCupo(); actualizarBoton(); });
   inputCupo.addEventListener("input", () => { validarCupo(); actualizarBoton(); });
 
   // ── Init ───────────────────────────────────────────────────────────────────

@@ -39,6 +39,11 @@ class CustomLoginView(LoginView):
             return reverse_lazy("turnos_view:turnos_del_dia")
         return reverse_lazy("core:home")
     
+    #def get_success_url(self):
+        #if self.request.user.is_superuser:
+            #return reverse_lazy("core:home")
+        #return reverse_lazy("core:home")
+    
 
 # ───── LOGOUT ─────
 class CustomLogoutView(LogoutView):
@@ -64,8 +69,8 @@ def register(request):
             form.save()
             messages.success(request, 'Cuenta creada correctamente 🎉')
             return redirect('accounts:login')
-        #else:
-        #    messages.error(request, 'Revisá los datos del formulario')
+        else:
+            messages.error(request, 'Revisá los datos del formulario')
 
     else:
         form = RegistroForm()
@@ -91,9 +96,9 @@ def secretario(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Cuenta creada correctamente 🎉")
-            return redirect('accounts:secretario')
-        #else:
-        #    messages.error(request, 'Revisá los datos del formulario')
+            return redirect('accounts:lista_secretarios')
+        else:
+            messages.error(request, 'Revisá los datos del formulario')
         
     else:
         form = CrearSecretarioForm()
@@ -101,6 +106,26 @@ def secretario(request):
     return render(request, 'accounts/secretario.html', {
         'form': form
     })
+
+# ───── LISTA SECRETARIOS ─────
+@user_passes_test(lambda u: u.is_staff, login_url='accounts:login')
+def lista_secretarios(request):
+    secretarios = User.objects.filter(tipo='secretario').order_by('last_name', 'first_name')
+    return render(request, 'accounts/lista_secretarios.html', {
+        'secretarios': secretarios
+    })
+
+
+# ───── ELIMINAR SECRETARIO ─────
+@user_passes_test(lambda u: u.is_staff, login_url='accounts:login')
+def eliminar_secretario(request, pk):
+    if request.method == 'POST':
+        secretario = User.objects.filter(pk=pk, tipo='secretario').first()
+        if secretario:
+            nombre = secretario.nombre_completo
+            secretario.delete()
+            messages.success(request, f"Secretario {nombre} eliminado correctamente 🗑️")
+    return redirect('accounts:lista_secretarios')
 
 # ───── PASSWORD CHANGE ─────
 class CustomPasswordChangeView(PasswordChangeView):

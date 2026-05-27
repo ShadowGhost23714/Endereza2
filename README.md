@@ -75,7 +75,7 @@ deactivate
 ## Notas
 
 * El entorno `.venv` no se incluye en el repositorio.
-* Si hay errores en Windows con PowerShell:
+* Si existen errores en Windows con PowerShell:
 
 ```bash
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
