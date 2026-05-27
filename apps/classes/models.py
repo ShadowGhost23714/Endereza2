@@ -72,7 +72,7 @@ class Reserva(models.Model):
         RESERVADO      = "reservado",      "Reservado"
         CANCELADO      = "cancelado",      "Cancelado"
         PAGO           = "pago",           "Pago"
-        LISTA_ESPERA   = "lista_espera",   "Lista de espera"   # ← NUEVO
+        LISTA_ESPERA   = "lista_espera",   "Lista de espera"
 
     id_usuario    = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reservas")
     id_turno      = models.ForeignKey(Turno, on_delete=models.CASCADE, related_name="reservas")
@@ -81,7 +81,11 @@ class Reserva(models.Model):
         choices=Estado.choices,
         default=Estado.RESERVADO,
     )
-    fecha_reserva = models.DateTimeField(auto_now_add=True)   # ← NUEVO
+    fecha_reserva = models.DateTimeField(auto_now_add=True)
+    recepcionado  = models.BooleanField(
+        default=False,
+        verbose_name="Recepcionado",
+    )
 
     class Meta:
         unique_together = ("id_usuario", "id_turno")
@@ -96,9 +100,7 @@ class Reserva(models.Model):
     
     def notify_cancelling_reserva(self):
         print(f"Notificando a {self.id_usuario} sobre la cancelación de su reserva para el turno {self.id_turno}.")
-        # Aquí podrías implementar la lógica real de notificación, como enviar un email o una
-        # notificación push, en lugar de solo imprimir un mensaje.
-    
+
     def lista_espera(self):
         return self.estado == self.Estado.LISTA_ESPERA
     

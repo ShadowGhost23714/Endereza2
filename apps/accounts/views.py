@@ -6,6 +6,7 @@ from django.contrib import messages
 from .forms import RegistroForm, LoginForm, CrearSecretarioForm
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.urls import reverse_lazy
+from django.http import JsonResponse
 
 
 User = get_user_model()
@@ -28,10 +29,15 @@ class CustomLoginView(LoginView):
         if request.user.is_authenticated:
             return redirect("core:home")
         return super().dispatch(request, *args, **kwargs)
-    
+
     def form_valid(self, form):
         messages.success(self.request, "Sesión iniciada correctamente 😉")
         return super().form_valid(form)
+    def get_success_url(self):
+        user = self.request.user
+        if user.es_secretario:
+            return reverse_lazy("turnos_view:turnos_del_dia")
+        return reverse_lazy("core:home")
     
     #def get_success_url(self):
         #if self.request.user.is_superuser:
@@ -43,8 +49,12 @@ class CustomLoginView(LoginView):
 class CustomLogoutView(LogoutView):
 
     def post(self, request, *args, **kwargs):
+        self.es_secretario = request.user.is_authenticated and request.user.es_secretario
         messages.success(request, "Sesión cerrada correctamente 👋")
         return super().post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy("core:home")
 
 
 # ───── REGISTER ─────
@@ -125,3 +135,17 @@ class CustomPasswordChangeView(PasswordChangeView):
     def form_valid(self, form):
         messages.success(self.request, "Contraseña actualizada correctamente 🔒")
         return super().form_valid(form)
+
+
+# ───── CANCEL ABONO ─────
+@login_required
+def cancelar_abono(request):
+    if request.method != "POST":
+        return JsonResponse({"ok": False, "error": "Método no permitido."})
+    user = request.user
+    if not user.abono_activo:
+        return JsonResponse({"ok": False, "error": "No tenés un abono activo."})
+    # Marcamos como cancelado pero mantenemos la fecha de vencimiento
+    user.tiene_abono_mensual = False
+    user.save(update_fields=["tiene_abono_mensual"])
+    return JsonResponse({"ok": True, "mensaje": f"Abono cancelado. Seguirá activo hasta el {user.abono_vencimiento.strftime('%d/%m/%Y')}."})

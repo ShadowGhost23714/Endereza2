@@ -55,15 +55,14 @@ class Usuario(AbstractUser):
     # ---------------------------------------------------------
 
     class TipoUsuario(models.TextChoices):
-        CLIENTE = "cliente", "Cliente"
+        CLIENTE    = "cliente",    "Cliente"
         SECRETARIO = "secretario", "Secretario"
-        DUENO = "dueno", "Dueño"
+        DUENO      = "dueno",      "Dueño"
 
     # ---------------------------------------------------------
     # AUTH
     # ---------------------------------------------------------
 
-    # Eliminamos username y usamos email para login
     username = None
 
     email = models.EmailField(
@@ -71,12 +70,8 @@ class Usuario(AbstractUser):
         verbose_name="Correo electrónico",
     )
 
-    USERNAME_FIELD = "email"
-
-    REQUIRED_FIELDS = [
-        "first_name",
-        "last_name",
-    ]
+    USERNAME_FIELD  = "email"
+    REQUIRED_FIELDS = ["first_name", "last_name"]
 
     objects = UsuarioManager()
 
@@ -120,14 +115,20 @@ class Usuario(AbstractUser):
         verbose_name="Tiene abono mensual",
     )
 
+    abono_vencimiento = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name="Vencimiento del abono",
+    )
+
     # ---------------------------------------------------------
     # META
     # ---------------------------------------------------------
 
     class Meta:
-        verbose_name = "Usuario"
+        verbose_name        = "Usuario"
         verbose_name_plural = "Usuarios"
-        ordering = ["last_name", "first_name"]
+        ordering            = ["last_name", "first_name"]
 
     # ---------------------------------------------------------
     # VALIDACIONES
@@ -135,43 +136,26 @@ class Usuario(AbstractUser):
 
     def clean(self):
 
-        # -----------------------------------------------------
-        # CLIENTE
-        # -----------------------------------------------------
-
         if self.tipo == self.TipoUsuario.CLIENTE:
             pass
 
-        # -----------------------------------------------------
-        # SECRETARIO
-        # -----------------------------------------------------
-
         elif self.tipo == self.TipoUsuario.SECRETARIO:
-
-            # No guardamos fecha de nacimiento
-            self.fecha_nacimiento = None
+            self.fecha_nacimiento    = None
             self.tiene_abono_mensual = False
-
-        # -----------------------------------------------------
-        # DUENO
-        # -----------------------------------------------------
+            self.abono_vencimiento   = None
 
         elif self.tipo == self.TipoUsuario.DUENO:
-
-            # No guardamos DNI ni fecha de nacimiento
-            self.dni = None
-            self.fecha_nacimiento = None
+            self.dni                 = None
+            self.fecha_nacimiento    = None
             self.tiene_abono_mensual = False
+            self.abono_vencimiento   = None
 
     # ---------------------------------------------------------
     # SAVE
     # ---------------------------------------------------------
 
     def save(self, *args, **kwargs):
-
-        # Ejecuta validaciones automáticamente
         self.full_clean()
-
         super().save(*args, **kwargs)
 
     # ---------------------------------------------------------
@@ -184,9 +168,7 @@ class Usuario(AbstractUser):
 
     @property
     def iniciales(self):
-        return (
-            f"{self.first_name[:1]}{self.last_name[:1]}"
-        ).upper()
+        return f"{self.first_name[:1]}{self.last_name[:1]}".upper()
 
     @property
     def es_cliente(self):
@@ -199,6 +181,14 @@ class Usuario(AbstractUser):
     @property
     def es_dueno(self):
         return self.tipo == self.TipoUsuario.DUENO
+
+    @property
+    def abono_activo(self):
+        if not self.tiene_abono_mensual:
+            return False
+        if self.abono_vencimiento is None:
+            return False
+        return self.abono_vencimiento >= date.today()
 
     # ---------------------------------------------------------
     # REPRESENTACIÓN
