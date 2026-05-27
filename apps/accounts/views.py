@@ -35,7 +35,7 @@ class CustomLoginView(LoginView):
     
     def get_success_url(self):
         if self.request.user.is_superuser:
-            return reverse_lazy("core:dueño")
+            return reverse_lazy("core:home")
         return reverse_lazy("core:home")
     
 
