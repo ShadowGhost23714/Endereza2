@@ -113,30 +113,32 @@
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Activa
             </span>
           </div>
-
+          
+          {% if user.es_cliente %}
           <div class="flex justify-between items-center">
             <span class="text-sm font-semibold text-gray-600 dark:text-white">Abono mensual</span>
-            {% if user.abono_activo %}
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                Activo, vence {{ user.abono_vencimiento|date:"d/m/Y" }}
-              </span>
-            {% elif not user.tiene_abono_mensual and user.abono_vencimiento %}
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-700">
-                <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                Cancelado, vence: · {{ user.abono_vencimiento|date:"d/m/Y" }}
-              </span>
-            {% else %}
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700">
-                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>Sin abono
-              </span>
-            {% endif %}
+              {% if user.abono_activo %}
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  Activo, vence {{ user.abono_vencimiento|date:"d/m/Y" }}
+                </span>
+              {% elif not user.tiene_abono_mensual and user.abono_vencimiento %}
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-700">
+                  <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                  Cancelado, vence: · {{ user.abono_vencimiento|date:"d/m/Y" }}
+                </span>
+              {% else %}
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>Sin abono
+                </span>
+              {% endif %}
           </div>
-
+          {% endif %}
         </div>
       </div>
     </div>
 
+    {% if user.es_cliente %}
     <!-- ══ HISTORIAL DE PAGOS ══ -->
     <div class="bg-white border border-gray-200 rounded-2xl p-7 dark:bg-gray-800 dark:border-gray-700">
       <div class="flex flex-wrap items-center justify-between gap-4">
@@ -155,6 +157,7 @@
         </a>
       </div>
     </div>
+    {% endif %}
 
     <!-- ══ CAMBIAR CONTRASEÑA ══ -->
     <div class="bg-white border border-gray-200 rounded-2xl p-7 dark:bg-gray-800 dark:border-gray-700">

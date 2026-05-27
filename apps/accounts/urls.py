@@ -12,6 +12,6 @@ urlpatterns = [
     path('secretario/nuevo/', views.secretario, name='secretario'),
     path('secretario/lista/', views.lista_secretarios, name='lista_secretarios'),
     path('secretario/<int:pk>/eliminar/', views.eliminar_secretario, name='eliminar_secretario'),
-    path('change_password/', CustomPasswordChangeView.as_view(), name="change_password")
+    path('change_password/', CustomPasswordChangeView.as_view(), name="change_password"),
     path('cancelar-abono/',  views.cancelar_abono,                name='cancelar_abono'),
 ]
