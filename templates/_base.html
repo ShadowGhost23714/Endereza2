@@ -27,7 +27,10 @@
 
                 <!-- Logo --> 
                 <a href="{% url 'core:home' %}" class="flex items-center">
-                    <img src="{% static 'img/full logo.png' %}" class="mr-3 h-6 sm:h-9" alt="Enderaza2 Logo" />
+                    <!-- cambiar el logo dependiendo de si es modo oscuro o dia-->
+                    
+                        <img src="{% static 'img/full logo.png' %}" class="mr-3 h-6 sm:h-9" alt="Enderaza2 Logo" />
+                    
                 </a>
 
                 <!-- Right: CTA + hamburger -->

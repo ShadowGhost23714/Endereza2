@@ -8,11 +8,16 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import get_object_or_404, redirect, render
 
+from apps.core import models
+from apps.accounts import models
+from apps.professor.models import Profesor
+
 from .forms import TurnoForm
-from .models import Reserva, Turno
+from .models import Reserva, Turno, TurnoProfesional
 from .emails import enviar_confirmacion_reserva, enviar_confirmacion_lista_espera
 
 
+    
 class StaffRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_staff
@@ -29,9 +34,11 @@ class TurnoCreateView(LoginRequiredMixin, SuperuserRequiredMixin, CreateView):
     success_url   = reverse_lazy("turnos:listar_clases")
 
     def form_valid(self, form):
-        response = super().form_valid(form)
-        messages.success(self.request, f"El turno fue creado exitosamente: {self.object}")
-        return response
+        turno = form.save()  # Guarda el Turno
+        profesor = form.cleaned_data['profesor']
+        TurnoProfesional.objects.create(id_turno=turno, id_profesor=profesor)
+        messages.success(self.request, f"El turno fue creado exitosamente: {turno}")
+        return redirect(self.success_url)
 
     def form_invalid(self, form):
         messages.error(self.request, "Por favor corregí los errores indicados antes de continuar.")

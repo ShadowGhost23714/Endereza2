@@ -25,10 +25,12 @@ class SelectWithActivities(forms.Select):
         option = super().create_option(name, value, label, selected, index, subindex, attrs)
         if value and hasattr(value, 'value'):
             value = value.value
+        
         if value:
             try:
                 profesor = Profesor.objects.get(pk=value)
                 # Guardamos el slug interno: "tren_inferior", "zona_media", "tren_superior"
+                
                 option['attrs']['data-especialidad'] = profesor.especialidad
             except Profesor.DoesNotExist:
                 pass
@@ -133,6 +135,13 @@ class TurnoForm(forms.ModelForm):
         model  = Turno
         fields = ["fecha", "hora_inicio", "sala", "cupo", "actividad", "profesor"]
 
+    def __init__(self, *base_args, **kwargs):
+        super().__init__(*base_args, **kwargs)
+        # Customizamos la etiqueta para que muestre Nombre y DNI (asumiendo que el campo se llama 'dni')
+        self.fields['profesor'].label_from_instance = lambda obj: f"{obj.dni} ({obj.nombre} {obj.apellido})"
+        
+        # Si prefieres que SOLO muestre el DNI, usa esta línea en su lugar:
+        # self.fields['profesor'].label_from_instance = lambda obj: f"DNI: {obj.dni}"
     
     
     def clean(self):
@@ -143,6 +152,13 @@ class TurnoForm(forms.ModelForm):
         profesor     = cleaned_data.get("profesor")
         sala         = cleaned_data.get("sala")
         cupo         = cleaned_data.get("cupo")
+
+        if profesor and fecha and hora_inicio:
+            qs_profesor = Turno.profesor_ocupado_en_turno(profesor, fecha, hora_inicio)
+            if self.instance.pk:
+                qs_profesor = qs_profesor.exclude(pk=self.instance.pk)
+            if qs_profesor:
+                self.add_error('profesor', "Este profesor ya tiene asignado un turno en esta fecha y hora.")
 
         if sala and cupo:
             if cupo > sala.capacidad:
