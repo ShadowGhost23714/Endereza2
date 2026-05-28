@@ -356,4 +356,40 @@ class RegistrarPacienteView(LoginRequiredMixin, SecretarioRequiredMixin, View):
             "id":     usuario.pk,
             "nombre": usuario.get_full_name(),
             "mensaje": f"Paciente {usuario.get_full_name()} registrado correctamente.",
+        })
+class NuevoAbonadoView(LoginRequiredMixin, SecretarioRequiredMixin, View):
+    def post(self, request):
+        from django.contrib.auth import get_user_model
+        from datetime import date
+        User = get_user_model()
+
+        dni = request.POST.get("dni", "").strip()
+
+        if not dni:
+            return JsonResponse({"ok": False, "error": "Ingresá un DNI."})
+
+        try:
+            usuario = User.objects.get(dni=dni)
+        except User.DoesNotExist:
+            return JsonResponse({"ok": False, "error": "No existe un paciente con ese DNI."})
+
+        if usuario.abono_activo:
+            return JsonResponse({"ok": False, "error": "Este paciente ya tiene un abono activo."})
+
+        # Calcular vencimiento: día 11 del próximo mes
+        hoy = date.today()
+        vencimiento = date(hoy.year, hoy.month, 11)
+        if hoy.month == 12:
+            vencimiento = date(hoy.year + 1, 1, 11)
+        else:
+            vencimiento = date(hoy.year, hoy.month + 1, 11)
+
+        with transaction.atomic():
+            usuario.tiene_abono_mensual = True
+            usuario.abono_vencimiento   = vencimiento
+            usuario.save(update_fields=["tiene_abono_mensual", "abono_vencimiento"])
+
+        return JsonResponse({
+            "ok":      True,
+            "mensaje": f"Abono registrado para {usuario.get_full_name()}. Vence el {vencimiento.strftime('%d/%m/%Y')}.",
         })                            

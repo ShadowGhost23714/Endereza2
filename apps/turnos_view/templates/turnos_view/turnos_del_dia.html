@@ -13,6 +13,12 @@
         Reserva Espontanea
     </a>
 </li>
+<li>
+    <a href="#" onclick="abrirModalNuevoAbonado(); return false;"
+        class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-600 lg:p-0 dark:text-gray-400 dark:hover:text-white">
+        Nuevo abonado
+    </a>
+</li>
 {% endblock nav_links %}
 
 {% block cta_buttons %}{% endblock %}
@@ -499,6 +505,30 @@
   </div>
 </div>
 
+{# ── Modal nuevo abonado ── #}
+<div class="modal-overlay" id="modal-nuevo-abonado">
+  <div class="modal-box" style="width:420px;">
+    <div class="modal-header">
+      💳 Nuevo abonado
+      <button onclick="cerrarModalNuevoAbonado()">×</button>
+    </div>
+    <div class="modal-body">
+      <label style="font-size:13px; font-weight:600; color:var(--texto); display:block; margin-bottom:6px;">DNI del paciente</label>
+      <input type="text" id="abonado-dni" placeholder="Ej: 12345678"
+        style="width:100%; padding:10px; border:1px solid var(--borde); border-radius:6px; font-size:14px; margin-bottom:8px;"
+        oninput="buscarPacienteAbonado()">
+      <div id="abonado-resultado" style="min-height:36px; margin-bottom:8px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancelar-modal" onclick="cerrarModalNuevoAbonado()">Cancelar</button>
+      <button class="btn-confirmar" id="abonado-btn-confirmar" onclick="confirmarNuevoAbonado()" disabled
+        style="opacity:0.5; cursor:not-allowed;">
+        Confirmar abono
+      </button>
+    </div>
+  </div>
+</div>
+
 {# ── Toast notificación ── #}
 <div class="toast" id="toast"></div>
 
@@ -514,6 +544,7 @@
   const URL_CLASES_POR_ACTIVIDAD = "{% url 'payments:api_clases_por_actividad' %}";
   const URL_NUEVA_RESERVA      = "{% url 'payments:api_nueva_reserva' %}";
   const URL_REGISTRAR_PACIENTE = "{% url 'payments:api_registrar_paciente' %}";
+  const URL_NUEVO_ABONADO = "{% url 'payments:api_nuevo_abonado' %}";
 
   let reservaActivaId = null;
 
@@ -989,6 +1020,84 @@ async function confirmarRegistro() {
         errDiv.style.display = "block";
     }
   }
+
+  // ── Nuevo abonado ─────────────────────────────────────────────────────
+let abonadoBuscarTimer = null;
+let abonadoDniValido   = false;
+
+function abrirModalNuevoAbonado() {
+    abonadoDniValido = false;
+    document.getElementById("abonado-dni").value = "";
+    document.getElementById("abonado-resultado").innerHTML = "";
+    actualizarBtnAbonado();
+    document.getElementById("modal-nuevo-abonado").classList.add("active");
+}
+
+function cerrarModalNuevoAbonado() {
+    document.getElementById("modal-nuevo-abonado").classList.remove("active");
+}
+
+function buscarPacienteAbonado() {
+    clearTimeout(abonadoBuscarTimer);
+    abonadoDniValido = false;
+    actualizarBtnAbonado();
+
+    const dni = document.getElementById("abonado-dni").value.trim();
+
+    if (dni.length > 0 && !/^\d{7,8}$/.test(dni)) {
+        document.getElementById("abonado-resultado").innerHTML =
+            '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-size:13px;">⚠️ 7 u 8 dígitos, sin puntos ni espacios.</div>';
+        return;
+    }
+
+    if (dni.length < 7) {
+        document.getElementById("abonado-resultado").innerHTML =
+            dni.length > 0
+            ? '<div style="padding:8px 12px; background:#f3f4f6; border-radius:6px; color:#6b7280; font-size:13px;">7 u 8 dígitos, sin puntos ni espacios.</div>'
+            : "";
+        return;
+    }
+
+    abonadoBuscarTimer = setTimeout(async function() {
+        const res  = await fetch(URL_BUSCAR_PACIENTE + "?dni=" + encodeURIComponent(dni));
+        const data = await res.json();
+
+        if (data.encontrado) {
+            abonadoDniValido = true;
+            document.getElementById("abonado-resultado").innerHTML =
+                '<div style="padding:8px 12px; background:#ccfbf1; border-radius:6px; color:var(--verde); font-weight:600; font-size:13px;">✓ ' + data.nombre + '</div>';
+        } else {
+            document.getElementById("abonado-resultado").innerHTML =
+                '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-size:13px;">✗ Paciente no encontrado.</div>';
+        }
+        actualizarBtnAbonado();
+    }, 500);
+}
+
+function actualizarBtnAbonado() {
+    const btn = document.getElementById("abonado-btn-confirmar");
+    btn.disabled          = !abonadoDniValido;
+    btn.style.opacity     = abonadoDniValido ? "1" : "0.5";
+    btn.style.cursor      = abonadoDniValido ? "pointer" : "not-allowed";
+}
+
+async function confirmarNuevoAbonado() {
+    const dni = document.getElementById("abonado-dni").value.trim();
+    const fd  = new FormData();
+    fd.append("dni",               dni);
+    fd.append("csrfmiddlewaretoken", CSRF);
+
+    const res  = await fetch(URL_NUEVO_ABONADO, { method: "POST", body: fd });
+    const data = await res.json();
+
+    if (data.ok) {
+        cerrarModalNuevoAbonado();
+        mostrarToast(data.mensaje, "ok");
+    } else {
+        document.getElementById("abonado-resultado").innerHTML =
+            '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-weight:600; font-size:13px;">⚠️ ' + data.error + '</div>';
+    }
+}
 
 </script>
 {% endblock %}
