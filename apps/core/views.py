@@ -21,9 +21,15 @@ def dueño(request):
     usuarios = User.objects.all()
     return render(request, 'core/dueño.html', {'usuarios': usuarios})
 
+def secretario(request):
+    usuarios = User.objects.all()
+    return render(request, 'turnos_view/turnos_del_dia.html', {'usuarios': usuarios})
+
 class HomeRouterView(View):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated and request.user.is_superuser:
             return dueño(request)
+        if request.user.is_authenticated and request.user.es_secretario:
+            return secretario(request)
         else:
             return home(request)
