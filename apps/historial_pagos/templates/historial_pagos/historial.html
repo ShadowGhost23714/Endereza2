@@ -68,7 +68,7 @@
             </div>
             <div>
               <p class="text-sm font-semibold text-gray-900 dark:text-white capitalize">
-                {{ pago.reserva.id_turno.actividad|default:"Clase" }}
+                {{ pago.reserva.id_turno.get_actividad_display|default:"Clase" }}
               </p>
               
             </div>
