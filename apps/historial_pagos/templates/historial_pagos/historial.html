@@ -100,6 +100,10 @@
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-gray-900 border border-sky-400" style="background-color: #0284c7;">
               <span class="text-base leading-none">💳</span> Mercado Pago
             </span>
+            {% elif pago.metodo_pago == "clase_a_favor" %}
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white border border-yellow-400" style="background-color: #d97706;">
+              <span class="text-base leading-none">⭐</span> Clase a favor
+            </span>
             {% else %}
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
               {{ pago.get_metodo_pago_display }}

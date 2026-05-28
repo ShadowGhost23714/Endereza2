@@ -259,11 +259,17 @@ def reservar_clase_a_favor(request, turno_id):
         return redirect("turnos:listar_clases")
 
     from django.db import transaction
+    from apps.payments.models import Pago
     with transaction.atomic():
         reserva = Reserva.objects.create(
             id_usuario = request.user,
             id_turno   = turno,
             estado     = Reserva.Estado.PAGO,
+        )
+        Pago.objects.create(
+            reserva        = reserva,
+            metodo_pago    = "clase_a_favor",
+            registrado_por = None,
         )
         request.user.clases_a_favor -= 1
         request.user.save(update_fields=["clases_a_favor"])
