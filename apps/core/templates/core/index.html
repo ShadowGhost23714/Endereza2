@@ -392,7 +392,7 @@
         </p>
       </div>
       <div class="relative z-10 sm:ml-auto flex gap-2 flex-wrap">
-        <a href="{% url 'turnos/clases/' % }"
+        <a href="{% url 'turnos:listar_clases' %}"
            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold
                   bg-primary-600 hover:bg-primary-700 text-white transition-colors">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -418,10 +418,10 @@
         </svg>
       </div>
       <div class="min-w-0">
-        <p class="text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">Próximo turno</p>
+        <p class="text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">Próxima clase</p>
         {% if proximo_turno %}
           <p class="text-sm font-semibold text-gray-900 truncate">
-            {{ proximo_turno.actividad }}
+            {{ proximo_turno.get_actividad_display }}
           </p>
           <p class="text-xs text-gray-400 mt-0.5">
             {{ proximo_turno.fecha|date:"D d/m" }} · {{ proximo_turno.hora_inicio }}
@@ -463,13 +463,13 @@
       </div>
       <div>
         <p class="text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">Abono mensual</p>
-        {% if pago_pendiente %}
+        {% if user.tiene_abono_mensual %}
           <p class="text-sm font-semibold text-amber-700">
-            Vence en {{ pago_pendiente.dias_restantes }} día{% if pago_pendiente.dias_restantes != 1 %}s{% endif %}
+            Activo
           </p>
-          <p class="text-xs text-gray-400 mt-0.5">{{ pago_pendiente.actividad }}</p>
+          <p class="text-xs text-gray-400 mt-0.5">Vence en {{ user.abono_vencimiento|date:"d/m/Y" }}</p>
         {% else %}
-          <p class="text-sm font-semibold text-gray-900">Al día</p>
+          <p class="text-sm font-semibold text-gray-900">Inactivo</p>
           <p class="text-xs text-gray-400 mt-0.5">Sin pagos pendientes</p>
         {% endif %}
       </div>
