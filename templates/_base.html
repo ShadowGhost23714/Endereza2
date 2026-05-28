@@ -85,7 +85,7 @@
 
                 <!-- (Grego) - No entiendo para que tendriamos esto. Para mí habria que sacarlo -->
                 <!-- (Aarón) - Lo tengo que dejar solo para secretarios porque sino no le aparecen funciones ya hechas a Facu. Después de la demo 1 lo vemos -->
-                {% if user.es_secretario %}
+                {% if not user.es_cliente %}
                 <div class="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1" id="mobile-menu">
                     <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
                         {% block nav_links %}
