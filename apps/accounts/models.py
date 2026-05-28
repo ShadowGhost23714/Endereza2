@@ -124,6 +124,11 @@ class Usuario(AbstractUser):
         verbose_name="Vencimiento del abono",
     )
 
+    clases_a_favor = models.PositiveIntegerField(
+    default=0,
+    verbose_name="Clases a favor",
+    )
+
     # ---------------------------------------------------------
     # META
     # ---------------------------------------------------------
@@ -146,12 +151,14 @@ class Usuario(AbstractUser):
             self.fecha_nacimiento    = None
             self.tiene_abono_mensual = False
             self.abono_vencimiento   = None
+            self.clases_a_favor      = 0
 
         elif self.tipo == self.TipoUsuario.DUENO:
             self.dni                 = None
             self.fecha_nacimiento    = None
             self.tiene_abono_mensual = False
             self.abono_vencimiento   = None
+            self.clases_a_favor      = 0
 
     # ---------------------------------------------------------
     # SAVE
