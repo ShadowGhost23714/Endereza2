@@ -4,6 +4,7 @@ from .views import (
     RecepcionarTurnoView, CancelarRecepcionView,
     BuscarPacientePorDniView, TurnoEspontaneoView,
     ClasesPorActividadView, NuevaReservaView,RegistrarPacienteView,
+    NuevoAbonadoView,
 )
 
 app_name = "payments"
@@ -19,4 +20,5 @@ urlpatterns = [
     path("api/clases-por-actividad/", ClasesPorActividadView.as_view(), name="api_clases_por_actividad"),
     path("api/nueva-reserva/",      NuevaReservaView.as_view(),        name="api_nueva_reserva"),
     path("api/registrar-paciente/",  RegistrarPacienteView.as_view(),   name="api_registrar_paciente"),
+    path("api/nuevo-abonado/",      NuevoAbonadoView.as_view(),        name="api_nuevo_abonado"),
 ]
