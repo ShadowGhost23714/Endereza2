@@ -1,22 +1,46 @@
 {% extends "_base.html" %}
+
+{% block nav_links %}
+<li>
+    <a href="#" onclick="abrirModalNuevaReserva(); return false;"
+        class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-600 lg:p-0 dark:text-gray-400 dark:hover:text-white">
+        Nueva Reserva
+    </a>
+</li>
+<li>
+    <a href="#" onclick="abrirModalEspontaneo(); return false;"
+        class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-600 lg:p-0 dark:text-gray-400 dark:hover:text-white">
+        Reserva Espontanea
+    </a>
+</li>
+<li>
+    <a href="#" onclick="abrirModalNuevoAbonado(); return false;"
+        class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-600 lg:p-0 dark:text-gray-400 dark:hover:text-white">
+        Nuevo abonado
+    </a>
+</li>
+{% endblock nav_links %}
+
+{% block cta_buttons %}{% endblock %}
+
 {% block content %}
 <style>
   :root {
-    --azul:    #1a6fbf;
-    --azul-os: #145a9e;
-    --gris-bg: #f0f4f8;
-    --borde:   #d0d9e4;
-    --texto:   #2c3e50;
-    --verde:   #27ae60;
-    --rojo:    #e74c3c;
-    --amarillo:#f39c12;
+    --primary:       oklch(48.0% 0.170 22);
+    --primary-os:    oklch(40.0% 0.160 22);
+    --primary-light: oklch(93.0% 0.030 22);
+    --gris-bg:       oklch(96.7% 0.003 264.542);
+    --borde:         oklch(92.8% 0.006 264.531);
+    --texto:         oklch(37.3% 0.034 259.733);
+    --verde:         oklch(60% 0.118 184.704);
+    --verde-os:      oklch(51.1% 0.096 186.391);
+    --rojo:          oklch(57.7% 0.245 27.325);
   }
 
   .td-wrapper  { display: flex; gap: 24px; padding: 24px; min-height: 80vh; }
   .td-lista    { flex: 1; }
   .td-sidebar  { width: 260px; flex-shrink: 0; }
 
-  /* ── Sidebar ── */
   .sidebar-card {
     background: white;
     border: 1px solid var(--borde);
@@ -26,7 +50,7 @@
     top: 20px;
   }
   .sidebar-card .sb-header {
-    background: var(--azul);
+    background: var(--primary);
     color: white;
     padding: 12px 16px;
     font-weight: 600;
@@ -45,9 +69,10 @@
     border-radius: 6px;
     font-size: 13px;
     color: var(--texto);
+    background: white;
   }
   .btn-filtrar {
-    background: var(--azul);
+    background: var(--primary);
     color: white;
     border: none;
     padding: 10px;
@@ -58,9 +83,8 @@
     width: 100%;
     transition: background .2s;
   }
-  .btn-filtrar:hover { background: var(--azul-os); }
+  .btn-filtrar:hover { background: var(--primary-os); }
 
-  /* ── Header lista ── */
   .lista-header {
     display: flex;
     align-items: center;
@@ -69,7 +93,7 @@
   }
   .lista-header h2 { font-size: 20px; color: var(--texto); margin: 0; }
   .badge-total {
-    background: var(--azul);
+    background: var(--primary);
     color: white;
     border-radius: 20px;
     padding: 3px 12px;
@@ -77,7 +101,6 @@
     font-weight: 600;
   }
 
-  /* ── Tarjeta paciente ── */
   .paciente-card {
     background: white;
     border: 1px solid var(--borde);
@@ -99,11 +122,11 @@
   }
   .pc-info { flex: 1; }
   .pc-nombre  { font-weight: 600; font-size: 15px; color: var(--texto); }
-  .pc-detalle { font-size: 12px; color: #7f8c8d; margin-top: 2px; }
+  .pc-detalle { font-size: 12px; color: #6b7280; margin-top: 2px; }
   .pc-acciones { display: flex; gap: 8px; flex-shrink: 0; }
 
   .btn-cobrar {
-    background: var(--azul);
+    background: var(--primary);
     color: white;
     border: none;
     padding: 7px 14px;
@@ -113,7 +136,7 @@
     cursor: pointer;
     transition: background .2s;
   }
-  .btn-cobrar:hover { background: var(--azul-os); }
+  .btn-cobrar:hover { background: var(--primary-os); }
   .btn-cancelar {
     background: white;
     color: var(--rojo);
@@ -126,6 +149,18 @@
     transition: all .2s;
   }
   .btn-cancelar:hover { background: var(--rojo); color: white; }
+  .btn-recepcionar {
+    background: var(--verde);
+    color: white;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .btn-recepcionar:hover { background: var(--verde-os); }
 
   .estado-badge {
     display: inline-block;
@@ -136,22 +171,20 @@
     text-transform: uppercase;
     letter-spacing: .5px;
   }
-  .estado-reservado { background: #eaf4ff; color: var(--azul); }
-  .estado-pago      { background: #eafaf1; color: var(--verde); }
+  .estado-reservado { background: var(--primary-light); color: var(--primary); }
+  .estado-pago      { background: oklch(95.3% 0.051 180.801); color: var(--verde); }
 
-  /* ── Vacío ── */
-  .lista-vacia { text-align: center; padding: 60px 20px; color: #95a5a6; }
+  .lista-vacia { text-align: center; padding: 60px 20px; color: #9ca3af; }
   .lista-vacia .ico { font-size: 48px; margin-bottom: 12px; }
 
-  /* ── Botones método de pago ── */
   .btn-metodo {
     flex: 1;
-    padding: 28px 16px;
+    padding: 20px 12px;
     border: 2px solid var(--borde);
     border-radius: 12px;
     background: white;
     cursor: pointer;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--texto);
     transition: all .2s;
@@ -160,14 +193,13 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    min-height: 110px;
+    gap: 8px;
+    min-height: 100px;
   }
-  .btn-metodo:hover     { border-color: var(--azul); background: #eaf4ff; }
-  .btn-metodo.btn-mp:hover { border-color: #009ee3; background: #e8f7fd; }
-  .btn-metodo.seleccionado { border-color: var(--azul); background: #eaf4ff; }
+  .btn-metodo:hover        { border-color: var(--primary); background: var(--primary-light); }
+  .btn-metodo.btn-mp:hover { border-color: var(--primary); background: var(--primary-light); }
+  .btn-metodo.seleccionado { border-color: var(--primary); background: var(--primary-light); }
 
-  /* ── Modal ── */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -186,13 +218,15 @@
     box-shadow: 0 20px 60px rgba(0,0,0,.3);
     animation: slideUp .25s ease;
     position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
   }
   @keyframes slideUp {
     from { transform: translateY(30px); opacity: 0; }
     to   { transform: translateY(0);    opacity: 1; }
   }
   .modal-header {
-    background: var(--azul);
+    background: var(--primary);
     color: white;
     padding: 16px 20px;
     font-weight: 700;
@@ -200,25 +234,37 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1;
   }
   .modal-header button {
     background: none; border: none; color: white;
     font-size: 20px; cursor: pointer; line-height: 1;
   }
   .modal-body { padding: 24px; }
-  .modal-footer { padding: 0 24px 20px; display: flex; gap: 10px; justify-content: flex-end; }
+  .modal-footer {
+    padding: 0 24px 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    position: sticky;
+    bottom: 0;
+    background: white;
+  }
   .btn-confirmar {
     background: var(--verde); color: white; border: none;
     padding: 10px 20px; border-radius: 6px; font-weight: 600;
-    font-size: 14px; cursor: pointer;
+    font-size: 14px; cursor: pointer; transition: background .2s;
   }
+  .btn-confirmar:hover    { background: var(--verde-os); }
+  .btn-confirmar:disabled { opacity: 0.5; cursor: not-allowed; }
   .btn-cancelar-modal {
-    background: white; color: #7f8c8d; border: 1px solid var(--borde);
+    background: white; color: #6b7280; border: 1px solid var(--borde);
     padding: 10px 20px; border-radius: 6px; font-weight: 600;
     font-size: 14px; cursor: pointer;
   }
 
-  /* ── Toast ── */
   .toast {
     position: fixed; bottom: 30px; right: 30px;
     padding: 14px 20px; border-radius: 8px;
@@ -232,7 +278,6 @@
 
 <div class="td-wrapper">
 
-  {# ── Lista de pacientes ── #}
   <div class="td-lista">
     <div class="lista-header">
       <h2>Pacientes agendados</h2>
@@ -241,7 +286,6 @@
     <div id="lista-reservas"></div>
   </div>
 
-  {# ── Sidebar filtros ── #}
   <div class="td-sidebar">
     <div class="sidebar-card">
       <div class="sb-header">🔍 Filtrar por</div>
@@ -283,10 +327,8 @@
     </div>
     <div class="modal-body">
       <p id="modal-nombre" style="font-weight:600; margin-bottom:20px; color:var(--texto);"></p>
-
-      {# ── Paso 1: elegir método ── #}
       <div id="paso-metodo">
-        <p style="font-size:13px; color:#7f8c8d; margin-bottom:16px;">Seleccioná el método de pago:</p>
+        <p style="font-size:13px; color:#6b7280; margin-bottom:16px;">Seleccioná el método de pago:</p>
         <div style="display:flex; gap:12px;">
           <button class="btn-metodo" onclick="elegirEfectivo(event)">
             <span style="font-size:36px;">💵</span>
@@ -298,24 +340,191 @@
           </button>
         </div>
       </div>
-
-      {# ── Paso 2: simulación Mercado Pago ── #}
       <div id="paso-mp" style="display:none; text-align:center; padding:10px 0;">
         <div id="mp-procesando">
           <div style="font-size:40px; margin-bottom:12px;">⏳</div>
           <p style="font-weight:600; color:var(--texto);">Conectando con Mercado Pago...</p>
-          <p style="font-size:13px; color:#7f8c8d;">Simulando proceso de pago</p>
+          <p style="font-size:13px; color:#6b7280;">Simulando proceso de pago</p>
         </div>
         <div id="mp-exitoso" style="display:none;">
           <div style="font-size:40px; margin-bottom:12px;">✅</div>
           <p style="font-weight:600; color:var(--verde);">¡Pago aprobado!</p>
-          <p style="font-size:13px; color:#7f8c8d;">El pago fue procesado exitosamente</p>
+          <p style="font-size:13px; color:#6b7280;">El pago fue procesado exitosamente</p>
         </div>
       </div>
-
     </div>
     <div class="modal-footer" id="modal-footer">
       <button class="btn-cancelar-modal" onclick="cerrarModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+{# ── Modal turno espontáneo ── #}
+<div class="modal-overlay" id="modal-espontaneo">
+  <div class="modal-box" style="width:480px;">
+    <div class="modal-header">
+      ⚡ Reserva Espontanea
+      <button onclick="cerrarModalEspontaneo()">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="esp-paso-turno">
+        <label style="font-size:13px; font-weight:600; color:var(--texto); display:block; margin-bottom:6px;">Clase disponible hoy</label>
+        <select id="esp-turno" onchange="actualizarBtnConfirmar(); if(document.getElementById('esp-dni').value.trim().length >= 7) buscarPaciente();"
+          style="width:100%; padding:10px; border:1px solid var(--borde); border-radius:6px; font-size:14px; margin-bottom:16px;">
+          <option value="">Cargando...</option>
+        </select>
+        <label style="font-size:13px; font-weight:600; color:var(--texto); display:block; margin-bottom:6px;">DNI del paciente</label>
+        <input type="text" id="esp-dni" placeholder="Ej: 12345678"
+          style="width:100%; padding:10px; border:1px solid var(--borde); border-radius:6px; font-size:14px; margin-bottom:8px;"
+          oninput="buscarPaciente()">
+        <div id="esp-resultado" style="margin-bottom:16px; min-height:36px;"></div>
+        <label style="font-size:13px; font-weight:600; color:var(--texto); display:block; margin-bottom:6px;">Método de pago</label>
+        <div style="display:flex; gap:12px; margin-bottom:8px;">
+          <button class="btn-metodo" onclick="seleccionarMetodoEsp(event, 'efectivo')">
+            <span style="font-size:28px;">💵</span>
+            Efectivo
+          </button>
+          <button class="btn-metodo btn-mp" onclick="seleccionarMetodoEsp(event, 'mercado_pago')">
+            <span style="font-size:28px;">💳</span>
+            Mercado Pago
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" id="esp-footer">
+      <button class="btn-cancelar-modal" onclick="cerrarModalEspontaneo()">Cancelar</button>
+      <button class="btn-confirmar" id="esp-btn-confirmar" onclick="confirmarEspontaneo()" disabled
+        style="opacity:0.5; cursor:not-allowed;">
+        Confirmar
+      </button>
+    </div>
+  </div>
+</div>
+
+{# ── Modal nueva reserva ── #}
+<div class="modal-overlay" id="modal-nueva-reserva">
+  <div class="modal-box" style="width:480px;">
+    <div class="modal-header">
+      📅 Nueva Reserva
+      <button onclick="cerrarModalNuevaReserva()">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="nr-paso-actividad">
+        <label style="font-size:13px; font-weight:600; color:var(--texto); display:block; margin-bottom:6px;">Tipo de clase</label>
+        <select id="nr-actividad" onchange="cargarClasesPorActividad()"
+          style="width:100%; padding:10px; border:1px solid var(--borde); border-radius:6px; font-size:14px; margin-bottom:16px;">
+          <option value="">Seleccionar tipo...</option>
+          {% for val, label in actividades %}
+            <option value="{{ val }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+
+        <label style="font-size:13px; font-weight:600; color:var(--texto); display:block; margin-bottom:6px;">Clase disponible</label>
+        <select id="nr-turno" onchange="actualizarBtnNuevaReserva(); if(document.getElementById('nr-dni').value.trim().length >= 7) buscarPacienteNuevaReserva();"
+          style="width:100%; padding:10px; border:1px solid var(--borde); border-radius:6px; font-size:14px; margin-bottom:16px;" disabled>
+          <option value="">Primero elegí el tipo de clase</option>
+        </select>
+
+        <label style="font-size:13px; font-weight:600; color:var(--texto); display:block; margin-bottom:6px;">DNI del paciente</label>
+        <input type="text" id="nr-dni" placeholder="Ej: 12345678"
+          style="width:100%; padding:10px; border:1px solid var(--borde); border-radius:6px; font-size:14px; margin-bottom:8px;"
+          oninput="buscarPacienteNuevaReserva()">
+        <div id="nr-resultado" style="margin-bottom:16px; min-height:36px;"></div>
+
+        <label style="font-size:13px; font-weight:600; color:var(--texto); display:block; margin-bottom:8px;">¿Cómo desea abonar?</label>
+        <div style="display:flex; gap:10px; margin-bottom:8px;">
+          <button class="btn-metodo" style="min-height:80px;" onclick="seleccionarPagoNR(event, 'despues')">
+            <span style="font-size:24px;">🕐</span>
+            Abonar después
+          </button>
+          <button class="btn-metodo" onclick="seleccionarPagoNR(event, 'efectivo')">
+            <span style="font-size:24px;">💵</span>
+            Efectivo
+          </button>
+          <button class="btn-metodo btn-mp" onclick="seleccionarPagoNR(event, 'mercado_pago')">
+            <span style="font-size:24px;">💳</span>
+            Mercado Pago
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancelar-modal" onclick="cerrarModalNuevaReserva()">Cancelar</button>
+      <button class="btn-confirmar" id="nr-btn-confirmar" onclick="confirmarNuevaReserva()" disabled
+        style="opacity:0.5; cursor:not-allowed;">
+        Confirmar reserva
+      </button>
+    </div>
+  </div>
+</div>
+
+{# ── Modal registrar paciente ── #}
+<div class="modal-overlay" id="modal-registrar-paciente">
+  <div class="modal-box" style="width:460px;">
+    <div class="modal-header">
+      👤 Registrar nuevo paciente
+      <button onclick="cerrarModalRegistrar()">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex; gap:12px; margin-bottom:14px;">
+        <div style="flex:1;">
+          <label style="font-size:13px; font-weight:600; color:var(--texto); display:block; margin-bottom:4px;">Nombre</label>
+          <input type="text" id="reg-nombre" placeholder="Nombre"
+            style="width:100%; padding:10px; border:1px solid var(--borde); border-radius:6px; font-size:14px;">
+        </div>
+        <div style="flex:1;">
+          <label style="font-size:13px; font-weight:600; color:var(--texto); display:block; margin-bottom:4px;">Apellido</label>
+          <input type="text" id="reg-apellido" placeholder="Apellido"
+            style="width:100%; padding:10px; border:1px solid var(--borde); border-radius:6px; font-size:14px;">
+        </div>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:13px; font-weight:600; color:var(--texto); display:block; margin-bottom:4px;">DNI</label>
+        <input type="text" id="reg-dni" placeholder="Sin puntos ni espacios"
+          style="width:100%; padding:10px; border:1px solid var(--borde); border-radius:6px; font-size:14px;">
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:13px; font-weight:600; color:var(--texto); display:block; margin-bottom:4px;">Fecha de nacimiento</label>
+        <input type="date" id="reg-fecha"
+          style="width:100%; padding:10px; border:1px solid var(--borde); border-radius:6px; font-size:14px;">
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:13px; font-weight:600; color:var(--texto); display:block; margin-bottom:4px;">Email</label>
+        <input type="email" id="reg-email" placeholder="correo@ejemplo.com"
+          style="width:100%; padding:10px; border:1px solid var(--borde); border-radius:6px; font-size:14px;">
+      </div>
+      <div style="padding:10px 12px; background:#f3f4f6; border-radius:6px; font-size:12px; color:#6b7280;">
+        🔑 Se generará una contraseña automática y se le enviará al paciente por email.
+      </div>
+      <div id="reg-error" style="margin-top:10px; display:none;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancelar-modal" onclick="cerrarModalRegistrar()">Cancelar</button>
+      <button class="btn-confirmar" onclick="confirmarRegistro()">Registrar paciente</button>
+    </div>
+  </div>
+</div>
+
+{# ── Modal nuevo abonado ── #}
+<div class="modal-overlay" id="modal-nuevo-abonado">
+  <div class="modal-box" style="width:420px;">
+    <div class="modal-header">
+      💳 Nuevo abonado
+      <button onclick="cerrarModalNuevoAbonado()">×</button>
+    </div>
+    <div class="modal-body">
+      <label style="font-size:13px; font-weight:600; color:var(--texto); display:block; margin-bottom:6px;">DNI del paciente</label>
+      <input type="text" id="abonado-dni" placeholder="Ej: 12345678"
+        style="width:100%; padding:10px; border:1px solid var(--borde); border-radius:6px; font-size:14px; margin-bottom:8px;"
+        oninput="buscarPacienteAbonado()">
+      <div id="abonado-resultado" style="min-height:36px; margin-bottom:8px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancelar-modal" onclick="cerrarModalNuevoAbonado()">Cancelar</button>
+      <button class="btn-confirmar" id="abonado-btn-confirmar" onclick="confirmarNuevoAbonado()" disabled
+        style="opacity:0.5; cursor:not-allowed;">
+        Confirmar abono
+      </button>
     </div>
   </div>
 </div>
@@ -324,14 +533,24 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  const CSRF         = "{{ csrf_token }}";
-  const URL_FILTRAR  = "{% url 'payments:api_filtrar' %}";
-  const URL_COBRAR   = "{% url 'payments:api_cobrar' %}";
-  const URL_CANCELAR = "{% url 'payments:api_cancelar' %}";
+  const CSRF                   = "{{ csrf_token }}";
+  const URL_FILTRAR            = "{% url 'payments:api_filtrar' %}";
+  const URL_COBRAR             = "{% url 'payments:api_cobrar' %}";
+  const URL_CANCELAR           = "{% url 'payments:api_cancelar' %}";
+  const URL_RECEPCIONAR        = "{% url 'payments:api_recepcionar' %}";
+  const URL_CANCELAR_RECEPCION = "{% url 'payments:api_cancelar_recepcion' %}";
+  const URL_BUSCAR_PACIENTE    = "{% url 'payments:api_buscar_paciente' %}";
+  const URL_TURNO_ESPONTANEO   = "{% url 'payments:api_turno_espontaneo' %}";
+  const URL_CLASES_POR_ACTIVIDAD = "{% url 'payments:api_clases_por_actividad' %}";
+  const URL_NUEVA_RESERVA      = "{% url 'payments:api_nueva_reserva' %}";
+  const URL_REGISTRAR_PACIENTE = "{% url 'payments:api_registrar_paciente' %}";
+  const URL_NUEVO_ABONADO = "{% url 'payments:api_nuevo_abonado' %}";
+
   let reservaActivaId = null;
 
   document.addEventListener("DOMContentLoaded", () => filtrar());
 
+  // ── Filtrar ───────────────────────────────────────────────────────────
   async function filtrar() {
     const fecha     = document.getElementById("filtro-fecha").value;
     const actividad = document.getElementById("filtro-actividad").value;
@@ -359,10 +578,22 @@
     }
 
     cont.innerHTML = reservas.map(function(r) {
-      var acciones = r.ya_pagado
-        ? '<span class="estado-badge estado-pago" style="padding:7px 14px;">✓ Pagado</span>'
-        : '<button class="btn-cobrar" onclick="abrirModal(' + r.id + ', \'' + r.nombre + '\')">Cobrar</button>'
-          + '<button class="btn-cancelar" onclick="cancelarTurno(' + r.id + ')">Cancelar</button>';
+      var acciones;
+      if (r.ya_pagado && r.recepcionado && r.es_pasado) {
+        acciones = '<span class="estado-badge estado-pago" style="padding:7px 14px;">✓ Atendido</span>';
+      } else if (r.ya_pagado && r.recepcionado) {
+        acciones = '<span class="estado-badge estado-pago" style="padding:7px 14px;">✓ Atendido</span>'
+                 + '<button class="btn-cancelar" onclick="cancelarRecepcion(' + r.id + ')" style="margin-left:6px;">Cancelar recepción</button>';
+      } else if (r.ya_pagado && !r.recepcionado && r.es_pasado) {
+        acciones = '<span class="estado-badge" style="padding:7px 14px; background:#f3f4f6; color:#6b7280;">✗ Ausente</span>';
+      } else if (r.ya_pagado && !r.recepcionado) {
+        acciones = '<button class="btn-recepcionar" onclick="recepcionarTurno(' + r.id + ')">Recepcionar</button>';
+      } else if (r.es_pasado) {
+        acciones = '<span class="estado-badge" style="padding:7px 14px; background:#f3f4f6; color:#6b7280;">✗ Ausente</span>';
+      } else {
+        acciones = '<button class="btn-cobrar" onclick="abrirModal(' + r.id + ', \'' + r.nombre + '\')">Cobrar</button>'
+                 + '<button class="btn-cancelar" onclick="cancelarTurno(' + r.id + ')">Cancelar</button>';
+      }
 
       return '<div class="paciente-card" id="card-' + r.id + '">'
         + '<div class="pc-avatar">👤</div>'
@@ -376,6 +607,7 @@
     }).join("");
   }
 
+  // ── Modal cobrar ──────────────────────────────────────────────────────
   function abrirModal(id, nombre) {
     reservaActivaId = id;
     document.getElementById("modal-nombre").textContent = "Paciente: " + nombre;
@@ -394,7 +626,7 @@
   }
 
   function elegirEfectivo(event) {
-    document.querySelectorAll(".btn-metodo").forEach(b => b.classList.remove("seleccionado"));
+    document.querySelectorAll("#modal-cobrar .btn-metodo").forEach(b => b.classList.remove("seleccionado"));
     event.currentTarget.classList.add("seleccionado");
     document.getElementById("modal-footer").innerHTML =
       '<button class="btn-cancelar-modal" onclick="cerrarModal()">Cancelar</button>'
@@ -405,7 +637,6 @@
     document.getElementById("paso-metodo").style.display = "none";
     document.getElementById("paso-mp").style.display = "block";
     document.getElementById("modal-footer").innerHTML = "";
-
     setTimeout(function() {
       document.getElementById("mp-procesando").style.display = "none";
       document.getElementById("mp-exitoso").style.display = "block";
@@ -419,35 +650,44 @@
     fd.append("reserva_id",          reservaActivaId);
     fd.append("metodo_pago",         metodo);
     fd.append("csrfmiddlewaretoken", CSRF);
-
     const res  = await fetch(URL_COBRAR, { method: "POST", body: fd });
     const data = await res.json();
     cerrarModal();
-
-    if (data.ok) {
-      mostrarToast(data.mensaje, "ok");
-      filtrar();
-    } else {
-      mostrarToast(data.error, "error");
-    }
+    if (data.ok) { mostrarToast(data.mensaje, "ok"); filtrar(); }
+    else          { mostrarToast(data.error,   "error"); }
   }
 
   async function cancelarTurno(id) {
     if (!confirm("¿Confirmar cancelación del turno?")) return;
-
     const fd = new FormData();
     fd.append("reserva_id",          id);
     fd.append("csrfmiddlewaretoken", CSRF);
-
     const res  = await fetch(URL_CANCELAR, { method: "POST", body: fd });
     const data = await res.json();
+    if (data.ok) { mostrarToast(data.mensaje, "ok"); filtrar(); }
+    else          { mostrarToast(data.error,   "error"); }
+  }
 
-    if (data.ok) {
-      mostrarToast(data.mensaje, "ok");
-      filtrar();
-    } else {
-      mostrarToast(data.error, "error");
-    }
+  async function recepcionarTurno(id) {
+    if (!confirm("¿Confirmar recepción del paciente?")) return;
+    const fd = new FormData();
+    fd.append("reserva_id",          id);
+    fd.append("csrfmiddlewaretoken", CSRF);
+    const res  = await fetch(URL_RECEPCIONAR, { method: "POST", body: fd });
+    const data = await res.json();
+    if (data.ok) { mostrarToast(data.mensaje, "ok"); filtrar(); }
+    else          { mostrarToast(data.error,   "error"); }
+  }
+
+  async function cancelarRecepcion(id) {
+    if (!confirm("¿Cancelar la recepción del paciente?")) return;
+    const fd = new FormData();
+    fd.append("reserva_id",          id);
+    fd.append("csrfmiddlewaretoken", CSRF);
+    const res  = await fetch(URL_CANCELAR_RECEPCION, { method: "POST", body: fd });
+    const data = await res.json();
+    if (data.ok) { mostrarToast(data.mensaje, "ok"); filtrar(); }
+    else          { mostrarToast(data.error,   "error"); }
   }
 
   function mostrarToast(msg, tipo) {
@@ -457,5 +697,407 @@
     t.style.display = "block";
     setTimeout(() => { t.style.display = "none"; }, 3500);
   }
+
+  // ── Turno espontáneo ──────────────────────────────────────────────────
+  let espUsuarioId   = null;
+  let espMetodoPago  = null;
+  let espBuscarTimer = null;
+
+  async function abrirModalEspontaneo() {
+    espUsuarioId  = null;
+    espMetodoPago = null;
+    document.getElementById("esp-dni").value = "";
+    document.getElementById("esp-resultado").innerHTML = "";
+    document.querySelectorAll("#modal-espontaneo .btn-metodo").forEach(b => b.classList.remove("seleccionado"));
+    actualizarBtnConfirmar();
+
+    const res  = await fetch(URL_TURNO_ESPONTANEO);
+    const data = await res.json();
+    const sel  = document.getElementById("esp-turno");
+    if (!data.turnos.length) {
+      sel.innerHTML = '<option value="">No hay turnos disponibles hoy</option>';
+    } else {
+      sel.innerHTML = '<option value="">Seleccionar turno...</option>'
+        + data.turnos.map(function(t) {
+            return '<option value="' + t.id + '">' + t.label + ' (' + t.cupos + ' cupos)</option>';
+          }).join("");
+    }
+    document.getElementById("modal-espontaneo").classList.add("active");
+  }
+
+  function cerrarModalEspontaneo() {
+    document.getElementById("modal-espontaneo").classList.remove("active");
+  }
+
+  function buscarPaciente() {
+    clearTimeout(espBuscarTimer);
+    espUsuarioId = null;
+    actualizarBtnConfirmar();
+
+    const dni = document.getElementById("esp-dni").value.trim();
+
+    if (dni.length > 0 && !/^\d{7,8}$/.test(dni)) {
+        document.getElementById("esp-resultado").innerHTML =
+            '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-size:13px;">⚠️ 7 u 8 dígitos, sin puntos ni espacios.</div>';
+        return;
+    }
+
+    if (dni.length < 7) {
+        document.getElementById("esp-resultado").innerHTML =
+            dni.length > 0
+            ? '<div style="padding:8px 12px; background:#f3f4f6; border-radius:6px; color:#6b7280; font-size:13px;">7 u 8 dígitos, sin puntos ni espacios.</div>'
+            : "";
+        return;
+    }
+
+    espBuscarTimer = setTimeout(async function() {
+        const turnoId = document.getElementById("esp-turno").value;
+        const url     = URL_BUSCAR_PACIENTE + "?dni=" + encodeURIComponent(dni) + (turnoId ? "&turno_id=" + turnoId : "");
+        const res     = await fetch(url);
+        const data    = await res.json();
+
+        if (data.encontrado) {
+            if (data.ya_reservado) {
+                document.getElementById("esp-resultado").innerHTML =
+                    '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-weight:600; font-size:13px;">⚠️ Este paciente ya tiene una reserva en este turno.</div>';
+            } else if (data.conflicto_horario) {
+                document.getElementById("esp-resultado").innerHTML =
+                    '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-weight:600; font-size:13px;">⚠️ Este paciente ya tiene un turno en ese día y horario.</div>';
+            } else {
+                espUsuarioId = data.id;
+                document.getElementById("esp-resultado").innerHTML =
+                    '<div style="padding:8px 12px; background:#ccfbf1; border-radius:6px; color:var(--verde); font-weight:600; font-size:13px;">✓ ' + data.nombre + '</div>';
+            }
+        } else {
+            document.getElementById("esp-resultado").innerHTML =
+                '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-size:13px; display:flex; align-items:center; justify-content:space-between;">'
+                + '<span>✗ Paciente no encontrado</span>'
+                + '<button class="btn-cobrar" style="font-size:12px; padding:4px 10px;" onclick="abrirModalRegistrar(\'espontaneo\', \'' + dni + '\')">+ Registrar paciente</button>'
+                + '</div>';
+        }
+        actualizarBtnConfirmar();
+    }, 500);
+}
+
+  function seleccionarMetodoEsp(event, metodo) {
+    espMetodoPago = metodo;
+    document.querySelectorAll("#modal-espontaneo .btn-metodo").forEach(b => b.classList.remove("seleccionado"));
+    event.currentTarget.classList.add("seleccionado");
+    actualizarBtnConfirmar();
+  }
+
+  function actualizarBtnConfirmar() {
+    const turnoId = document.getElementById("esp-turno").value;
+    const btn     = document.getElementById("esp-btn-confirmar");
+    const listo   = espUsuarioId && espMetodoPago && turnoId;
+    btn.disabled  = !listo;
+    btn.style.opacity = listo ? "1" : "0.5";
+    btn.style.cursor  = listo ? "pointer" : "not-allowed";
+  }
+
+  async function confirmarEspontaneo() {
+    const turnoId = document.getElementById("esp-turno").value;
+    const fd = new FormData();
+    fd.append("turno_id",            turnoId);
+    fd.append("usuario_id",          espUsuarioId);
+    fd.append("metodo_pago",         espMetodoPago);
+    fd.append("csrfmiddlewaretoken", CSRF);
+    const res  = await fetch(URL_TURNO_ESPONTANEO, { method: "POST", body: fd });
+    const data = await res.json();
+    cerrarModalEspontaneo();
+    if (data.ok) { mostrarToast(data.mensaje, "ok"); filtrar(); }
+    else          { mostrarToast(data.error,   "error"); }
+  }
+
+  // ── Nueva reserva ─────────────────────────────────────────────────────
+  let nrUsuarioId   = null;
+  let nrMetodoPago  = null;
+  let nrBuscarTimer = null;
+
+  function abrirModalNuevaReserva() {
+    nrUsuarioId  = null;
+    nrMetodoPago = null;
+    document.getElementById("nr-actividad").value = "";
+    document.getElementById("nr-turno").value = "";
+    document.getElementById("nr-turno").disabled = true;
+    document.getElementById("nr-turno").innerHTML = '<option value="">Primero elegí el tipo de clase</option>';
+    document.getElementById("nr-dni").value = "";
+    document.getElementById("nr-resultado").innerHTML = "";
+    document.querySelectorAll("#modal-nueva-reserva .btn-metodo").forEach(b => b.classList.remove("seleccionado"));
+    actualizarBtnNuevaReserva();
+    document.getElementById("modal-nueva-reserva").classList.add("active");
+  }
+
+  function cerrarModalNuevaReserva() {
+    document.getElementById("modal-nueva-reserva").classList.remove("active");
+  }
+
+  async function cargarClasesPorActividad() {
+    const actividad = document.getElementById("nr-actividad").value;
+    const sel = document.getElementById("nr-turno");
+
+    if (!actividad) {
+      sel.disabled = true;
+      sel.innerHTML = '<option value="">Primero elegí el tipo de clase</option>';
+      actualizarBtnNuevaReserva();
+      return;
+    }
+
+    sel.disabled = true;
+    sel.innerHTML = '<option value="">Cargando...</option>';
+
+    const res  = await fetch(URL_CLASES_POR_ACTIVIDAD + "?actividad=" + encodeURIComponent(actividad));
+    const data = await res.json();
+
+    if (!data.turnos.length) {
+      sel.innerHTML = '<option value="">No hay clases disponibles</option>';
+    } else {
+      sel.disabled = false;
+      sel.innerHTML = '<option value="">Seleccionar clase...</option>'
+        + data.turnos.map(function(t) {
+            return '<option value="' + t.id + '">' + t.label + '</option>';
+          }).join("");
+    }
+    actualizarBtnNuevaReserva();
+  }
+
+  function buscarPacienteNuevaReserva() {
+    clearTimeout(nrBuscarTimer);
+    nrUsuarioId = null;
+    actualizarBtnNuevaReserva();
+
+    const dni = document.getElementById("nr-dni").value.trim();
+
+    if (dni.length > 0 && !/^\d{7,8}$/.test(dni)) {
+        document.getElementById("nr-resultado").innerHTML =
+            '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-size:13px;">⚠️ 7 u 8 dígitos, sin puntos ni espacios.</div>';
+        return;
+    }
+
+    if (dni.length < 7) {
+        document.getElementById("nr-resultado").innerHTML =
+            dni.length > 0
+            ? '<div style="padding:8px 12px; background:#f3f4f6; border-radius:6px; color:#6b7280; font-size:13px;">7 u 8 dígitos, sin puntos ni espacios.</div>'
+            : "";
+        return;
+    }
+
+    nrBuscarTimer = setTimeout(async function() {
+        const turnoId = document.getElementById("nr-turno").value;
+        const url     = URL_BUSCAR_PACIENTE + "?dni=" + encodeURIComponent(dni) + (turnoId ? "&turno_id=" + turnoId : "");
+        const res     = await fetch(url);
+        const data    = await res.json();
+
+        if (data.encontrado) {
+            if (data.ya_reservado) {
+                document.getElementById("nr-resultado").innerHTML =
+                    '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-weight:600; font-size:13px;">⚠️ Este paciente ya tiene una reserva en este turno.</div>';
+            } else if (data.conflicto_horario) {
+                document.getElementById("nr-resultado").innerHTML =
+                    '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-weight:600; font-size:13px;">⚠️ Este paciente ya tiene un turno en ese día y horario.</div>';
+            } else {
+                nrUsuarioId = data.id;
+                document.getElementById("nr-resultado").innerHTML =
+                    '<div style="padding:8px 12px; background:#ccfbf1; border-radius:6px; color:var(--verde); font-weight:600; font-size:13px;">✓ ' + data.nombre + '</div>';
+            }
+        } else {
+            document.getElementById("nr-resultado").innerHTML =
+                '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-size:13px; display:flex; align-items:center; justify-content:space-between;">'
+                + '<span>✗ Paciente no encontrado</span>'
+                + '<button class="btn-cobrar" style="font-size:12px; padding:4px 10px;" onclick="abrirModalRegistrar(\'nueva-reserva\', \'' + dni + '\')">+ Registrar paciente</button>'
+                + '</div>';
+        }
+        actualizarBtnNuevaReserva();
+    }, 500);
+}
+
+
+  function seleccionarPagoNR(event, metodo) {
+    nrMetodoPago = metodo;
+    document.querySelectorAll("#modal-nueva-reserva .btn-metodo").forEach(b => b.classList.remove("seleccionado"));
+    event.currentTarget.classList.add("seleccionado");
+    actualizarBtnNuevaReserva();
+  }
+
+  function actualizarBtnNuevaReserva() {
+    const turnoId = document.getElementById("nr-turno").value;
+    const btn     = document.getElementById("nr-btn-confirmar");
+    const listo   = nrUsuarioId && nrMetodoPago && turnoId;
+    btn.disabled  = !listo;
+    btn.style.opacity = listo ? "1" : "0.5";
+    btn.style.cursor  = listo ? "pointer" : "not-allowed";
+  }
+
+  async function confirmarNuevaReserva() {
+    const turnoId    = document.getElementById("nr-turno").value;
+    const cobrarAhora = nrMetodoPago !== "despues";
+
+    const fd = new FormData();
+    fd.append("turno_id",            turnoId);
+    fd.append("usuario_id",          nrUsuarioId);
+    fd.append("cobrar_ahora",        cobrarAhora ? "true" : "false");
+    fd.append("metodo_pago",         cobrarAhora ? nrMetodoPago : "");
+    fd.append("csrfmiddlewaretoken", CSRF);
+
+    const res  = await fetch(URL_NUEVA_RESERVA, { method: "POST", body: fd });
+    const data = await res.json();
+    cerrarModalNuevaReserva();
+
+    if (data.ok) { mostrarToast(data.mensaje, "ok"); filtrar(); }
+    else          { mostrarToast(data.error,   "error"); }
+  }
+
+  // ── Variables registrar paciente ──────────────────────────────────────
+let regOrigen = null; // 'espontaneo' o 'nueva-reserva'
+
+function abrirModalRegistrar(origen, dniPrecargado) {
+    regOrigen = origen;
+    document.getElementById("reg-nombre").value   = "";
+    document.getElementById("reg-apellido").value = "";
+    document.getElementById("reg-dni").value      = dniPrecargado || "";
+    document.getElementById("reg-fecha").value    = "";
+    document.getElementById("reg-email").value    = "";
+    document.getElementById("reg-error").style.display = "none";
+    document.getElementById("modal-registrar-paciente").classList.add("active");
+}
+
+function cerrarModalRegistrar() {
+    document.getElementById("modal-registrar-paciente").classList.remove("active");
+}
+
+async function confirmarRegistro() {
+    const nombre   = document.getElementById("reg-nombre").value.trim();
+    const apellido = document.getElementById("reg-apellido").value.trim();
+    const dni      = document.getElementById("reg-dni").value.trim();
+    const fecha    = document.getElementById("reg-fecha").value;
+    const email    = document.getElementById("reg-email").value.trim();
+
+    const errDiv = document.getElementById("reg-error");
+
+    if (!nombre || !apellido || !dni || !email) {
+        errDiv.innerHTML = '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-size:13px;">⚠️ Completá todos los campos obligatorios.</div>';
+        errDiv.style.display = "block";
+        return;
+    }
+
+    if (!/^\d{7,8}$/.test(dni)) {
+        errDiv.innerHTML = '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-size:13px;">⚠️ El DNI debe tener 7 u 8 dígitos.</div>';
+        errDiv.style.display = "block";
+        return;
+    }
+
+    const fd = new FormData();
+    fd.append("nombre",           nombre);
+    fd.append("apellido",         apellido);
+    fd.append("dni",              dni);
+    fd.append("fecha_nacimiento", fecha);
+    fd.append("email",            email);
+    fd.append("csrfmiddlewaretoken", CSRF);
+
+    const res  = await fetch(URL_REGISTRAR_PACIENTE, { method: "POST", body: fd });
+    const data = await res.json();
+
+    if (data.ok) {
+        cerrarModalRegistrar();
+        mostrarToast(data.mensaje, "ok");
+
+        // Inyectar paciente en el formulario de origen
+        if (regOrigen === "espontaneo") {
+            espUsuarioId = data.id;
+            document.getElementById("esp-dni").value = dni;
+            document.getElementById("esp-resultado").innerHTML =
+                '<div style="padding:8px 12px; background:#ccfbf1; border-radius:6px; color:var(--verde); font-weight:600; font-size:13px;">✓ ' + data.nombre + '</div>';
+            actualizarBtnConfirmar();
+        } else if (regOrigen === "nueva-reserva") {
+            nrUsuarioId = data.id;
+            document.getElementById("nr-dni").value = dni;
+            document.getElementById("nr-resultado").innerHTML =
+                '<div style="padding:8px 12px; background:#ccfbf1; border-radius:6px; color:var(--verde); font-weight:600; font-size:13px;">✓ ' + data.nombre + '</div>';
+            actualizarBtnNuevaReserva();
+        }
+    } else {
+        errDiv.innerHTML = '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-size:13px;">⚠️ ' + data.error + '</div>';
+        errDiv.style.display = "block";
+    }
+  }
+
+  // ── Nuevo abonado ─────────────────────────────────────────────────────
+let abonadoBuscarTimer = null;
+let abonadoDniValido   = false;
+
+function abrirModalNuevoAbonado() {
+    abonadoDniValido = false;
+    document.getElementById("abonado-dni").value = "";
+    document.getElementById("abonado-resultado").innerHTML = "";
+    actualizarBtnAbonado();
+    document.getElementById("modal-nuevo-abonado").classList.add("active");
+}
+
+function cerrarModalNuevoAbonado() {
+    document.getElementById("modal-nuevo-abonado").classList.remove("active");
+}
+
+function buscarPacienteAbonado() {
+    clearTimeout(abonadoBuscarTimer);
+    abonadoDniValido = false;
+    actualizarBtnAbonado();
+
+    const dni = document.getElementById("abonado-dni").value.trim();
+
+    if (dni.length > 0 && !/^\d{7,8}$/.test(dni)) {
+        document.getElementById("abonado-resultado").innerHTML =
+            '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-size:13px;">⚠️ 7 u 8 dígitos, sin puntos ni espacios.</div>';
+        return;
+    }
+
+    if (dni.length < 7) {
+        document.getElementById("abonado-resultado").innerHTML =
+            dni.length > 0
+            ? '<div style="padding:8px 12px; background:#f3f4f6; border-radius:6px; color:#6b7280; font-size:13px;">7 u 8 dígitos, sin puntos ni espacios.</div>'
+            : "";
+        return;
+    }
+
+    abonadoBuscarTimer = setTimeout(async function() {
+        const res  = await fetch(URL_BUSCAR_PACIENTE + "?dni=" + encodeURIComponent(dni));
+        const data = await res.json();
+
+        if (data.encontrado) {
+            abonadoDniValido = true;
+            document.getElementById("abonado-resultado").innerHTML =
+                '<div style="padding:8px 12px; background:#ccfbf1; border-radius:6px; color:var(--verde); font-weight:600; font-size:13px;">✓ ' + data.nombre + '</div>';
+        } else {
+            document.getElementById("abonado-resultado").innerHTML =
+                '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-size:13px;">✗ Paciente no encontrado.</div>';
+        }
+        actualizarBtnAbonado();
+    }, 500);
+}
+
+function actualizarBtnAbonado() {
+    const btn = document.getElementById("abonado-btn-confirmar");
+    btn.disabled          = !abonadoDniValido;
+    btn.style.opacity     = abonadoDniValido ? "1" : "0.5";
+    btn.style.cursor      = abonadoDniValido ? "pointer" : "not-allowed";
+}
+
+async function confirmarNuevoAbonado() {
+    const dni = document.getElementById("abonado-dni").value.trim();
+    const fd  = new FormData();
+    fd.append("dni",               dni);
+    fd.append("csrfmiddlewaretoken", CSRF);
+
+    const res  = await fetch(URL_NUEVO_ABONADO, { method: "POST", body: fd });
+    const data = await res.json();
+
+    if (data.ok) {
+        cerrarModalNuevoAbonado();
+        mostrarToast(data.mensaje, "ok");
+    } else {
+        document.getElementById("abonado-resultado").innerHTML =
+            '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-weight:600; font-size:13px;">⚠️ ' + data.error + '</div>';
+    }
+}
+
 </script>
 {% endblock %}

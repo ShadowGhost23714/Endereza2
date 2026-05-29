@@ -9,12 +9,13 @@ from apps.classes.models import Turno, Reserva
 from apps.payments.models import Pago
 
 
-class StaffRequiredMixin(UserPassesTestMixin):
+class SecretarioRequiredMixin(UserPassesTestMixin):
     def test_func(self):
-        return self.request.user.is_staff
+        user = self.request.user
+        return user.is_staff or user.es_secretario
 
 
-class TurnosDelDiaView(LoginRequiredMixin, StaffRequiredMixin, TemplateView):
+class TurnosDelDiaView(LoginRequiredMixin, SecretarioRequiredMixin, TemplateView):
     template_name = "turnos_view/turnos_del_dia.html"
 
     def get_context_data(self, **kwargs):

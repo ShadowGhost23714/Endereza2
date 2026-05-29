@@ -166,6 +166,22 @@
               {% endif %}
             </div>
 
+            <div class="flex flex-col gap-1.5">
+              <label for="{{ form.precio.id_for_label }}" class="text-sm font-medium tracking-wide text-gray-500 dark:text-white">
+                Precio <span class="text-red-500">*</span>
+              </label>
+              {{ form.precio }}
+              <p class="text-xs text-gray-400">
+                Precio del turno (mínimo 0, máximo <span id="capacidad-dinamica">—</span>).
+              </p>
+              {% if form.precio.errors %}
+                <p class="text-xs text-red-500 flex items-center gap-1">
+                  <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                  {{ form.precio.errors|join:", " }}
+                </p>
+              {% endif %}
+            </div>
+
             <!-- Submit -->
             <div id="id_crear_clase">
               <button

@@ -37,7 +37,17 @@
                 <div class="flex items-center lg:order-2 gap-2">
 
                     {% if user.is_authenticated %}
-                        {% if not user.is_superuser %}
+                        {% if not user.es_cliente %}
+                        <!-- Agenda -->
+                        <a href="{% url 'turnos_view:turnos_del_dia' %}"
+                        class="inline-flex items-center gap-2 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-semibold rounded-lg px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                <path d="M16 2v4M8 2v4M3 10h18"/>
+                            </svg>
+                            Agenda
+                        </a>
+                        {% else %}
                         <!-- Mis turnos -->
                         <a href="{% url 'turnos:mis_clases' %}"
                         class="inline-flex items-center gap-2 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-semibold rounded-lg px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
@@ -74,19 +84,14 @@
 
                     {% endif %}
 
-                    <!-- Botón pedir turno (siempre visible si querés) 
-                    <a href="#turnos"
-                    class="text-white bg-teal-600 hover:bg-teal-700 font-medium rounded-lg text-sm px-4 py-2">
-                        Pedir turno
-                    </a>
-                    -->
-
                 </div>
 
-                <!-- No entiendo para que tendriamos esto. Para mí habria que sacarlo-->
-                <!-- Nav links 
+                <!-- (Grego) - No entiendo para que tendriamos esto. Para mí habria que sacarlo -->
+                <!-- (Aarón) - Lo tengo que dejar solo para secretarios porque sino no le aparecen funciones ya hechas a Facu. Después de la demo 1 lo vemos -->
+                {% if not user.es_cliente %}
                 <div class="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1" id="mobile-menu">
                     <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+                        {% block nav_links %}
                         <li>
                             <a href="{% url 'turnos:listar_clases' %}"
                                 class="block py-2 pr-4 pl-3 text-primary-600 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:p-0 dark:text-gray-400 dark:hover:text-white">Turnos</a>
@@ -103,13 +108,13 @@
                             <a href="#contacto"
                                 class="block py-2 pr-4 pl-3 text-gray-700 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-600 lg:p-0 dark:text-gray-400 dark:hover:text-white">Contacto</a>
                         </li>
+                        {% endblock nav_links %}
                     </ul>
                 </div>
-            -->
-
+                {% endif %}
             </div>
         </nav>
-
+        
         <div class="border-t border-gray-200 dark:border-gray-700"></div>
         
     </header>
@@ -171,18 +176,18 @@
                     <div>
                         <h2 class="mb-4 text-sm font-semibold text-gray-900 uppercase dark:text-white">Navegación</h2>
                         <ul class="text-sm text-gray-500 dark:text-gray-400 space-y-2">
-                            <li><a href="/" class="hover:text-teal-600">Inicio</a></li>
-                            <li><a href="#servicios" class="hover:text-teal-600">Servicios</a></li>
-                            <li><a href="#nosotros" class="hover:text-teal-600">Nosotros</a></li>
-                            <li><a href="#turnos" class="hover:text-teal-600">Turnos</a></li>
+                            <li><a href="/" class="hover:text-primary-600">Inicio</a></li>
+                            <li><a href="#servicios" class="hover:text-primary-600">Servicios</a></li>
+                            <li><a href="#nosotros" class="hover:text-primary-600">Nosotros</a></li>
+                            <li><a href="#turnos" class="hover:text-primary-600">Turnos</a></li>
                         </ul>
                     </div>
                     <div>
                         <h2 class="mb-4 text-sm font-semibold text-gray-900 uppercase dark:text-white">Contacto</h2>
                         <ul class="text-sm text-gray-500 dark:text-gray-400 space-y-2">
                             <li>📍 La Plata, Buenos Aires</li>
-                            <li>📞 <a href="tel:+5491100000000" class="hover:text-teal-600">+54 9 11 0000-0000</a></li>
-                            <li>✉️ <a href="mailto:info@enderaza2.com" class="hover:text-teal-600">info@enderaza2.com</a></li>
+                            <li>📞 <a href="tel:+5491100000000" class="hover:text-primary-600">+54 9 11 0000-0000</a></li>
+                            <li>✉️ <a href="mailto:info@enderaza2.com" class="hover:text-primary-600">info@enderaza2.com</a></li>
                         </ul>
                     </div>
                     <div>

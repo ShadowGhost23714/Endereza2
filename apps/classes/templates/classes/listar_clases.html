@@ -213,8 +213,26 @@
                                                 </button> 
                                            </form>
                                         </li>
+                                        {% if user.clases_a_favor > 0 %}
+                                        <li>
+                                            <form method="post" action="{% url 'turnos:reservar_clase_a_favor' turno.pk %}">
+                                            {% csrf_token %}
+                                                <button type="submit" class="flex items-center w-full gap-2 font-semibold px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 transition">
+                                                    <div class="flex items-center justify-center w-9 h-9 rounded bg-teal-50 text-teal-700">
+                                                        <span class="text-lg">⭐</span>
+                                                    </div>
+                                                    <div class="block ms-2.5">
+                                                        <div class="w-full text-base font-medium">Usar clase a favor</div>
+                                                        <div class="w-full font-normal text-sm">Tenés {{ user.clases_a_favor }} disponible{{ user.clases_a_favor|pluralize:"s" }}</div>
+                                                    </div>
+                                                    <svg class="w-5 h-5 ms-auto" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m14 0-4 4m4-4-4-4"/>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </li>
+                                    {% endif %}
                                     </ul>
-                                    
                                 </div>
                             </div>
                         </div>
@@ -226,7 +244,7 @@
                         {% csrf_token %}
                         <button type="submit"
                         class="bg-yellow-100 text-yellow-700 font-semibold py-2 px-4 rounded-lg  text-sm">
-                        Lista de espera
+                        Agregar a lista de espera
                     </button>
                     </form>
                 {% endif %}
@@ -243,7 +261,11 @@
         {% endfor %}
     </div>
 </div>
-
+<p class="mt-7 mb-8 text-center text-lg text-gray-400">
+  <a href="{% url 'core:home' %}" class="text-primary-700 font-semibold hover:underline dark:text-primary-500">
+    ← Volver a inicio
+  </a>
+</p>
 <script>
     // Esperamos a que cargue el DOM
     document.addEventListener("DOMContentLoaded", function() {

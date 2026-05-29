@@ -149,10 +149,9 @@ def reservar_clase(request, turno_id, efectivo):
     # ── Escenario 4: ya tiene una reserva activa en el mismo horario ──────────
     conflicto = Reserva.objects.filter(
         id_usuario   = request.user,
-        estado       = Reserva.Estado.RESERVADO,
         id_turno__fecha       = turno.fecha,
         id_turno__hora_inicio = turno.hora_inicio,
-    ).exclude(id_turno=turno).first()
+    ).exclude(id_turno=turno).exclude(estado=Reserva.Estado.CANCELADO).first()
 
     if conflicto:
         messages.error(
@@ -166,7 +165,7 @@ def reservar_clase(request, turno_id, efectivo):
     reserva_existente = Reserva.objects.filter(
         id_usuario=request.user,
         id_turno=turno,
-    ).first()
+    ).exclude(estado=Reserva.Estado.CANCELADO).first()
 
     if reserva_existente:
         if reserva_existente.estado == Reserva.Estado.RESERVADO:
@@ -226,4 +225,56 @@ def anotarse_lista_espera(request, turno_id):
     )
     enviar_confirmacion_lista_espera(reserva)
     messages.success(request, "Te anotamos en la lista de espera. Te avisamos si se libera un cupo.")
+    return redirect("turnos:mis_clases")
+
+@login_required
+def reservar_clase_a_favor(request, turno_id):
+    if request.method != "POST":
+        return redirect("turnos:listar_clases")
+
+    turno = get_object_or_404(Turno, pk=turno_id)
+
+    # Verificar que tiene clases a favor
+    if request.user.clases_a_favor <= 0:
+        messages.error(request, "No tenés clases a favor disponibles.")
+        return redirect("turnos:listar_clases")
+
+    # Conflicto de horario
+    conflicto = Reserva.objects.filter(
+        id_usuario=request.user,
+        id_turno__fecha=turno.fecha,
+        id_turno__hora_inicio=turno.hora_inicio,
+    ).exclude(id_turno=turno).exclude(estado=Reserva.Estado.CANCELADO).first()
+
+    if conflicto:
+        messages.error(request, "Ya tenés reservada una clase en este horario.")
+        return redirect("turnos:listar_clases")
+
+    # Reserva ya existente
+    reserva_existente = Reserva.objects.filter(
+        id_usuario=request.user,
+        id_turno=turno,
+    ).exclude(estado=Reserva.Estado.CANCELADO).first()
+
+    if reserva_existente:
+        messages.info(request, "Ya tenés una reserva para este turno.")
+        return redirect("turnos:mis_clases")
+
+    # Sin cupo
+    if not turno.tiene_cupo():
+        messages.error(request, "No hay cupos disponibles para este turno.")
+        return redirect("turnos:listar_clases")
+
+    from django.db import transaction
+    with transaction.atomic():
+        reserva = Reserva.objects.create(
+            id_usuario = request.user,
+            id_turno   = turno,
+            estado     = Reserva.Estado.PAGO,
+        )
+        request.user.clases_a_favor -= 1
+        request.user.save(update_fields=["clases_a_favor"])
+
+    enviar_confirmacion_reserva(reserva)
+    messages.success(request, "¡Reserva creada con clase a favor! Te enviamos un mail de confirmación.")
     return redirect("turnos:mis_clases")

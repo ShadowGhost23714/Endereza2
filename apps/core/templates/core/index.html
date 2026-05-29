@@ -306,7 +306,7 @@
               </svg>
               <div>
                 <p class="text-sm font-semibold text-gray-900">Turno mañana</p>
-                <p class="text-xs text-gray-400">08:00 a 14:00 hs · 3 profesionales por actividad</p>
+                <p class="text-xs text-gray-400">08:00 a 14:00 hs · 1 profesional por actividad</p>
               </div>
             </div>
             <div class="flex items-start gap-3 bg-white border border-gray-200 rounded-2xl px-5 py-4">
@@ -321,7 +321,7 @@
               </svg>
               <div>
                 <p class="text-sm font-semibold text-gray-900">Turno tarde</p>
-                <p class="text-xs text-gray-400">14:00 a 20:00 hs · 3 profesionales por actividad</p>
+                <p class="text-xs text-gray-400">14:00 a 20:00 hs · 1 profesional por actividad</p>
               </div>
             </div>
             <div class="flex items-start gap-3 bg-white border border-gray-200 rounded-2xl px-5 py-4">
@@ -392,7 +392,7 @@
         </p>
       </div>
       <div class="relative z-10 sm:ml-auto flex gap-2 flex-wrap">
-        <a href="{% url 'turnos/clases/' % }"
+        <a href="{% url 'turnos:listar_clases' %}"
            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold
                   bg-primary-600 hover:bg-primary-700 text-white transition-colors">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -400,7 +400,7 @@
             <rect x="3" y="4" width="18" height="18" rx="2"/>
             <path d="M16 2v4M8 2v4M3 10h18"/>
           </svg>
-          Reservar clase
+          Clases disponibles
         </a>
       </div>
     </div>
@@ -418,10 +418,10 @@
         </svg>
       </div>
       <div class="min-w-0">
-        <p class="text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">Próximo turno</p>
+        <p class="text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">Próxima clase</p>
         {% if proximo_turno %}
           <p class="text-sm font-semibold text-gray-900 truncate">
-            {{ proximo_turno.actividad }}
+            {{ proximo_turno.get_actividad_display }}
           </p>
           <p class="text-xs text-gray-400 mt-0.5">
             {{ proximo_turno.fecha|date:"D d/m" }} · {{ proximo_turno.hora_inicio }}
@@ -463,13 +463,14 @@
       </div>
       <div>
         <p class="text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">Abono mensual</p>
-        {% if pago_pendiente %}
-          <p class="text-sm font-semibold text-amber-700">
-            Vence en {{ pago_pendiente.dias_restantes }} día{% if pago_pendiente.dias_restantes != 1 %}s{% endif %}
-          </p>
-          <p class="text-xs text-gray-400 mt-0.5">{{ pago_pendiente.actividad }}</p>
+        {% if user.tiene_abono_mensual %}
+          <p class="text-sm font-semibold text-gray-900">Activo</p>
+          <p class="text-xs text-gray-400 mt-0.5">Vence en {{ user.abono_vencimiento|date:"d/m/Y" }}</p>
+        {% elif not user.tiene_abono_mensual and user.abono_vencimiento %}
+          <p class="text-sm font-semibold text-gray-900">Cancelado</p>
+          <p class="text-xs text-gray-400 mt-0.5">Vence en {{ user.abono_vencimiento|date:"d/m/Y" }}</p>
         {% else %}
-          <p class="text-sm font-semibold text-gray-900">Al día</p>
+          <p class="text-sm font-semibold text-gray-900">Inactivo</p>
           <p class="text-xs text-gray-400 mt-0.5">Sin pagos pendientes</p>
         {% endif %}
       </div>
@@ -727,7 +728,9 @@
                  </svg>
                  Reservado
                </span>`;
-      } else if (c.reservados >= c.cupo) {
+      } /*
+      (Aarón) - Lo dejo comentado por ahora, pero la idea es que el cliente pueda reservar normal y en lista de espera desde el home.
+      else if (c.reservados >= c.cupo) {
         btn = `<a href="/reservar/${c.pk}/espera/"
                   class="inline-flex items-center gap-1 text-xs font-semibold
                          bg-amber-50 border border-amber-200 text-amber-700
@@ -749,7 +752,8 @@
                  </svg>
                  Reservar
                </a>`;
-      }
+      }*/
+
 
       return `
         <div class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3
@@ -817,8 +821,6 @@
 </script>
 
 {% endif %}
-
-<!-- ════════════════ VISTA: SECRETARIO ════════════════ -->
 
 <style>
   @keyframes fade-up {
