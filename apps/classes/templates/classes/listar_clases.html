@@ -50,7 +50,7 @@
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
        {% load dict_extras %}
-
+        {% if turnos %}
         {% for turno in turnos %}
         <div class="bg-white rounded-lg shadow-md p-6">
             
@@ -262,6 +262,9 @@
         {% endif %}
         </div>
         {% endfor %}
+        {% else %}
+            <p class="text-gray-600">No hay clases para mostrar</p>
+        {% endif %}
     </div>
 </div>
 <p class="mt-7 mb-8 text-center text-lg text-gray-400">
