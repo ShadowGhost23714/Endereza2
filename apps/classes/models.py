@@ -30,11 +30,24 @@ class Turno(models.Model):
         verbose_name="Precio"
     )
 
+
     class Meta:
         verbose_name        = "Turno"
         verbose_name_plural = "Turnos"
         ordering            = ["fecha", "hora_inicio"]
 
+    def devolver_profesor(self):
+        turno_profesional = self.turno_profesionales.select_related("id_profesor").first()
+        return turno_profesional.id_profesor if turno_profesional else "profesor random"
+    
+    def devolver_especialidad(self):
+        if self.actividad == self.Actividad.TREN_INFERIOR:
+            return "Tren inferior"
+        elif self.actividad == self.Actividad.ZONA_MEDIA:
+            return "Zona media"
+        elif self.actividad == self.Actividad.TREN_SUPERIOR:
+            return "Tren superior"
+        return "Especialidad desconocida"
     def __str__(self):
         return f"{self.actividad} — {self.fecha} {self.hora_inicio.strftime('%H:%M')}"
 
@@ -44,6 +57,12 @@ class Turno(models.Model):
 
     def tiene_cupo(self):
         return self.cupos_disponibles() > 0
+    def profesor_ocupado_en_turno(profesor, fecha, hora_inicio):
+        return TurnoProfesional.objects.filter(
+            id_profesor=profesor,
+            id_turno__fecha=fecha,
+            id_turno__hora_inicio=hora_inicio
+        ).count() > 0
 
     @property
     def es_hoy(self):
