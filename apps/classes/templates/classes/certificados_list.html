@@ -1,0 +1,259 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}Certificados médicos pendientes{% endblock %}
+
+{% block content %}
+<div class="py-8 px-4 max-w-5xl mx-auto">
+
+  {# ── Encabezado ── #}
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-semibold text-gray-900">Certificados médicos</h1>
+      <p class="text-sm text-gray-500 mt-0.5">Revisá y resolvé los certificados enviados por los clientes.</p>
+    </div>
+    {% if certificados %}
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-sm font-medium">
+        <span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span>
+        {{ certificados.count }} pendiente{{ certificados.count|pluralize:"s" }}
+      </span>
+    {% endif %}
+  </div>
+
+  {# ── Mensajes django ── #}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="mb-4 px-4 py-3 rounded-lg border
+        {% if message.tags == 'success' %}bg-emerald-50 border-emerald-100 text-emerald-800
+        {% elif message.tags == 'error' %}bg-rose-50 border-rose-100 text-rose-800
+        {% else %}bg-blue-50 border-blue-100 text-blue-800{% endif %}
+        text-sm">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {# ── Lista vacía ── #}
+  {% if not certificados %}
+    <div class="flex flex-col items-center justify-center py-20 text-gray-400">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586" />
+      </svg>
+      <p class="text-base font-medium text-gray-500">No hay certificados pendientes</p>
+      <p class="text-sm text-gray-400 mt-1">Cuando un cliente envíe un certificado aparecerá aquí.</p>
+    </div>
+
+  {# ── Tabla de certificados ── #}
+  {% else %}
+    <div class="bg-white rounded-2xl border border-gray-200 shadow overflow-hidden">
+      <div class="divide-y divide-gray-100">
+
+        {% for cert in certificados %}
+        <div class="flex items-center gap-4 px-5 py-4 hover:bg-gray-50/60 transition-colors">
+
+          {# Miniatura #}
+          <div class="flex-shrink-0">
+            <a href="javascript:void(0);" 
+               onclick="openModal('{{ cert.imagen.url }}', '{{ cert.reserva.id_usuario.nombre_completo }}')"
+               title="Ver certificado completo"
+               class="group relative block w-16 h-16 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+              <img
+                src="{{ cert.imagen.url }}"
+                alt="Certificado de {{ cert.reserva.id_usuario.nombre_completo }}"
+                class="w-full h-full object-cover"
+              />
+              {# Overlay al hover #}
+              <span class="absolute inset-0 bg-gray-900/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                </svg>
+              </span>
+            </a>
+          </div>
+
+          {# Info del cliente #}
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-gray-900 truncate">
+              {{ cert.reserva.id_usuario.nombre_completo }}
+            </p>
+            <p class="text-xs text-gray-500 truncate mt-0.5">
+              {{ cert.reserva.id_usuario.email }}
+            </p>
+
+            {# Info del turno #}
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2">
+              <span class="inline-flex items-center gap-1 text-xs text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 9v7.5" />
+                </svg>
+                {{ cert.reserva.id_turno.fecha|date:"d/m/Y" }}
+              </span>
+              <span class="inline-flex items-center gap-1 text-xs text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                {{ cert.reserva.id_turno.hora_inicio|time:"H:i" }}
+              </span>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 text-xs font-medium">
+                {{ cert.reserva.id_turno.get_actividad_display }}
+              </span>
+            </div>
+          </div>
+
+          {# Fecha de envío #}
+          <div class="hidden sm:block flex-shrink-0 text-right">
+            <p class="text-xs text-gray-400">Enviado</p>
+            <p class="text-xs font-medium text-gray-600 mt-0.5">{{ cert.fecha_envio|date:"d/m/Y H:i" }}</p>
+          </div>
+
+          {# Acciones #}
+          <div class="flex-shrink-0 flex items-center gap-2">
+            {# Validar #}
+            <form method="post" action="{% url 'turnos:resolver_certificado' cert.pk %}">
+              {% csrf_token %}
+              <input type="hidden" name="accion" value="validar">
+              <button
+                type="submit"
+                title="Validar certificado y otorgar clase a favor"
+                onclick="return confirm('¿Validar el certificado de {{ cert.reserva.id_usuario.nombre_completo }}? Se le otorgará una clase a favor.')"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold transition-colors shadow-sm"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                </svg>
+                Validar
+              </button>
+            </form>
+
+            {# No validar #}
+            <form method="post" action="{% url 'turnos:resolver_certificado' cert.pk %}">
+              {% csrf_token %}
+              <input type="hidden" name="accion" value="rechazar">
+              <button
+                type="submit"
+                title="Rechazar certificado"
+                onclick="return confirm('¿Rechazar el certificado de {{ cert.reserva.id_usuario.nombre_completo }}? No se otorgarán clases a favor.')"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-gray-100 text-gray-700 text-xs font-semibold border border-gray-200 transition-colors shadow-sm"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+                Rechazar
+              </button>
+            </form>
+          </div>
+
+        </div>
+        {% endfor %}
+
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+<div id="imageModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+    <button onclick="closeModal()" class="absolute top-4 right-4 text-white/70 hover:text-white p-2 rounded-full bg-black/40 hover:bg-black/60 transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    
+    <div class="max-w-[90vw] max-h-[85vh] p-2 bg-white rounded-2xl shadow-2xl relative overflow-hidden flex flex-col items-center scale-95 transition-transform duration-300" id="modalContent">
+      <img id="modalImage" src="" alt="Certificado ampliado" class="max-w-full max-h-[75vh] object-contain rounded-xl cursor-zoom-in transition-transform duration-300 select-none" style="transform-origin: center center;">
+      <p id="modalCaption" class="text-sm font-semibold text-gray-700 mt-3 text-center"></p>
+    </div>
+  </div>
+  
+<script>
+    function openModal(imgUrl, userName) {
+      const modal = document.getElementById('imageModal');
+      const modalImg = document.getElementById('modalImage');
+      const modalCaption = document.getElementById('modalCaption');
+      const modalContent = document.getElementById('modalContent');
+      
+      // Asignar los datos dinámicos del certificado clickeado
+      modalImg.src = imgUrl;
+      modalCaption.textContent = 'Certificado de ' + userName;
+      
+      // Mostrar contenedor
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      
+      // Gatillar animaciones suaves de Tailwind
+      setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modalContent.classList.remove('scale-95');
+        modalContent.classList.add('scale-100');
+      }, 10);
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('imageModal');
+      const modalContent = document.getElementById('modalContent');
+      
+      modal.classList.add('opacity-0');
+      modalContent.classList.remove('scale-100');
+      modalContent.classList.add('scale-95');
+      
+      // Esperar a que termine la animación de desvanecimiento para ocultarlo del DOM
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }, 300);
+    }
+
+    // Cerrar el modal automáticamente si se hace click en el fondo negro
+    document.getElementById('imageModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+    
+    // Cerrar también presionando la tecla Escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+    // ── Zoom con clic sobre la imagen del modal ──
+(function () {
+  const img = document.getElementById('modalImage');
+  let zoomed = false;
+  let scale = 1;
+  const ZOOM_SCALE = 2.5;
+
+  img.addEventListener('click', function (e) {
+    e.stopPropagation();          // que no propague al fondo y cierre el modal
+
+    if (!zoomed) {
+      // Calcular el punto de origen del zoom relativo a la imagen
+      const rect = img.getBoundingClientRect();
+      const xPct = ((e.clientX - rect.left) / rect.width)  * 100;
+      const yPct = ((e.clientY - rect.top)  / rect.height) * 100;
+      img.style.transformOrigin = `${xPct}% ${yPct}%`;
+      img.style.transform = `scale(${ZOOM_SCALE})`;
+      img.classList.remove('cursor-zoom-in');
+      img.classList.add('cursor-zoom-out');
+      zoomed = true;
+    } else {
+      img.style.transform = 'scale(1)';
+      img.style.transformOrigin = 'center center';
+      img.classList.remove('cursor-zoom-out');
+      img.classList.add('cursor-zoom-in');
+      zoomed = false;
+    }
+  });
+
+  // Resetear zoom al cerrar el modal
+  const originalClose = window.closeModal;
+  window.closeModal = function () {
+    img.style.transform = 'scale(1)';
+    img.style.transformOrigin = 'center center';
+    img.classList.remove('cursor-zoom-out');
+    img.classList.add('cursor-zoom-in');
+    zoomed = false;
+    originalClose();
+  };
+})();
+  </script>
+{% endblock %}

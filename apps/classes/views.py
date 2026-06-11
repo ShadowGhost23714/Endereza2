@@ -1,16 +1,19 @@
 # apps/classes/views.py
 from django.contrib import messages
+from django.template.response import TemplateResponse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
 from django.views.generic import ListView, View
 from django.utils import timezone
+from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import get_object_or_404, redirect, render
 
 from apps.core import models
 from apps.accounts import models
 from apps.professor.models import Profesor
+from apps.classes.models import CertificadoMedico
 
 from .forms import TurnoForm
 from .models import Reserva, Turno, TurnoProfesional
@@ -284,3 +287,52 @@ def reservar_clase_a_favor(request, turno_id):
     enviar_confirmacion_reserva(reserva)
     messages.success(request, "¡Reserva creada con clase a favor! Te enviamos un mail de confirmación.")
     return redirect("turnos:mis_clases")
+
+@login_required
+def lista_certificados(request):
+    if not (request.user.es_dueno or request.user.es_secretario):
+        messages.error(request, "No tenés permisos para acceder a esta sección.")
+        return redirect("home")
+
+    certificados = (
+        CertificadoMedico.objects
+        .filter(estado=CertificadoMedico.Estado.PENDIENTE)
+        .select_related("reserva__id_usuario", "reserva__id_turno")
+        .order_by("-fecha_envio")
+    )
+    return TemplateResponse(request, "classes/certificados_list.html", {"certificados": certificados})
+
+@login_required
+@require_POST
+def resolver_certificado(request, pk):
+    if not (request.user.es_dueno or request.user.es_secretario):
+        messages.error(request, "No tenés permisos para realizar esta acción.")
+        return redirect("home")
+
+    certificado = get_object_or_404(
+        CertificadoMedico, pk=pk, estado=CertificadoMedico.Estado.PENDIENTE
+    )
+    accion = request.POST.get("accion")
+
+    if accion == "validar":
+        certificado.estado         = CertificadoMedico.Estado.VALIDADO
+        certificado.revisado_por   = request.user
+        certificado.fecha_revision = timezone.now()
+        certificado.save()
+
+        usuario = certificado.reserva.id_usuario
+        usuario.clases_a_favor += 1
+        usuario.save(update_fields=["clases_a_favor"])
+        messages.success(request, f"Certificado validado. Se le otorgó una clase a favor a {usuario.nombre_completo}.")
+
+    elif accion == "rechazar":
+        certificado.estado         = CertificadoMedico.Estado.RECHAZADO
+        certificado.revisado_por   = request.user
+        certificado.fecha_revision = timezone.now()
+        certificado.save()
+        messages.info(request, "Certificado rechazado. No se otorgaron clases a favor.")
+
+    else:
+        messages.error(request, "Acción no reconocida.")
+
+    return redirect("clases:lista_certificados")
