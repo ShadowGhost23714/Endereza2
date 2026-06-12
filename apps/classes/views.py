@@ -335,4 +335,4 @@ def resolver_certificado(request, pk):
     else:
         messages.error(request, "Acción no reconocida.")
 
-    return redirect("clases:lista_certificados")
+    return redirect("turnos:lista_certificados")
