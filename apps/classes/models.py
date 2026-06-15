@@ -172,7 +172,7 @@ class CertificadoMedico(models.Model):
     )
     imagen = models.ImageField(
         upload_to="certificados_medicos/%Y/%m/",
-        verbose_name="Imagen del certificado",
+        verbose_name="Imagen O PDF del certificado",
     )
     estado = models.CharField(
         max_length=10,
