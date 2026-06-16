@@ -141,8 +141,8 @@
             {% csrf_token %}
             <input type="hidden" name="accion" value="validar">
             <button type="submit" title="Validar certificado y otorgar clase a favor"
-              onclick="return confirm('¿Validar el certificado de {{ cert.reserva.id_usuario.nombre_completo }}? Se le otorgará una clase a favor.')"
-              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold transition-colors shadow-sm">
+              onclick="return abrirConfirmacion(this, '¿Validar el certificado de {{ cert.reserva.id_usuario.nombre_completo }}?', 'Se le otorgará una clase a favor.', 'validar')"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-600 hover:bg-primary-600 text-white text-xs font-semibold transition-colors shadow-sm">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"
                 stroke-width="2.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
@@ -156,7 +156,7 @@
             {% csrf_token %}
             <input type="hidden" name="accion" value="rechazar">
             <button type="submit" title="Rechazar certificado"
-              onclick="return confirm('¿Rechazar el certificado de {{ cert.reserva.id_usuario.nombre_completo }}? No se otorgarán clases a favor.')"
+              onclick="return abrirConfirmacion(this, '¿Rechazar el certificado de {{ cert.reserva.id_usuario.nombre_completo }}?', 'No se otorgarán clases a favor.', 'rechazar')"
               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-gray-100 text-gray-700 text-xs font-semibold border border-gray-200 transition-colors shadow-sm">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24"
                 stroke-width="2.5" stroke="currentColor">
@@ -205,8 +205,95 @@
     <p id="modalCaption" class="text-sm font-semibold text-gray-700 mt-3 text-center"></p>
   </div>
 </div>
-
+{# ── Modal de confirmación de acciones ── #}
+<div id="confirmModal"
+  class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-200">
+  <div id="confirmContent"
+    class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm mx-4 scale-95 transition-transform duration-200">
+    <div id="confirmIconWrap" class="flex items-center justify-center w-12 h-12 rounded-full mx-auto mb-4">
+      <svg id="confirmIcon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+        stroke-width="2" stroke="currentColor"></svg>
+    </div>
+    <h3 id="confirmTitle" class="text-base font-semibold text-gray-900 text-center"></h3>
+    <p id="confirmSubtitle" class="text-sm text-gray-500 text-center mt-1"></p>
+    <div class="flex gap-3 mt-6">
+      <button onclick="cerrarConfirmacion()"
+        class="flex-1 px-4 py-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 text-sm font-semibold transition-colors">
+        Cancelar
+      </button>
+      <button id="confirmBtn"
+        class="flex-1 px-4 py-2 rounded-lg text-white text-sm font-semibold transition-colors bg-primary-600 hover:bg-primary-700">
+        Confirmar
+      </button>
+    </div>
+  </div>
+</div>
 <script>
+  let confirmFormBtn = null;
+
+  function abrirConfirmacion(btnOrigen, titulo, subtitulo, accion) {
+    const modal = document.getElementById('confirmModal');
+    const content = document.getElementById('confirmContent');
+    const iconWrap = document.getElementById('confirmIconWrap');
+    const icon = document.getElementById('confirmIcon');
+
+    document.getElementById('confirmTitle').textContent = titulo;
+    document.getElementById('confirmSubtitle').textContent = subtitulo;
+
+    const confirmBtn = document.getElementById('confirmBtn');
+    confirmFormBtn = btnOrigen;
+
+    if (accion === 'validar') {
+      iconWrap.className = 'flex items-center justify-center w-12 h-12 rounded-full mx-auto mb-4 bg-emerald-100';
+      icon.setAttribute('stroke', '#10b981');
+      icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />';
+      confirmBtn.style.removeProperty('background-color');
+      confirmBtn.className = 'flex-1 px-4 py-2 rounded-lg text-white text-sm font-semibold transition-colors bg-primary-600 hover:bg-primary-700';
+    } else {
+      iconWrap.className = 'flex items-center justify-center w-12 h-12 rounded-full mx-auto mb-4 bg-red-100';
+      icon.setAttribute('stroke', '#f43f5e');
+      icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />';
+      confirmBtn.style.removeProperty('background-color');
+      confirmBtn.className = 'flex-1 px-4 py-2 rounded-lg text-white text-sm font-semibold transition-colors bg-primary-600 hover:bg-primary-700';
+    }
+
+    confirmBtn.onclick = function () {
+      cerrarConfirmacion();
+      confirmFormBtn.closest('form').submit();
+    };
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    setTimeout(() => {
+      modal.classList.remove('opacity-0');
+      content.classList.remove('scale-95');
+      content.classList.add('scale-100');
+    }, 10);
+
+    return false; // evita que el form se envíe directamente
+  }
+
+  function cerrarConfirmacion() {
+    const modal = document.getElementById('confirmModal');
+    const content = document.getElementById('confirmContent');
+    modal.classList.add('opacity-0');
+    content.classList.remove('scale-100');
+    content.classList.add('scale-95');
+    setTimeout(() => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }, 200);
+  }
+
+  // Cerrar con Escape
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') cerrarConfirmacion();
+  });
+
+  // Cerrar al hacer click en el fondo
+  document.getElementById('confirmModal').addEventListener('click', function (e) {
+    if (e.target === this) cerrarConfirmacion();
+  });
   let pdfActual = null;
 
   function renderTodasLasPaginas(pdf) {
