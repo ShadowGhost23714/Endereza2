@@ -986,6 +986,20 @@ async function confirmarRegistro() {
         return;
     }
 
+    if (fecha) {
+    const hoy   = new Date();
+    const nacim = new Date(fecha);
+    let edad    = hoy.getFullYear() - nacim.getFullYear();
+    const cumplioEnEsteMes = hoy.getMonth() > nacim.getMonth()
+                          || (hoy.getMonth() === nacim.getMonth() && hoy.getDate() >= nacim.getDate());
+    if (!cumplioEnEsteMes) edad--;
+    if (edad < 13) {
+        errDiv.innerHTML = '<div style="padding:8px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-size:11px;">⚠️ El paciente debe tener al menos 13 años para registrarse.</div>';
+        errDiv.style.display = "block";
+        return;
+    }
+    }
+
     const fd = new FormData();
     fd.append("nombre",           nombre);
     fd.append("apellido",         apellido);
