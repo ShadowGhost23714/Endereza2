@@ -305,7 +305,7 @@ def lista_certificados(request):
 @login_required
 @require_POST
 def resolver_certificado(request, pk):
-    if not (request.user.es_dueno or request.user.es_secretario):
+    if not (request.user.es_dueno):
         messages.error(request, "No tenés permisos para realizar esta acción.")
         return redirect("home")
 
