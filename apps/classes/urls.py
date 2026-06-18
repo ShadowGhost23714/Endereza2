@@ -15,4 +15,6 @@ urlpatterns = [
     path("eliminar-turno/<int:pk>/",       views.TurnoDeleteView.as_view(),  name="turno_delete"),
     path("clase-a-favor/<int:turno_id>/",  views.reservar_clase_a_favor,     name="reservar_clase_a_favor"),
     path("cancelar-reserva/<int:reserva_id>/",      views.cancelar_reserva,           name="cancelar_reserva"),
+    path("certificados/", views.lista_certificados, name="lista_certificados"),
+    path("certificados/<int:pk>/resolver/", views.resolver_certificado, name="resolver_certificado"),
 ]
