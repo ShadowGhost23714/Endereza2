@@ -134,6 +134,28 @@ class MisClasesView(LoginRequiredMixin, ListView):
             .order_by("id_turno__fecha", "id_turno__hora_inicio")
         )
 
+@login_required
+def cancelar_reserva(request, reserva_id):
+    if request.method != "POST":
+        return redirect("turnos:mis_clases")
+
+    reserva = get_object_or_404(Reserva, pk=reserva_id, id_usuario=request.user)
+
+    
+    if reserva.estado == Reserva.Estado.RESERVADO or reserva.estado == Reserva.Estado.LISTA_ESPERA:
+        messages.success(request, "Reserva cancelada exitosamente.")
+    elif reserva.estado == Reserva.Estado.PAGO:
+        if reserva.id_turno.fecha - timezone.now().date() < timezone.timedelta(days=2):
+            messages.error(request, "No podés cancelar esta reserva con menos de 48 horas de anticipación.")
+            return redirect("turnos:mis_clases")
+        usuario = get_object_or_404(models.Usuario, pk=request.user.pk)
+        usuario.clases_a_favor += 1
+        usuario.save(update_fields=["clases_a_favor"])
+
+    reserva.estado = Reserva.Estado.CANCELADO
+    reserva.save()
+    messages.success(request, "Reserva cancelada exitosamente.")
+    return redirect("turnos:mis_clases")
 
 @login_required
 def reservar_clase(request, turno_id, efectivo):
