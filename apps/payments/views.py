@@ -1,13 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.shortcuts import redirect
-from django.views.generic import TemplateView
+from django.shortcuts import redirect, render
 from django.db import transaction
 from datetime import time as time_type
 from django.views import View
 from django.http import JsonResponse
 from datetime import date as date_type
+import mercadopago
 from apps.classes.models import Reserva, Turno
+from config import settings
 from .models import Pago
 from django.utils import timezone
 
@@ -393,3 +394,103 @@ class NuevoAbonadoView(LoginRequiredMixin, SecretarioRequiredMixin, View):
             "ok":      True,
             "mensaje": f"Abono registrado para {usuario.get_full_name()}. Vence el {vencimiento.strftime('%d/%m/%Y')}.",
         })                            
+
+
+# Vistas para reservas online y MercadoPago
+
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from apps.classes.models import Turno, Reserva
+from .services import crear_preferencia
+import json, logging
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
+
+# Vista para reservar una clase online y redirigir a MercadoPago
+@login_required
+@require_POST
+def reservar_online(request, turno_id):
+    turno = get_object_or_404(Turno, pk=turno_id)
+
+    if not turno.tiene_cupo():
+        messages.error(request, "No hay cupos disponibles para este turno.")
+        return redirect("classes:listar_clases")
+
+    reserva, created = Reserva.objects.get_or_create(
+        id_usuario=request.user,
+        id_turno=turno,
+        defaults={"estado": Reserva.Estado.RESERVADO}
+    )
+
+    if not created and reserva.estado == Reserva.Estado.PAGO:
+        messages.info(request, "Ya tenés esta clase pagada.")
+        return redirect("classes:listar_clases")
+
+    preferencia = crear_preferencia(reserva, request)
+
+    pago, _ = Pago.objects.get_or_create(reserva=reserva)
+    pago.metodo_pago   = Pago.MetodoPago.MERCADO_PAGO
+    pago.preference_id = preferencia["id"]
+    pago.monto         = reserva.id_turno.precio
+    pago.estado        = Pago.Estado.PENDIENTE
+    pago.save()
+
+    return redirect(preferencia["init_point"])
+
+# Vistas para manejar las redirecciones de MercadoPago después del pago
+def pago_exito(request):
+    return redirect("turnos:listar_clases")
+
+def pago_error(request):
+    return redirect("turnos:listar_clases")
+
+def pago_pendiente(request):
+    return redirect("turnos:listar_clases")
+
+
+# Configuración de logging para el webhook
+logger = logging.getLogger(__name__)
+@csrf_exempt
+@require_POST
+def webhook(request):
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return HttpResponse(status=400)
+
+    if data.get("type") != "payment":
+        return HttpResponse(status=200)
+
+    payment_id = str(data.get("data", {}).get("id", ""))
+    if not payment_id:
+        return HttpResponse(status=400)
+
+    sdk = mercadopago.SDK(settings.MP_ACCESS_TOKEN)
+    mp_pago = sdk.payment().get(payment_id)["response"]
+
+    reserva_id = mp_pago.get("external_reference")
+    estado_mp  = mp_pago.get("status")
+
+    ESTADOS = {
+        "approved":   Pago.Estado.APROBADO,
+        "rejected":   Pago.Estado.RECHAZADO,
+        "pending":    Pago.Estado.PENDIENTE,
+        "in_process": Pago.Estado.EN_PROCESO,
+        "cancelled":  Pago.Estado.CANCELADO,
+    }
+
+    try:
+        pago = Pago.objects.get(reserva__id=reserva_id)
+        pago.payment_id = payment_id
+        pago.estado     = ESTADOS.get(estado_mp, Pago.Estado.PENDIENTE)
+        pago.save()
+
+        if pago.esta_aprobado:
+            pago.reserva.estado = Reserva.Estado.PAGO
+            pago.reserva.save()
+    except Pago.DoesNotExist:
+        logger.warning(f"Webhook: no se encontró pago para reserva {reserva_id}")
+
+    return HttpResponse(status=200)
