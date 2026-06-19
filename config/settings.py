@@ -31,7 +31,15 @@ MP_PUBLIC_KEY = config("MP_PUBLIC_KEY")
 MP_ACCESS_TOKEN = config("MP_ACCESS_TOKEN")
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "extinct-stem-sporting.ngrok-free.dev",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://extinct-stem-sporting.ngrok-free.dev",
+]
 
 
 # Application definition
