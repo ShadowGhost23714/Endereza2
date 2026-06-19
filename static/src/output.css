@@ -76,6 +76,7 @@
     --color-rose-50: oklch(96.9% 0.015 12.422);
     --color-rose-100: oklch(94.1% 0.03 12.58);
     --color-rose-300: oklch(81% 0.117 11.638);
+    --color-rose-400: oklch(71.2% 0.194 13.428);
     --color-rose-500: oklch(64.5% 0.246 16.439);
     --color-rose-700: oklch(51.4% 0.222 16.935);
     --color-rose-800: oklch(45.5% 0.188 13.697);
@@ -421,6 +422,9 @@
   .z-50 {
     z-index: 50;
   }
+  .z-\[60\] {
+    z-index: 60;
+  }
   .container {
     width: 100%;
     @media (width >= 40rem) {
@@ -447,6 +451,9 @@
   }
   .mx-1 {
     margin-inline: calc(var(--spacing) * 1);
+  }
+  .mx-4 {
+    margin-inline: calc(var(--spacing) * 4);
   }
   .mx-auto {
     margin-inline: auto;
@@ -1124,6 +1131,12 @@
       background-color: color-mix(in oklab, var(--color-black) 40%, transparent);
     }
   }
+  .bg-black\/60 {
+    background-color: color-mix(in srgb, #000 60%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-black) 60%, transparent);
+    }
+  }
   .bg-black\/80 {
     background-color: color-mix(in srgb, #000 80%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -1168,6 +1181,9 @@
   }
   .bg-gray-400 {
     background-color: var(--color-gray-400);
+  }
+  .bg-gray-500 {
+    background-color: var(--color-gray-500);
   }
   .bg-gray-900 {
     background-color: var(--color-gray-900);
@@ -1490,6 +1506,9 @@
     font-size: var(--text-xs);
     line-height: var(--tw-leading, var(--text-xs--line-height));
   }
+  .text-\[10px\] {
+    font-size: 10px;
+  }
   .leading-\[1\.1\] {
     --tw-leading: 1.1;
     line-height: 1.1;
@@ -1623,6 +1642,9 @@
   }
   .text-red-800 {
     color: var(--color-red-800);
+  }
+  .text-rose-400 {
+    color: var(--color-rose-400);
   }
   .text-rose-800 {
     color: var(--color-rose-800);
@@ -1894,13 +1916,6 @@
         @supports (color: color-mix(in lab, red, red)) {
           background-color: color-mix(in oklab, var(--color-black) 60%, transparent);
         }
-      }
-    }
-  }
-  .hover\:bg-emerald-600 {
-    &:hover {
-      @media (hover: hover) {
-        background-color: var(--color-emerald-600);
       }
     }
   }
