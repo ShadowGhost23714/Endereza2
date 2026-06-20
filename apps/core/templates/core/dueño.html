@@ -12,13 +12,14 @@
   </div>
 
   <!-- Grid principal -->
-  <div class="grid grid-cols-1 gap-6" >
+  <div class="grid grid-cols-1 gap-6">
 
     <!-- Fila superior: tarjeta grande + tarjeta roja -->
     <div class="grid grid-cols-[1.5fr_1fr] gap-6">
 
       <!-- Tarjeta Administrar Clases -->
-      <div class="relative bg-white rounded-2xl shadow border border-gray-100 overflow-hidden flex items-center gap-6 p-6">
+      <div
+        class="relative bg-white rounded-2xl shadow border border-gray-100 overflow-hidden flex items-center gap-6 p-6">
         <!-- Borde izquierdo rojo -->
         <div class="absolute left-0 inset-y-0 w-1.5 bg-primary-600 rounded-l-2xl"></div>
 
@@ -26,10 +27,10 @@
           <!-- Icono -->
           <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mb-4">
             <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke-width="2"/>
-              <line x1="16" y1="2" x2="16" y2="6" stroke-width="2"/>
-              <line x1="8" y1="2" x2="8" y2="6" stroke-width="2"/>
-              <line x1="3" y1="10" x2="21" y2="10" stroke-width="2"/>
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke-width="2" />
+              <line x1="16" y1="2" x2="16" y2="6" stroke-width="2" />
+              <line x1="8" y1="2" x2="8" y2="6" stroke-width="2" />
+              <line x1="3" y1="10" x2="21" y2="10" stroke-width="2" />
             </svg>
           </div>
 
@@ -39,85 +40,109 @@
           </p>
 
           <a href="{% url 'turnos:listar_clases' %}"
-             class="inline-flex items-center gap-2 text-primary-600 font-semibold hover:text-primary-700 transition-colors">
+            class="inline-flex items-center gap-2 text-primary-600 font-semibold hover:text-primary-700 transition-colors">
             Gestionar clases
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </a>
         </div>
 
-        
+
       </div>
 
-     
 
-    <!-- Fila inferior: 3 tarjetas -->
-    <div class="grid grid-cols-2 gap-6">
 
-      <!-- Tarjeta Administrar Secretarios -->
-      <div class="bg-white rounded-2xl shadow border border-gray-100 p-6 flex flex-col justify-between">
-        <div>
-          <!-- Icono -->
-          <div class="w-11 h-11 bg-gray-100 rounded-xl flex items-center justify-center mb-5">
-            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-              <rect x="2" y="3" width="20" height="18" rx="2" stroke-width="1.8"/>
-              <path stroke-linecap="round" d="M8 10h8M8 14h5"/>
-            </svg>
+      <!-- Fila inferior: 3 tarjetas -->
+      <div class="grid grid-cols-2 gap-6">
+
+        <!-- Tarjeta Administrar Secretarios -->
+        <div class="bg-white rounded-2xl shadow border border-gray-100 p-6 flex flex-col justify-between">
+          <div>
+            <!-- Icono -->
+            <div class="w-11 h-11 bg-gray-100 rounded-xl flex items-center justify-center mb-5">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="1.8"
+                viewBox="0 0 24 24">
+                <rect x="2" y="3" width="20" height="18" rx="2" stroke-width="1.8" />
+                <path stroke-linecap="round" d="M8 10h8M8 14h5" />
+              </svg>
+            </div>
+
+            <h3 class="text-lg font-bold text-gray-900 mb-2">Administrar Secretarios</h3>
+            <p class="text-gray-500 text-sm mb-5">Control de accesos y perfiles administrativos de soporte.</p>
+
+
           </div>
 
-          <h3 class="text-lg font-bold text-gray-900 mb-2">Administrar Secretarios</h3>
-          <p class="text-gray-500 text-sm mb-5">Control de accesos y perfiles administrativos de soporte.</p>
-
-          
+          <a href="{% url 'accounts:lista_secretarios' %}"
+            class="block w-full text-center border border-gray-300 text-gray-700 font-semibold text-sm py-2.5 rounded-xl hover:bg-gray-100 transition-colors">
+            Gestionar
+          </a>
         </div>
 
-        <a href="{% url 'accounts:lista_secretarios' %}"
-           class="block w-full text-center border border-gray-300 text-gray-700 font-semibold text-sm py-2.5 rounded-xl hover:bg-gray-100 transition-colors">
-          Gestionar
-        </a>
-      </div>
+        <!-- Tarjeta Administrar Profesores -->
+        <div class="bg-primary-600 rounded-2xl shadow border border-gray-100 p-6 flex flex-col justify-between">
+          <div>
+            <!-- Icono -->
+            <div class="w-11 h-11 bg-gray-100 rounded-xl flex items-center justify-center mb-5">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="1.8"
+                viewBox="0 0 24 24">
+                <circle cx="9" cy="7" r="3" stroke-width="1.8" />
+                <path stroke-linecap="round" d="M3 21v-1a6 6 0 0112 0v1" stroke-width="1.8" />
+                <circle cx="17" cy="8" r="2.5" stroke-width="1.8" />
+                <path stroke-linecap="round" d="M21 21v-1a4 4 0 00-5-3.87" stroke-width="1.8" />
+              </svg>
+            </div>
 
-      <!-- Tarjeta Administrar Profesores -->
-      <div class="bg-primary-600 rounded-2xl shadow border border-gray-100 p-6 flex flex-col justify-between">
-        <div>
-          <!-- Icono -->
-          <div class="w-11 h-11 bg-gray-100 rounded-xl flex items-center justify-center mb-5">
-            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-              <circle cx="9" cy="7" r="3" stroke-width="1.8"/>
-              <path stroke-linecap="round" d="M3 21v-1a6 6 0 0112 0v1" stroke-width="1.8"/>
-              <circle cx="17" cy="8" r="2.5" stroke-width="1.8"/>
-              <path stroke-linecap="round" d="M21 21v-1a4 4 0 00-5-3.87" stroke-width="1.8"/>
-            </svg>
-          </div>
+            <h3 class="text-lg font-bold text-white mb-2">Administrar Profesores</h3>
+            <p class="text-white/75  text-sm mb-5">Supervisión de instructores, especialidades y desempeño.</p>
 
-          <h3 class="text-lg font-bold text-white mb-2">Administrar Profesores</h3>
-          <p class="text-white/75  text-sm mb-5">Supervisión de instructores, especialidades y desempeño.</p>
+            <!-- Barra de progreso -->
+            <div class="mb-1">
+              <div class="flex items-center justify-between mb-1.5">
 
-          <!-- Barra de progreso -->
-          <div class="mb-1">
-            <div class="flex items-center justify-between mb-1.5">
-              
-              
+
+              </div>
             </div>
           </div>
+
+          <a href="{% url 'profesores:lista' %}"
+            class="block w-full bg-gray-100 text-center border border-gray-300 text-gray-700 font-semibold text-sm py-2.5 rounded-xl hover:bg-gray-200 transition-colors mt-4">
+            Gestionar
+          </a>
         </div>
 
-        <a href="{% url 'profesores:lista' %}"
-           class="block w-full bg-gray-100 text-center border border-gray-300 text-gray-700 font-semibold text-sm py-2.5 rounded-xl hover:bg-gray-200 transition-colors mt-4">
-          Gestionar
-        </a>
+        <!-- Tarjeta Ver certificados -->
+        <div class="bg-gray-500 rounded-2xl shadow border border-gray-100 p-6 flex flex-col justify-between">
+          <div>
+            <!-- Icono -->
+            <div class="w-11 h-11 bg-gray-100 rounded-xl flex items-center justify-center mb-5">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="1.8"
+                viewBox="0 0 24 24">
+                <rect x="2" y="3" width="20" height="18" rx="2" stroke-width="1.8" />
+                <path stroke-linecap="round" d="M8 10h8M8 14h5" />
+              </svg>
+            </div>
+
+            <h3 class="text-lg font-bold text-white mb-2">Gestionar certificados</h3>
+            <p class="text-white text-sm mb-5">Validar o rechazar certificados enviados por clientes que cancelaron sus turnos.</p>
+
+
+          </div>
+
+          <a href="{% url 'turnos:lista_certificados' %}"
+            class="block w-full bg-gray-100 text-center border border-gray-300 text-gray-700 font-semibold text-sm py-2.5 rounded-xl hover:bg-gray-200 transition-colors mt-4">
+            Gestionar
+          </a>
+        </div>
+
+
       </div>
-
-      
-          
-     
     </div>
-  </div>
 
-</div>
+  </div>
 </div>
 {% else %}
-  <p>No tienes permisos para acceder a esta página.</p>
+<p>No tienes permisos para acceder a esta página.</p>
 {% endif %}
 {% endblock %}

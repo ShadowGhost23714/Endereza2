@@ -1,4 +1,5 @@
 # apps/classes/models.py
+from django.conf import settings
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -155,3 +156,59 @@ class Sala(models.Model):
 
     def __str__(self):
         return f"Sala {self.numero} (Capacidad: {self.capacidad})"
+    
+class CertificadoMedico(models.Model):
+
+    class Estado(models.TextChoices):
+        PENDIENTE = "pendiente", "Pendiente"
+        VALIDADO  = "validado",  "Validado"
+        RECHAZADO = "rechazado", "Rechazado"
+
+    reserva = models.OneToOneField(
+        Reserva,
+        on_delete=models.CASCADE,
+        related_name="certificado_medico",
+        verbose_name="Reserva cancelada",
+    )
+    imagen = models.ImageField(
+        upload_to="certificados_medicos/%Y/%m/",
+        verbose_name="Imagen O PDF del certificado",
+    )
+    estado = models.CharField(
+        max_length=10,
+        choices=Estado.choices,
+        default=Estado.PENDIENTE,
+        verbose_name="Estado",
+    )
+    fecha_envio = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Fecha de envío",
+    )
+    revisado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="certificados_revisados",
+        verbose_name="Revisado por",
+    )
+    fecha_revision = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Fecha de revisión",
+    )
+
+    class Meta:
+        verbose_name        = "Certificado médico"
+        verbose_name_plural = "Certificados médicos"
+        ordering            = ["-fecha_envio"]
+
+    @property
+    def es_pendiente(self):
+        return self.estado == self.Estado.PENDIENTE
+
+    def __str__(self):
+        return (
+            f"Certificado de {self.reserva.id_usuario.nombre_completo} "
+            f"— {self.reserva.id_turno} [{self.estado}]"
+        )

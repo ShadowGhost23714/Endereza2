@@ -166,3 +166,6 @@ LOGOUT_REDIRECT_URL = 'core:home'
 
 EMAIL_BACKEND   = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'Endereza2 <noreply@endereza2.com>'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
