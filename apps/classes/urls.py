@@ -14,4 +14,6 @@ urlpatterns = [
     path("lista-espera/<int:turno_id>/",   views.anotarse_lista_espera,      name="lista_espera"),
     path("eliminar-turno/<int:pk>/",       views.TurnoDeleteView.as_view(),  name="turno_delete"),
     path("clase-a-favor/<int:turno_id>/",  views.reservar_clase_a_favor,     name="reservar_clase_a_favor"),
+    path("certificados/", views.lista_certificados, name="lista_certificados"),
+    path("certificados/<int:pk>/resolver/", views.resolver_certificado, name="resolver_certificado"),
 ]
