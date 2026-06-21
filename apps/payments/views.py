@@ -402,7 +402,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from apps.classes.models import Turno, Reserva
-from .services import crear_preferencia
+from .services import crear_preferencia, MercadoPagoConnectionError, sincronizar_pago  
 import json, logging
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -428,7 +428,12 @@ def reservar_online(request, turno_id):
         messages.info(request, "Ya tenés esta clase pagada.")
         return redirect("classes:listar_clases")
 
-    preferencia = crear_preferencia(reserva, request)
+    # --- Escenario 2: error de conexión con la API ---
+    try:
+        preferencia = crear_preferencia(reserva, request)
+    except MercadoPagoConnectionError:
+        messages.error(request, "No se pudo conectar a Mercado Pago. Intente más tarde")
+        return redirect("turnos:listar_clases")
 
     pago, _ = Pago.objects.get_or_create(reserva=reserva)
     pago.metodo_pago   = Pago.MetodoPago.MERCADO_PAGO
@@ -437,16 +442,40 @@ def reservar_online(request, turno_id):
     pago.estado        = Pago.Estado.PENDIENTE
     pago.save()
 
+    # --- Escenario 1: redirige al pago ---
     return redirect(preferencia["init_point"])
 
 # Vistas para manejar las redirecciones de MercadoPago después del pago
 def pago_exito(request):
+    payment_id = request.GET.get("payment_id")
+    external_reference = request.GET.get("external_reference")
+    pago = sincronizar_pago(payment_id, external_reference)
+
+    # --- Escenario 1: pago exitoso ---
+    if pago and pago.esta_aprobado:
+        messages.success(request, "Reserva pagada")
+    else:
+        messages.error(request, "Hubo problemas para realizar el pago")
+
     return redirect("turnos:listar_clases")
+
 
 def pago_error(request):
+    payment_id = request.GET.get("payment_id")
+    external_reference = request.GET.get("external_reference")
+    sincronizar_pago(payment_id, external_reference)
+
+    # --- Escenario 3: pago fallido en MP ---
+    messages.error(request, "Hubo problemas para realizar el pago")
     return redirect("turnos:listar_clases")
 
+
 def pago_pendiente(request):
+    payment_id = request.GET.get("payment_id")
+    external_reference = request.GET.get("external_reference")
+    sincronizar_pago(payment_id, external_reference)
+
+    messages.info(request, "Tu pago está pendiente de confirmación")
     return redirect("turnos:listar_clases")
 
 
