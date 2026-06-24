@@ -1,4 +1,6 @@
 # apps/classes/models.py
+import uuid
+
 from django.conf import settings
 from django.db import models
 from django.contrib.auth import get_user_model
@@ -106,6 +108,12 @@ class Reserva(models.Model):
         default=False,
         verbose_name="Recepcionado",
     )
+    qr_token = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False,
+        unique=True,
+        verbose_name="Token de QR",
+    )
 
     class Meta:
         unique_together = ("id_usuario", "id_turno")
@@ -134,6 +142,19 @@ class Reserva(models.Model):
 
     def __str__(self):
         return f"Reserva #{self.pk} — {self.id_usuario} | {self.id_turno} [{self.estado}]"
+    @property
+    def puede_mostrar_qr(self):
+        """
+        El QR solo tiene sentido para reservas activas (no canceladas,
+        no en lista de espera) de un turno que todavía no pasó, y que
+        todavía no fueron recepcionadas (si ya se usó el QR para entrar,
+        se deshabilita hasta que el secretario/dueño cancele la recepción).
+        """
+        if self.estado not in (self.Estado.RESERVADO, self.Estado.PAGO):
+            return False
+        if self.recepcionado:
+            return False
+        return self.id_turno.fecha >= timezone.localdate()
 
 class Sala(models.Model):
     numero = models.PositiveSmallIntegerField(unique=True)
