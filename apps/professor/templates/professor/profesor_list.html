@@ -271,21 +271,27 @@
           const lista = document.getElementById('lista-clases');
 
           data.clases.forEach(clase => {
-            const opciones = data.profesores_disponibles
-              .map(p => `<option value="${p.id}">${p.apellido}, ${p.nombre}</option>`)
-              .join('');
+            const opciones = clase.disponibles.length > 0
+              ? clase.disponibles
+                .map(p => `<option value="${p.id}">${p.apellido}, ${p.nombre}</option>`)
+                .join('')
+              : '<option value="" disabled>Sin profesores disponibles para este horario</option>';
 
             const fila = document.createElement('div');
             fila.className = 'flex flex-col gap-1';
             fila.innerHTML = `
-            <span class="text-xs text-gray-500 font-medium">${clase.descripcion}</span>
-            <select data-turno="${clase.turno_id}"
-                    data-especialidad="${especialidadProfesorEliminado}" 
-                    onchange="seleccionarProfesor(this)"
-                    class="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500 bg-gray-50">
-              <option value="">— Seleccioná un profesor —</option>
-              ${opciones}
-            </select>`;
+    <span class="text-xs text-gray-500 font-medium">${clase.descripcion}</span>
+    <select data-turno="${clase.turno_id}"
+            data-especialidad="${especialidadProfesorEliminado}"
+            onchange="seleccionarProfesor(this)"
+            ${clase.disponibles.length === 0 ? 'disabled' : ''}
+            class="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500 bg-gray-50 disabled:opacity-50">
+      <option value="">— Seleccioná un profesor —</option>
+      ${opciones}
+    </select>
+    ${clase.disponibles.length === 0
+                ? '<p class="text-xs text-red-500">No hay profesores disponibles para este horario. Creá uno nuevo.</p>'
+                : ''}`;
             lista.appendChild(fila);
           });
 

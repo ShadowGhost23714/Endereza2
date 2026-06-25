@@ -80,6 +80,14 @@ class ProfesorDeleteView(LoginRequiredMixin, StaffRequiredMixin, View):
                 if nuevo_profesor_id:
                     try:
                         nuevo_profesor = Profesor.objects.get(pk=nuevo_profesor_id)
+                        turno = asignacion.id_turno
+                        conflicto = Turno.profesor_ocupado_en_turno(nuevo_profesor, turno.fecha, turno.hora_inicio)
+                        if conflicto:
+                            messages.error(
+                                request,
+                                f"{nuevo_profesor.nombre_completo} ya tiene un turno asignado el "
+                                f"{turno.fecha.strftime('%d/%m/%Y')} a las {turno.hora_inicio.strftime('%H:%M')}."
+                            )
                         asignacion.id_profesor = nuevo_profesor
                         asignacion.save()
                     except Profesor.DoesNotExist:
@@ -103,30 +111,35 @@ class ProfesorClasesAsignadasView(LoginRequiredMixin, StaffRequiredMixin, View):
             .select_related("id_turno")
         )
 
+        otros_profesores = Profesor.objects.exclude(pk=pk).filter(especialidad=profesor.especialidad)
+
         clases = []
         for a in asignaciones:
             turno = a.id_turno
-            especialidad_display = profesor.get_especialidad_display()
             fecha = turno.fecha.strftime("%d/%m/%Y")
             hora  = turno.hora_inicio.strftime("%H:%M")
+
+            disponibles = []
+            for p in otros_profesores:
+                ocupado = Turno.profesor_ocupado_en_turno(p, turno.fecha, turno.hora_inicio)
+                if not ocupado:
+                    disponibles.append({
+                        "id":       p.pk,
+                        "nombre":   p.nombre,
+                        "apellido": p.apellido,
+                    })
+
             clases.append({
                 "turno_id":    turno.pk,
-                "descripcion": f"{especialidad_display} - {fecha} - {hora}",
+                "descripcion": f"{profesor.get_especialidad_display()} - {fecha} - {hora}",
+                "disponibles": disponibles,
             })
 
-        otros_profesores = list(
-            Profesor.objects
-            .exclude(pk=pk)
-            .filter(especialidad=profesor.especialidad)
-            .values("id", "nombre", "apellido")
-        )
-
         return JsonResponse({
-            "clases":                 clases,
-            "profesores_disponibles": otros_profesores,
-            "especialidad":           profesor.especialidad,
+            "clases":       clases,
+            "especialidad": profesor.especialidad,
         })
-    
+        
 class ProfesorCreateAjaxView(LoginRequiredMixin, StaffRequiredMixin, View):
     """Crea un profesor via AJAX y devuelve JSON con el resultado."""
 
