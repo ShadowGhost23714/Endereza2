@@ -443,9 +443,9 @@
         </svg>
       </div>
       <div>
-        <p class="text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">Clases a favor</p>
+        <p class="text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">Saldo a favor</p>
         <p class="text-sm font-semibold text-gray-900">
-          {{ clases_a_favor|default:"0" }} clase{% if clases_a_favor != 1 %}s{% endif %}
+          $ {{ user.saldo_a_favor|default:"0" }} 
         </p>
         <p class="text-xs text-gray-400 mt-0.5">Sin vencimiento</p>
       </div>

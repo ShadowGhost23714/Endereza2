@@ -13,7 +13,7 @@ urlpatterns = [
     path("efectivo/<int:turno_id>/",       views.reservar_clase,             name="reservar_efectivo",  kwargs={"efectivo": True}),
     path("lista-espera/<int:turno_id>/",   views.anotarse_lista_espera,      name="lista_espera"),
     path("eliminar-turno/<int:pk>/",       views.TurnoDeleteView.as_view(),  name="turno_delete"),
-    path("clase-a-favor/<int:turno_id>/",  views.reservar_clase_a_favor,     name="reservar_clase_a_favor"),
+    path("saldo-a-favor/<int:turno_id>/",  views.reservar_saldo_a_favor,     name="reservar_saldo_a_favor"),
     path("cancelar-reserva/<int:reserva_id>/",      views.cancelar_reserva,           name="cancelar_reserva"),
     path("certificados/", views.lista_certificados, name="lista_certificados"),
     path("certificados/<int:pk>/resolver/", views.resolver_certificado, name="resolver_certificado"),

@@ -9,7 +9,8 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import get_object_or_404, redirect, render
-
+from datetime import datetime, timedelta
+from apps.classes.models import CertificadoMedico
 from apps.core import models
 from apps.accounts import models
 from apps.professor.models import Profesor
@@ -139,25 +140,65 @@ class MisClasesView(LoginRequiredMixin, ListView):
 
 @login_required
 def cancelar_reserva(request, reserva_id):
+
     if request.method != "POST":
         return redirect("turnos:mis_clases")
 
-    reserva = get_object_or_404(Reserva, pk=reserva_id, id_usuario=request.user)
+    reserva = get_object_or_404(
+        Reserva,
+        pk=reserva_id,
+        id_usuario=request.user
+    )
 
-    
-    if reserva.estado == Reserva.Estado.RESERVADO or reserva.estado == Reserva.Estado.LISTA_ESPERA:
-        messages.success(request, "Reserva cancelada exitosamente.")
-    elif reserva.estado == Reserva.Estado.PAGO:
-        if reserva.id_turno.fecha - timezone.now().date() < timezone.timedelta(days=2):
-            messages.error(request, "No podés cancelar esta reserva con menos de 48 horas de anticipación.")
-            return redirect("turnos:mis_clases")
-        usuario = get_object_or_404(models.Usuario, pk=request.user.pk)
-        usuario.clases_a_favor += 1
-        usuario.save(update_fields=["clases_a_favor"])
+    fecha_turno = datetime.combine(
+        reserva.id_turno.fecha,
+        reserva.id_turno.hora_inicio
+    )
+
+    faltan_mas_48 = (
+        fecha_turno - timezone.datetime.now()
+    ) >= timedelta(hours=48)
+
+    if faltan_mas_48:
+
+        tipo = request.POST.get("tipo_reembolso")
+
+        if tipo == "saldo":
+            request.user.saldo_a_favor += reserva.id_turno.get_costo_clase
+            request.user.save(update_fields=["saldo_a_favor"])
+
+        reserva.estado = Reserva.Estado.CANCELADO
+        reserva.save()
+
+        messages.success(
+            request,
+            "Reserva cancelada correctamente."
+        )
+
+        return redirect("turnos:mis_clases")
+
+    archivo = request.FILES.get("certificado")
+
+    if not archivo:
+        messages.error(
+            request,
+            "Debés adjuntar un certificado médico."
+        )
+        return redirect("turnos:mis_clases")
+
+    CertificadoMedico.objects.create(
+        reserva=reserva,
+        imagen=archivo,
+    )
 
     reserva.estado = Reserva.Estado.CANCELADO
     reserva.save()
-    messages.success(request, "Reserva cancelada exitosamente.")
+
+    messages.success(
+        request,
+        "Certificado enviado correctamente. Será revisado por administración."
+    )
+
     return redirect("turnos:mis_clases")
 
 @login_required
@@ -253,15 +294,15 @@ def anotarse_lista_espera(request, turno_id):
     return redirect("turnos:mis_clases")
 
 @login_required
-def reservar_clase_a_favor(request, turno_id):
+def reservar_saldo_a_favor(request, turno_id):
     if request.method != "POST":
         return redirect("turnos:listar_clases")
 
     turno = get_object_or_404(Turno, pk=turno_id)
 
-    # Verificar que tiene clases a favor
-    if request.user.clases_a_favor <= 0:
-        messages.error(request, "No tenés clases a favor disponibles.")
+    # Verificar que tiene saldo a favor
+    if request.user.saldo_a_favor < turno.get_costo_clase:
+        messages.error(request, "No tenés saldo a favor suficiente.")
         return redirect("turnos:listar_clases")
 
     # Conflicto de horario
@@ -300,14 +341,14 @@ def reservar_clase_a_favor(request, turno_id):
         )
         Pago.objects.create(
             reserva        = reserva,
-            metodo_pago    = "clase_a_favor",
+            metodo_pago    = "saldo_a_favor",
             registrado_por = None,
         )
-        request.user.clases_a_favor -= 1
-        request.user.save(update_fields=["clases_a_favor"])
+        request.user.saldo_a_favor -= turno.get_costo_clase
+        request.user.save(update_fields=["saldo_a_favor"])
 
     enviar_confirmacion_reserva(reserva)
-    messages.success(request, "¡Reserva creada con clase a favor! Te enviamos un mail de confirmación.")
+    messages.success(request, "¡Reserva creada con saldo a favor! Te enviamos un mail de confirmación.")
     return redirect("turnos:mis_clases")
 
 @login_required
@@ -343,9 +384,9 @@ def resolver_certificado(request, pk):
         certificado.save()
 
         usuario = certificado.reserva.id_usuario
-        usuario.clases_a_favor += 1
-        usuario.save(update_fields=["clases_a_favor"])
-        messages.success(request, f"Certificado validado. Se le otorgó una clase a favor a {usuario.nombre_completo}.")
+        usuario.saldo_a_favor += certificado.reserva.id_turno.get_costo_clase
+        usuario.save(update_fields=["saldo_a_favor"])
+        messages.success(request, f"Certificado validado. Se le otorgó saldo a favor a {usuario.nombre_completo}.")
 
     elif accion == "rechazar":
         certificado.estado         = CertificadoMedico.Estado.RECHAZADO
