@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 from apps.classes.models import CertificadoMedico
 from apps.core import models
 from apps.accounts import models
+from apps.payments.models import Pago
 from apps.professor.models import Profesor
 from apps.classes.models import CertificadoMedico
 
@@ -166,6 +167,7 @@ def cancelar_reserva(request, reserva_id):
         if tipo == "saldo":
             request.user.saldo_a_favor += reserva.id_turno.get_costo_clase
             request.user.save(update_fields=["saldo_a_favor"])
+            Pago.objects.filter(reserva=reserva).update(reembolsado=True)
 
         reserva.estado = Reserva.Estado.CANCELADO
         reserva.save()
@@ -393,7 +395,7 @@ def resolver_certificado(request, pk):
         certificado.revisado_por   = request.user
         certificado.fecha_revision = timezone.now()
         certificado.save()
-        messages.info(request, "Certificado rechazado. No se otorgaron clases a favor.")
+        messages.info(request, "Certificado rechazado. No se otorgó saldo a favor.")
 
     else:
         messages.error(request, "Acción no reconocida.")

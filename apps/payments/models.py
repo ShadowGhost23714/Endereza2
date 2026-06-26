@@ -31,6 +31,7 @@ class Pago(models.Model):
         related_name="pagos_registrados",
         verbose_name="Secretario",
     )
+    reembolsado = models.BooleanField(default=False)
 
     class Meta:
         verbose_name        = "Pago"
