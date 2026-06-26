@@ -40,7 +40,7 @@ class Turno(models.Model):
 
     def devolver_profesor(self):
         turno_profesional = self.turno_profesionales.select_related("id_profesor").first()
-        return turno_profesional.id_profesor if turno_profesional else "profesor random"
+        return turno_profesional.id_profesor if turno_profesional else "Profesor a asignar"
     
     def devolver_especialidad(self):
         if self.actividad == self.Actividad.TREN_INFERIOR:
