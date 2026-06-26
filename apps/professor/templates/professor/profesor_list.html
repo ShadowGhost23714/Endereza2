@@ -16,9 +16,11 @@
         </p>
       </div>
       <a href="{% url 'profesores:crear' %}"
-         class="inline-flex items-center gap-2 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-semibold rounded-lg px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+        class="inline-flex items-center gap-2 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-semibold rounded-lg px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+          <path fill-rule="evenodd"
+            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+            clip-rule="evenodd" />
         </svg>
         Nuevo profesor
       </a>
@@ -26,87 +28,386 @@
 
     {# ── Django messages ── #}
     {% if messages %}
-      {% for message in messages %}
-        <div class="mb-4 rounded-lg border px-4 py-3 text-sm
+    {% for message in messages %}
+    <div class="mb-4 rounded-lg border px-4 py-3 text-sm
           {% if message.tags == 'success' %}bg-emerald-50 border-green-200 text-green-800
           {% elif message.tags == 'error' %}bg-red-50 border-red-200 text-red-700
           {% else %}bg-teal-50 border-teal-200 text-teal-800{% endif %}">
-          {{ message }}
-        </div>
-      {% endfor %}
+      {{ message }}
+    </div>
+    {% endfor %}
     {% endif %}
 
     {# ── Lista ── #}
     {% if profesores %}
-      <ul class="divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white shadow-sm">
-        {% for profesor in profesores %}
-          <li class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50 transition-colors">
+    <ul class="divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white shadow-sm">
+      {% for profesor in profesores %}
+      <li class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50 transition-colors">
 
-            {# Datos del profesor #}
-            <span class="text-gray-800 text-sm sm:text-base">
-              <span class="font-semibold text-gray-900">{{ profesor.apellido }}, {{ profesor.nombre }}</span>
-              <span class="text-gray-400 mx-1">·</span>
-              <span class="text-gray-600">DNI: {{ profesor.dni }}</span>
-              <span class="text-gray-400 mx-1">·</span>
-              <span class="text-gray-600">Especialidad:
-                <span class="font-medium text-teal-700">{{ profesor.get_especialidad_display }}</span>
-              </span>
-            </span>
-
-            {# Botón eliminar #}
-            <form method="post"
-                  action="{% url 'profesores:eliminar' profesor.pk %}"
-                  onsubmit="return confirm('¿Eliminar a {{ profesor.nombre_completo }}? Esta acción no se puede deshacer.')">
-              {% csrf_token %}
-              <button type="submit"
-                      class="flex-shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-                Eliminar
-              </button>
-            </form>
-
-          </li>
-        {% endfor %}
-      </ul>
-
-      {# ── Paginación ── #}
-      {% if is_paginated %}
-        <nav class="mt-6 flex items-center justify-center gap-2 text-sm">
-          {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}"
-               class="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-gray-600 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200 transition-colors">
-              ← Anterior
-            </a>
-          {% endif %}
-
-          <span class="px-3 py-1.5 text-gray-500">
-            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        {# Datos del profesor #}
+        <span class="text-gray-800 text-sm sm:text-base">
+          <span class="font-semibold text-gray-900">{{ profesor.apellido }}, {{ profesor.nombre }}</span>
+          <span class="text-gray-400 mx-1">·</span>
+          <span class="text-gray-600">DNI: {{ profesor.dni }}</span>
+          <span class="text-gray-400 mx-1">·</span>
+          <span class="text-gray-600">Especialidad:
+            <span class="font-medium text-teal-700">{{ profesor.get_especialidad_display }}</span>
           </span>
+        </span>
 
-          {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}"
-               class="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-gray-600 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200 transition-colors">
-              Siguiente →
-            </a>
-          {% endif %}
-        </nav>
+        {# Botón eliminar #}
+        <button type="button" data-pk="{{ profesor.pk }}" data-nombre="{{ profesor.nombre_completo }}"
+          data-url-clases="{% url 'profesores:clases_asignadas' profesor.pk %}"
+          data-url-eliminar="{% url 'profesores:eliminar' profesor.pk %}" onclick="abrirModalEliminar(this)"
+          class="flex-shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+              clip-rule="evenodd" />
+          </svg>
+          Eliminar
+        </button>
+        </form>
+
+      </li>
+      {% endfor %}
+    </ul>
+
+    {# ── Paginación ── #}
+    {% if is_paginated %}
+    <nav class="mt-6 flex items-center justify-center gap-2 text-sm">
+      {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}"
+        class="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-gray-600 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200 transition-colors">
+        ← Anterior
+      </a>
       {% endif %}
 
-    {% else %}
-      {# Estado vacío #}
-      <div class="rounded-xl border border-gray-200 bg-white px-8 py-16 text-center shadow-sm">
-        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto mb-4 h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-        <p class="text-lg font-semibold text-gray-700">No hay profesores registrados</p>
-        <p class="mt-1 text-sm text-gray-400">Agregá el primero usando el botón de arriba.</p>
-      </div>
+      <span class="px-3 py-1.5 text-gray-500">
+        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+      </span>
+
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}"
+        class="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-gray-600 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200 transition-colors">
+        Siguiente →
+      </a>
+      {% endif %}
+    </nav>
     {% endif %}
-        <p class="mt-7 text-center text-lg text-gray-400">
-          <a href="{% url 'core:home' %}" class="text-primary-700 font-semibold hover:underline dark:text-primary-500">← Volver a inicio</a>
-        </p>
+
+    {% else %}
+    {# Estado vacío #}
+    <div class="rounded-xl border border-gray-200 bg-white px-8 py-16 text-center shadow-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto mb-4 h-12 w-12 text-gray-300" fill="none"
+        viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+      <p class="text-lg font-semibold text-gray-700">No hay profesores registrados</p>
+      <p class="mt-1 text-sm text-gray-400">Agregá el primero usando el botón de arriba.</p>
+    </div>
+    {% endif %}
+    <p class="mt-7 text-center text-lg text-gray-400">
+      <a href="{% url 'core:home' %}" class="text-primary-700 font-semibold hover:underline dark:text-primary-500">←
+        Volver a inicio</a>
+    </p>
   </div>
 </div>
+
+{# ── Modal de eliminación con reasignación ── #}
+<div id="modal-eliminar" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+  <div class="w-full max-w-lg bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+
+    {# Cabecera #}
+    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+      <h2 class="text-base font-semibold text-gray-900">Eliminar profesor</h2>
+      <button onclick="cerrarModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    {# Cuerpo #}
+    <div class="px-6 py-5">
+      <p id="modal-titulo" class="text-sm text-gray-700 mb-4"></p>
+
+      {# Zona de reasignación (visible solo si hay clases) #}
+      <div id="zona-reasignacion" class="hidden">
+        <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">
+          Reasignar clases
+        </p>
+        <div id="lista-clases" class="flex flex-col gap-3 max-h-64 overflow-y-auto pr-1"></div>
+
+        {# Link para crear profesor nuevo #}
+        <button type="button" onclick="toggleFormNuevoProfesor()"
+          class="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-primary-700 hover:underline">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Crear nuevo profesor
+        </button>
+
+        {# Sub-panel formulario inline #}
+        <div id="form-nuevo-profesor" class="hidden mt-4 border border-gray-200 rounded-xl p-4 bg-gray-50">
+          <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Nuevo profesor</p>
+
+          <div id="form-nuevo-errors"
+            class="hidden mb-3 p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700"></div>
+
+          <div class="flex flex-col gap-3">
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="flex flex-col gap-1">
+                <label class="text-xs font-medium text-gray-500">Nombre</label>
+                <input id="nuevo-nombre" type="text" placeholder="Nombre"
+                  class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-primary-500 focus:border-primary-500" />
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-xs font-medium text-gray-500">Apellido</label>
+                <input id="nuevo-apellido" type="text" placeholder="Apellido"
+                  class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-primary-500 focus:border-primary-500" />
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-xs font-medium text-gray-500">DNI</label>
+              <input id="nuevo-dni" type="text" placeholder="Sin puntos ni espacios" maxlength="8" inputmode="numeric"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-primary-500 focus:border-primary-500" />
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-xs font-medium text-gray-500">Especialidad</label>
+              <select id="nuevo-especialidad"
+                class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-primary-500 focus:border-primary-500">
+                <option value="">— Seleccioná —</option>
+                <option value="tren_inferior">Tren inferior</option>
+                <option value="zona_media">Zona media</option>
+                <option value="tren_superior">Tren superior</option>
+              </select>
+            </div>
+
+            <div class="flex justify-end gap-2 mt-1">
+              <button type="button" onclick="toggleFormNuevoProfesor()"
+                class="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors">
+                Cancelar
+              </button>
+              <button type="button" onclick="guardarNuevoProfesor()"
+                class="px-3 py-1.5 text-xs font-semibold text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors">
+                Guardar profesor
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# Footer #}
+    <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
+      <button onclick="cerrarModal()"
+        class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+        Cancelar
+      </button>
+
+      <form id="form-eliminar" method="post" action="">
+        {% csrf_token %}
+        <input type="hidden" name="reasignaciones" id="input-reasignaciones" value="{}">
+        <button id="btn-confirmar" type="submit" disabled
+          class="px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          Confirmar eliminación
+        </button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  (function () {
+    let reasignaciones = {};   // { turno_id: profesor_id }
+    let totalClases = 0;
+
+    window.abrirModalEliminar = function (btn) {
+      const pk = btn.dataset.pk;
+      const nombre = btn.dataset.nombre;
+      const urlClases = btn.dataset.urlClases;
+      const urlEliminar = btn.dataset.urlEliminar;
+
+      // Resetear estado
+      reasignaciones = {};
+      totalClases = 0;
+
+      // Preparar el modal
+      document.getElementById('modal-titulo').textContent =
+        `¿Eliminar a ${nombre}? Esta acción no se puede deshacer.`;
+      document.getElementById('form-eliminar').action = urlEliminar;
+      document.getElementById('zona-reasignacion').classList.add('hidden');
+      document.getElementById('lista-clases').innerHTML = '';
+
+      // Deshabilitar el botón mientras carga
+      const btn_confirmar = document.getElementById('btn-confirmar');
+      btn_confirmar.disabled = true;
+
+      // Mostrar el modal YA (con botón deshabilitado mientras llega la respuesta)
+      document.getElementById('modal-eliminar').classList.remove('hidden');
+
+      fetch(urlClases, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(r => r.json())
+        .then(data => {
+          let especialidadProfesorEliminado = data.especialidad;
+          totalClases = data.clases.length;
+
+          if (totalClases === 0) {
+            // Sin clases asignadas: habilitar confirmar directo
+            actualizarBoton();
+            return;
+          }
+
+          // Hay clases: mostrar zona de reasignación
+          document.getElementById('zona-reasignacion').classList.remove('hidden');
+          const lista = document.getElementById('lista-clases');
+
+          data.clases.forEach(clase => {
+            const opciones = clase.disponibles.length > 0
+              ? clase.disponibles
+                .map(p => `<option value="${p.id}">${p.apellido}, ${p.nombre}</option>`)
+                .join('')
+              : '<option value="" disabled>Sin profesores disponibles para este horario</option>';
+
+            const fila = document.createElement('div');
+            fila.className = 'flex flex-col gap-1';
+            fila.innerHTML = `
+    <span class="text-xs text-gray-500 font-medium">${clase.descripcion}</span>
+    <select data-turno="${clase.turno_id}"
+            data-especialidad="${especialidadProfesorEliminado}"
+            onchange="seleccionarProfesor(this)"
+            ${clase.disponibles.length === 0 ? 'disabled' : ''}
+            class="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-primary-500 focus:border-primary-500 bg-gray-50 disabled:opacity-50">
+      <option value="">— Seleccioná un profesor —</option>
+      ${opciones}
+    </select>
+    ${clase.disponibles.length === 0
+                ? '<p class="text-xs text-red-500">No hay profesores disponibles para este horario. Creá uno nuevo.</p>'
+                : ''}`;
+            lista.appendChild(fila);
+          });
+
+          actualizarBoton();
+        })
+        .catch(() => {
+          // Si el fetch falla, mostrar error en el modal en lugar de romper silenciosamente
+          document.getElementById('modal-titulo').textContent =
+            'Error al cargar las clases asignadas. Recargá la página e intentá de nuevo.';
+          actualizarBoton();
+        });
+    };
+
+    window.seleccionarProfesor = function (select) {
+      const turnoId = select.dataset.turno;
+      if (select.value) {
+        reasignaciones[turnoId] = select.value;
+      } else {
+        delete reasignaciones[turnoId];
+      }
+      document.getElementById('input-reasignaciones').value = JSON.stringify(reasignaciones);
+      actualizarBoton();
+    };
+
+    window.cerrarModal = function () {
+      document.getElementById('modal-eliminar').classList.add('hidden');
+    };
+
+    function actualizarBoton() {
+      const btn = document.getElementById('btn-confirmar');
+      const listo = totalClases === 0 || Object.keys(reasignaciones).length === totalClases;
+      btn.disabled = !listo;
+    }
+
+    // Cerrar al hacer clic fuera del panel
+    document.getElementById('modal-eliminar').addEventListener('click', function (e) {
+      if (e.target === this) cerrarModal();
+    });
+    // URL del endpoint AJAX — inyectada desde Django
+    const URL_CREAR_AJAX = "{% url 'profesores:crear_ajax' %}";
+
+    window.toggleFormNuevoProfesor = function () {
+      const panel = document.getElementById('form-nuevo-profesor');
+      panel.classList.toggle('hidden');
+      // Limpiar al abrir
+      if (!panel.classList.contains('hidden')) {
+        document.getElementById('nuevo-nombre').value = '';
+        document.getElementById('nuevo-apellido').value = '';
+        document.getElementById('nuevo-dni').value = '';
+        document.getElementById('nuevo-especialidad').value = '';
+        document.getElementById('form-nuevo-errors').classList.add('hidden');
+      }
+    };
+
+    window.guardarNuevoProfesor = function () {
+      const nombre = document.getElementById('nuevo-nombre').value.trim();
+      const apellido = document.getElementById('nuevo-apellido').value.trim();
+      const dni = document.getElementById('nuevo-dni').value.trim();
+      const especialidad = document.getElementById('nuevo-especialidad').value;
+      const errDiv = document.getElementById('form-nuevo-errors');
+
+      if (!nombre || !apellido || !dni || !especialidad) {
+        errDiv.textContent = 'Completá todos los campos.';
+        errDiv.classList.remove('hidden');
+        return;
+      }
+
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+      fetch(URL_CREAR_AJAX, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-CSRFToken': csrfToken,
+        },
+        body: new URLSearchParams({ nombre, apellido, dni, especialidad }),
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (!data.ok) {
+            // Mostrar errores del form Django
+            const msgs = Object.values(data.errors).flat().join(' · ');
+            errDiv.textContent = msgs;
+            errDiv.classList.remove('hidden');
+            return;
+          }
+
+          // Agregar el nuevo profesor a todos los <select> del modal si coincide la especialidad
+          const selects = document.querySelectorAll('#lista-clases select');
+          selects.forEach(sel => {
+            // Verificar si ya existe la opción (por si se guarda dos veces)
+            if (sel.querySelector(`option[value="${data.id}"]`)) return;
+
+            // Solo agregar si la especialidad coincide con la del profesor a eliminar
+            // (los selects ya están filtrados, pero el nuevo puede no coincidir)
+            const opt = document.createElement('option');
+            opt.value = data.id;
+            opt.textContent = `${data.apellido}, ${data.nombre}`;
+            sel.appendChild(opt);
+
+            // Si la especialidad coincide, seleccionarlo automáticamente
+            if (data.especialidad === sel.closest('[data-especialidad]')?.dataset.especialidad) {
+              sel.value = data.id;
+              seleccionarProfesor(sel);
+            }
+          });
+
+          // Cerrar el sub-panel
+          toggleFormNuevoProfesor();
+          errDiv.classList.add('hidden');
+        })
+        .catch(() => {
+          errDiv.textContent = 'Error al guardar. Intentá de nuevo.';
+          errDiv.classList.remove('hidden');
+        });
+    };
+  })();
+</script>
 {% endblock %}
