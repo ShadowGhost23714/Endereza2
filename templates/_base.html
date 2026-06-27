@@ -29,7 +29,7 @@
                 <a href="{% url 'core:home' %}" class="flex items-center">
                     <!-- cambiar el logo dependiendo de si es modo oscuro o dia-->
                     
-                        <img src="{% static 'img/full logo.png' %}" class="mr-3 h-6 sm:h-9" alt="Enderaza2 Logo" />
+                        <img src="{% static 'img/full_logo_sin_fondo.png' %}" class="mr-3 h-6 sm:h-9" alt="Enderaza2 Logo" />
                     
                 </a>
 
@@ -147,11 +147,11 @@
 
                 <!-- Brand -->
                 <div class="mb-2 md:mb-0">
-                    <a href="/" class="flex items-center gap-2 mb-3">
-                        <span class="text-lg font-bold text-primary-700 dark:text-white">Enderaza2</span>
-                    </a>
+                    <div class="flex items-center gap-2 mb-3">
+                        <img src="{% static 'img/full_logo_sin_fondo.png' %}" class="mr-3 h-6 sm:h-9" alt="Enderaza2 Logo" />
+                    </div>
                     <p class="text-sm text-gray-500 dark:text-gray-400 max-w-xs">
-                        Kinesiología profesional para todas las edades. Tu bienestar es nuestra misión.
+                        Movimiento que te alinea.
                     </p>
                 </div>
 
