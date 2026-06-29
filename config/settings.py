@@ -35,6 +35,16 @@ ALLOWED_HOSTS = ["127.0.0.1", "localhost", ".trycloudflare.com"]
 
 CSRF_TRUSTED_ORIGINS = ["https://*.trycloudflare.com"]
 
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "extinct-stem-sporting.ngrok-free.dev",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://extinct-stem-sporting.ngrok-free.dev",
+]
+
 
 # Application definition
 

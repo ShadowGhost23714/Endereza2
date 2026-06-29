@@ -181,7 +181,7 @@
                                     <p class="text-gray-500 mb-4 dark:text-gray-200">¿Cómo preferís realizar el pago?</p>
                                     <ul class="space-y-4 mb-4">
                                         <li>
-                                            <form method="post" action="{% url 'turnos:reservar_clase' turno.pk %}">
+                                            <form method="post" action="{% url 'payments:reservar_online' turno.pk %}">
                                             {% csrf_token %}
                                             <input type="radio" id="job-2" name="job" value="online" class="hidden peer">
                                             <button type="submit" for="job-2" class="w-full inline-flex items-center gap-2 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-semibold rounded-lg px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
