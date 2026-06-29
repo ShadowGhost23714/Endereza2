@@ -1,13 +1,14 @@
 {% extends "_base.html" %}
 {% load static %}
-
 {% block content %}
 {% if user.is_superuser %}
-<div class="min-h-[calc(100vh-64px)] p-8">
+
+<div class="min-h-screen bg-gray-50 py-10 px-4">
+  <div class="max-w-5xl mx-auto animate-fade-up">
 
   <!-- Encabezado de bienvenida -->
   <div class="mb-8">
-    <h1 class="text-4xl font-bold text-gray-900">Bienvenido, Administrador</h1>
+    <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Bienvenido, {{ user.first_name }} {{ user.last_name }}</h1>
     <p class="mt-1 text-gray-500">Control total de tu centro de postura y bienestar.</p>
   </div>
 
@@ -15,7 +16,7 @@
   <div class="grid grid-cols-1 gap-6">
 
     <!-- Fila superior: tarjeta grande + tarjeta roja -->
-    <div class="grid grid-cols-[1.5fr_1fr] gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-6">
 
       <!-- Tarjeta Administrar Clases -->
       <div
@@ -47,14 +48,10 @@
             </svg>
           </a>
         </div>
-
-
       </div>
 
-
-
       <!-- Fila inferior: 3 tarjetas -->
-      <div class="grid grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
         <!-- Tarjeta Administrar Secretarios -->
         <div class="bg-white rounded-2xl shadow border border-gray-100 p-6 flex flex-col justify-between">
@@ -63,15 +60,14 @@
             <div class="w-11 h-11 bg-gray-100 rounded-xl flex items-center justify-center mb-5">
               <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" stroke-width="1.8"
                 viewBox="0 0 24 24">
-                <rect x="2" y="3" width="20" height="18" rx="2" stroke-width="1.8" />
-                <path stroke-linecap="round" d="M8 10h8M8 14h5" />
+                <circle cx="9" cy="7" r="3" stroke-width="1.8" />
+                <path stroke-linecap="round" d="M3 21v-1a6 6 0 0112 0v1" stroke-width="1.8" />
+                <circle cx="17" cy="8" r="2.5" stroke-width="1.8" />
+                <path stroke-linecap="round" d="M21 21v-1a4 4 0 00-5-3.87" stroke-width="1.8" />
               </svg>
             </div>
-
             <h3 class="text-lg font-bold text-gray-900 mb-2">Administrar Secretarios</h3>
             <p class="text-gray-500 text-sm mb-5">Control de accesos y perfiles administrativos de soporte.</p>
-
-
           </div>
 
           <a href="{% url 'accounts:lista_secretarios' %}"
@@ -96,12 +92,9 @@
 
             <h3 class="text-lg font-bold text-white mb-2">Administrar Profesores</h3>
             <p class="text-white/75  text-sm mb-5">Supervisión de instructores, especialidades y desempeño.</p>
-
             <!-- Barra de progreso -->
             <div class="mb-1">
               <div class="flex items-center justify-between mb-1.5">
-
-
               </div>
             </div>
           </div>
@@ -123,11 +116,8 @@
                 <path stroke-linecap="round" d="M8 10h8M8 14h5" />
               </svg>
             </div>
-
             <h3 class="text-lg font-bold text-white mb-2">Administrar certificados</h3>
             <p class="text-white text-sm mb-5">Validar o rechazar certificados enviados por clientes que cancelaron sus turnos.</p>
-
-
           </div>
 
           <a href="{% url 'turnos:lista_certificados' %}"
@@ -135,14 +125,18 @@
             Gestionar
           </a>
         </div>
-
-
       </div>
     </div>
-
+    </div>
   </div>
 </div>
+
 {% else %}
+
 <p>No tienes permisos para acceder a esta página.</p>
+
 {% endif %}
+
+
+
 {% endblock %}
