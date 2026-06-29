@@ -31,14 +31,13 @@ MP_PUBLIC_KEY = config("MP_PUBLIC_KEY")
 MP_ACCESS_TOKEN = config("MP_ACCESS_TOKEN")
 
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", ".trycloudflare.com"]
-
 CSRF_TRUSTED_ORIGINS = ["https://*.trycloudflare.com"]
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "extinct-stem-sporting.ngrok-free.dev",
+    ".trycloudflare.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
