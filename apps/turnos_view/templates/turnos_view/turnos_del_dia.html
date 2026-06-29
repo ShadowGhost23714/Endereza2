@@ -274,6 +274,42 @@
   }
   .toast.ok    { background: var(--verde); }
   .toast.error { background: var(--rojo); }
+
+  @media (max-width: 768px) {
+    .td-wrapper {
+      flex-direction: column;
+      padding: 14px;
+      gap: 16px;
+    }
+    .td-sidebar {
+      width: 100%;
+    }
+    .sidebar-card {
+      position: static;
+      top: auto;
+    }
+    .lista-header {
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .paciente-card {
+      flex-wrap: wrap;
+      padding: 14px;
+    }
+    .pc-info {
+      min-width: 0;
+    }
+    .pc-acciones {
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .modal-box {
+      width: 92vw !important;
+      max-width: 420px;
+    }
+   }
+
 </style>
 
 <div class="td-wrapper">
@@ -281,7 +317,10 @@
   <div class="td-lista">
     <div class="lista-header">
       <h2>Pacientes agendados</h2>
-      <span class="badge-total" id="badge-total">0 turnos</span>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button class="btn-cobrar" onclick="abrirModalEscanearQR()">📷 Escanear QR</button>
+        <span class="badge-total" id="badge-total">0 turnos</span>
+      </div>
     </div>
     <div id="lista-reservas"></div>
   </div>
@@ -529,9 +568,46 @@
   </div>
 </div>
 
+{# ── Modal escanear QR ── #}
+<div class="modal-overlay" id="modal-escanear-qr">
+  <div class="modal-box" style="width:420px;">
+    <div class="modal-header">
+      📷 Escanear QR
+      <button onclick="cerrarModalEscanearQR()">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="qr-reader" style="width:100%; border-radius:8px; overflow:hidden;"></div>
+      <div id="qr-scan-resultado" style="margin-top:12px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancelar-modal" onclick="cerrarModalEscanearQR()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+{# ── Modal recepción vía QR ── #}
+<div class="modal-overlay" id="modal-recepcion-qr">
+  <div class="modal-box" style="width:420px;">
+    <div class="modal-header">
+      ✅ Confirmar recepción
+      <button onclick="cerrarModalRecepcionQR()">×</button>
+    </div>
+    <div class="modal-body">
+      <p id="recepcion-qr-mensaje" style="font-weight:700; color:var(--verde); margin-bottom:16px;"></p>
+      <div id="recepcion-qr-datos" style="background:var(--gris-bg); border-radius:8px; padding:14px; font-size:14px; color:var(--texto); line-height:1.7;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancelar" onclick="cancelarDesdeQR()">Cancelar</button>
+      <button class="btn-confirmar" onclick="recepcionarDesdeQR()">Recepcionar</button>
+    </div>
+  </div>
+</div>
+
 {# ── Toast notificación ── #}
 <div class="toast" id="toast"></div>
 
+
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
   const CSRF                   = "{{ csrf_token }}";
   const URL_FILTRAR            = "{% url 'payments:api_filtrar' %}";
@@ -545,6 +621,7 @@
   const URL_NUEVA_RESERVA      = "{% url 'payments:api_nueva_reserva' %}";
   const URL_REGISTRAR_PACIENTE = "{% url 'payments:api_registrar_paciente' %}";
   const URL_NUEVO_ABONADO = "{% url 'payments:api_nuevo_abonado' %}";
+  const URL_VERIFICAR_QR  = "{% url 'payments:api_verificar_qr' %}";
 
   let reservaActivaId = null;
 
@@ -653,8 +730,17 @@
     const res  = await fetch(URL_COBRAR, { method: "POST", body: fd });
     const data = await res.json();
     cerrarModal();
-    if (data.ok) { mostrarToast(data.mensaje, "ok"); filtrar(); }
-    else          { mostrarToast(data.error,   "error"); }
+    if (data.ok) {
+      mostrarToast(data.mensaje, "ok");
+      if (qrFlowActivo && qrReservaActual) {
+        qrFlowActivo = false;
+        abrirModalRecepcionQR(qrReservaActual, "Reserva paga, confirme recepción");
+      } else {
+        filtrar();
+      }
+    } else {
+      mostrarToast(data.error, "error");
+    }
   }
 
   async function cancelarTurno(id) {
@@ -696,6 +782,121 @@
     t.className     = "toast " + tipo;
     t.style.display = "block";
     setTimeout(() => { t.style.display = "none"; }, 3500);
+  }
+
+  // ── Escanear QR ──────────────────────────────────────────────────────
+  let html5QrCode        = null;
+  let qrEscaneoBloqueado = false;
+  let qrReservaActual    = null; // datos de la reserva que devolvió api_verificar_qr
+  let qrFlowActivo       = false; // true mientras esperamos el pago iniciado desde un escaneo
+
+  async function abrirModalEscanearQR() {
+    document.getElementById("qr-scan-resultado").innerHTML = "";
+    document.getElementById("modal-escanear-qr").classList.add("active");
+    qrEscaneoBloqueado = false;
+
+    html5QrCode = new Html5Qrcode("qr-reader");
+    try {
+      await html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 220 },
+        onScanQRExitoso,
+        () => {} // se llama constantemente mientras no detecta nada, se ignora
+      );
+    } catch (err) {
+      console.error("Error al iniciar la cámara:", err);
+      const nombreError = (err && err.name) ? err.name : "Error";
+      const detalle      = (err && err.message) ? err.message : String(err);
+      document.getElementById("qr-scan-resultado").innerHTML =
+        '<div style="padding:10px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-size:13px;">'
+        + '⚠️ No se pudo acceder a la cámara.<br>'
+        + '<strong>' + nombreError + '</strong>: ' + detalle
+        + '</div>';
+    }
+  }
+
+  function cerrarModalEscanearQR() {
+    document.getElementById("modal-escanear-qr").classList.remove("active");
+    if (html5QrCode) {
+      html5QrCode.stop().catch(() => {});
+      html5QrCode = null;
+    }
+  }
+
+  async function onScanQRExitoso(token) {
+    if (qrEscaneoBloqueado) return; // evita procesar el mismo QR varias veces seguidas
+    qrEscaneoBloqueado = true;
+
+    const fd = new FormData();
+    fd.append("token",               token);
+    fd.append("csrfmiddlewaretoken", CSRF);
+    const res  = await fetch(URL_VERIFICAR_QR, { method: "POST", body: fd });
+    const data = await res.json();
+
+    if (!data.ok) {
+      // QR rechazado: se muestra el motivo SIN cerrar la cámara, para que
+      // quede claro qué pasó y se pueda probar con otro QR sin reabrir el modal.
+      document.getElementById("qr-scan-resultado").innerHTML =
+        '<div style="padding:10px 12px; background:#fef2f2; border-radius:6px; color:var(--rojo); font-size:13px; font-weight:600;">'
+        + '⚠️ ' + data.error + '</div>';
+      setTimeout(() => {
+        document.getElementById("qr-scan-resultado").innerHTML = "";
+        qrEscaneoBloqueado = false;
+      }, 2500);
+      return;
+    }
+
+    cerrarModalEscanearQR();
+
+    if (data.tipo === "no_pago") {
+      qrFlowActivo    = true;
+      qrReservaActual = data.reserva;
+      abrirModal(data.reserva.id, data.reserva.nombre); // reutiliza el modal de pago existente
+    } else if (data.tipo === "pago_confirmado") {
+      qrFlowActivo = false;
+      abrirModalRecepcionQR(data.reserva, data.mensaje);
+    }
+  }
+
+  // ── Modal de recepción vía QR ─────────────────────────────────────────
+  function abrirModalRecepcionQR(reserva, mensaje) {
+    qrReservaActual = reserva;
+    document.getElementById("recepcion-qr-mensaje").textContent = mensaje || "Reserva paga, confirme recepción";
+    document.getElementById("recepcion-qr-datos").innerHTML =
+      "<strong>" + reserva.nombre + "</strong><br>"
+      + "DNI: " + reserva.dni + "<br>"
+      + reserva.actividad + " — " + reserva.hora;
+    document.getElementById("modal-recepcion-qr").classList.add("active");
+  }
+
+  function cerrarModalRecepcionQR() {
+    document.getElementById("modal-recepcion-qr").classList.remove("active");
+    qrReservaActual = null;
+  }
+
+  async function recepcionarDesdeQR() {
+    if (!qrReservaActual) return;
+    const fd = new FormData();
+    fd.append("reserva_id",          qrReservaActual.id);
+    fd.append("csrfmiddlewaretoken", CSRF);
+    const res  = await fetch(URL_RECEPCIONAR, { method: "POST", body: fd });
+    const data = await res.json();
+    cerrarModalRecepcionQR();
+    if (data.ok) { mostrarToast(data.mensaje, "ok"); filtrar(); }
+    else          { mostrarToast(data.error,   "error"); }
+  }
+
+  async function cancelarDesdeQR() {
+    if (!qrReservaActual) return;
+    if (!confirm("¿Confirmar cancelación del turno?")) return;
+    const fd = new FormData();
+    fd.append("reserva_id",          qrReservaActual.id);
+    fd.append("csrfmiddlewaretoken", CSRF);
+    const res  = await fetch(URL_CANCELAR, { method: "POST", body: fd });
+    const data = await res.json();
+    cerrarModalRecepcionQR();
+    if (data.ok) { mostrarToast(data.mensaje, "ok"); filtrar(); }
+    else          { mostrarToast(data.error,   "error"); }
   }
 
   // ── Turno espontáneo ──────────────────────────────────────────────────
