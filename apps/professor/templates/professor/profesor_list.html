@@ -138,68 +138,6 @@
         </p>
         <div id="lista-clases" class="flex flex-col gap-3 max-h-64 overflow-y-auto pr-1"></div>
 
-        {# Link para crear profesor nuevo #}
-        <button type="button" onclick="toggleFormNuevoProfesor()"
-          class="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-primary-700 hover:underline">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          Crear nuevo profesor
-        </button>
-
-        {# Sub-panel formulario inline #}
-        <div id="form-nuevo-profesor" class="hidden mt-4 border border-gray-200 rounded-xl p-4 bg-gray-50">
-          <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Nuevo profesor</p>
-
-          <div id="form-nuevo-errors"
-            class="hidden mb-3 p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700"></div>
-
-          <div class="flex flex-col gap-3">
-
-            <div class="grid grid-cols-2 gap-3">
-              <div class="flex flex-col gap-1">
-                <label class="text-xs font-medium text-gray-500">Nombre</label>
-                <input id="nuevo-nombre" type="text" placeholder="Nombre"
-                  class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-primary-500 focus:border-primary-500" />
-              </div>
-              <div class="flex flex-col gap-1">
-                <label class="text-xs font-medium text-gray-500">Apellido</label>
-                <input id="nuevo-apellido" type="text" placeholder="Apellido"
-                  class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-primary-500 focus:border-primary-500" />
-              </div>
-            </div>
-
-            <div class="flex flex-col gap-1">
-              <label class="text-xs font-medium text-gray-500">DNI</label>
-              <input id="nuevo-dni" type="text" placeholder="Sin puntos ni espacios" maxlength="8" inputmode="numeric"
-                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-primary-500 focus:border-primary-500" />
-            </div>
-
-            <div class="flex flex-col gap-1">
-              <label class="text-xs font-medium text-gray-500">Especialidad</label>
-              <select id="nuevo-especialidad"
-                class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-primary-500 focus:border-primary-500">
-                <option value="">— Seleccioná —</option>
-                <option value="tren_inferior">Tren inferior</option>
-                <option value="zona_media">Zona media</option>
-                <option value="tren_superior">Tren superior</option>
-              </select>
-            </div>
-
-            <div class="flex justify-end gap-2 mt-1">
-              <button type="button" onclick="toggleFormNuevoProfesor()"
-                class="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors">
-                Cancelar
-              </button>
-              <button type="button" onclick="guardarNuevoProfesor()"
-                class="px-3 py-1.5 text-xs font-semibold text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors">
-                Guardar profesor
-              </button>
-            </div>
-
-          </div>
-        </div>
       </div>
     </div>
 
@@ -288,7 +226,7 @@
       ${opciones}
     </select>
     ${clase.disponibles.length === 0
-                ? '<p class="text-xs text-red-500">No hay profesores disponibles para este horario. Creá uno nuevo.</p>'
+                ? '<p class="text-xs text-red-500">No hay profesores disponibles para este horario.</p>'
                 : ''}`;
             lista.appendChild(fila);
           });
@@ -328,84 +266,7 @@
     document.getElementById('modal-eliminar').addEventListener('click', function (e) {
       if (e.target === this) cerrarModal();
     });
-    // URL del endpoint AJAX — inyectada desde Django
-    const URL_CREAR_AJAX = "{% url 'profesores:crear_ajax' %}";
 
-    window.toggleFormNuevoProfesor = function () {
-      const panel = document.getElementById('form-nuevo-profesor');
-      panel.classList.toggle('hidden');
-      // Limpiar al abrir
-      if (!panel.classList.contains('hidden')) {
-        document.getElementById('nuevo-nombre').value = '';
-        document.getElementById('nuevo-apellido').value = '';
-        document.getElementById('nuevo-dni').value = '';
-        document.getElementById('nuevo-especialidad').value = '';
-        document.getElementById('form-nuevo-errors').classList.add('hidden');
-      }
-    };
-
-    window.guardarNuevoProfesor = function () {
-      const nombre = document.getElementById('nuevo-nombre').value.trim();
-      const apellido = document.getElementById('nuevo-apellido').value.trim();
-      const dni = document.getElementById('nuevo-dni').value.trim();
-      const especialidad = document.getElementById('nuevo-especialidad').value;
-      const errDiv = document.getElementById('form-nuevo-errors');
-
-      if (!nombre || !apellido || !dni || !especialidad) {
-        errDiv.textContent = 'Completá todos los campos.';
-        errDiv.classList.remove('hidden');
-        return;
-      }
-
-      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-      fetch(URL_CREAR_AJAX, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'X-CSRFToken': csrfToken,
-        },
-        body: new URLSearchParams({ nombre, apellido, dni, especialidad }),
-      })
-        .then(r => r.json())
-        .then(data => {
-          if (!data.ok) {
-            // Mostrar errores del form Django
-            const msgs = Object.values(data.errors).flat().join(' · ');
-            errDiv.textContent = msgs;
-            errDiv.classList.remove('hidden');
-            return;
-          }
-
-          // Agregar el nuevo profesor a todos los <select> del modal si coincide la especialidad
-          const selects = document.querySelectorAll('#lista-clases select');
-          selects.forEach(sel => {
-            // Verificar si ya existe la opción (por si se guarda dos veces)
-            if (sel.querySelector(`option[value="${data.id}"]`)) return;
-
-            // Solo agregar si la especialidad coincide con la del profesor a eliminar
-            // (los selects ya están filtrados, pero el nuevo puede no coincidir)
-            const opt = document.createElement('option');
-            opt.value = data.id;
-            opt.textContent = `${data.apellido}, ${data.nombre}`;
-            sel.appendChild(opt);
-
-            // Si la especialidad coincide, seleccionarlo automáticamente
-            if (data.especialidad === sel.closest('[data-especialidad]')?.dataset.especialidad) {
-              sel.value = data.id;
-              seleccionarProfesor(sel);
-            }
-          });
-
-          // Cerrar el sub-panel
-          toggleFormNuevoProfesor();
-          errDiv.classList.add('hidden');
-        })
-        .catch(() => {
-          errDiv.textContent = 'Error al guardar. Intentá de nuevo.';
-          errDiv.classList.remove('hidden');
-        });
-    };
   })();
 </script>
 {% endblock %}
