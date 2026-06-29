@@ -158,22 +158,25 @@
                 <!-- Links -->
                 {% if not user.es_secretario %}
                 <div class="grid grid-cols-2 gap-8 sm:grid-cols-3">
-                    {% if user.is_authenticated %}
                     <div>
                         <h2 class="mb-4 text-sm font-semibold text-gray-900 uppercase dark:text-white">Navegación</h2>
                         <ul class="text-sm text-gray-500 dark:text-gray-400 space-y-2">
                             <li><a href="{% url 'core:home' %}" class="hover:text-primary-600">Inicio</a></li>
-                            <li><a href="{% url 'turnos:listar_clases' %}" class="hover:text-primary-600">Clases</a></li>
-                            {% if user.es_cliente %}
-                            <li><a href="{% url 'turnos:mis_clases' %}" class="hover:text-primary-600">Reservas</a></li>
+                            {% if not user.is_authenticated %}
+                                <li><a href="{% url 'accounts:login' %}" class="hover:text-primary-600">Iniciar sesión</a></li>
+                                <li><a href="{% url 'accounts:register' %}" class="hover:text-primary-600">Registrarse</a></li>
                             {% else %}
-                            <li><a href="{% url 'accounts:lista_secretarios' %}" class="hover:text-primary-600">Secretarios</a></li>
-                            <li><a href="{% url 'profesores:lista' %}" class="hover:text-primary-600">Profesores</a></li>
-                            <li><a href="{% url 'turnos:lista_certificados' %}" class="hover:text-primary-600">Certificados</a></li>
+                                <li><a href="{% url 'turnos:listar_clases' %}" class="hover:text-primary-600">Clases</a></li>
+                                {% if user.es_cliente %}
+                                    <li><a href="{% url 'turnos:mis_clases' %}" class="hover:text-primary-600">Reservas</a></li>
+                                {% else %}
+                                    <li><a href="{% url 'accounts:lista_secretarios' %}" class="hover:text-primary-600">Secretarios</a></li>
+                                    <li><a href="{% url 'profesores:lista' %}" class="hover:text-primary-600">Profesores</a></li>
+                                    <li><a href="{% url 'turnos:lista_certificados' %}" class="hover:text-primary-600">Certificados</a></li>
+                                {% endif %}
                             {% endif %}
                         </ul>
                     </div>
-                    {% endif %}
                     <div>
                         <h2 class="mb-4 text-sm font-semibold text-gray-900 uppercase dark:text-white">Contacto</h2>
                         <ul class="text-sm text-gray-500 dark:text-gray-400 space-y-2">
