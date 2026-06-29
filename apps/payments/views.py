@@ -402,6 +402,7 @@ class VerificarQRView(LoginRequiredMixin, SecretarioRequiredMixin, View):
 
     - invalido        -> el token no corresponde a ninguna reserva válida
     - fecha_invalida   -> el QR es de un turno que no es el de hoy
+    - fuera_de_horario -> es de hoy, pero ya pasó más de 1 hora desde el inicio
     - ya_utilizado     -> la reserva ya fue recepcionada antes
     - deuda_abono      -> el cliente tiene abono mensual vencido
     - no_pago          -> la reserva no está paga (hay que cobrar)
@@ -420,7 +421,7 @@ class VerificarQRView(LoginRequiredMixin, SecretarioRequiredMixin, View):
             return JsonResponse({
                 "ok": False,
                 "tipo": "invalido",
-                "error": "El QR escaneado no es válido.",
+                "error": "El QR escaneado no pertenece a una reserva.",
             })
 
         if reserva.estado in (Reserva.Estado.CANCELADO, Reserva.Estado.LISTA_ESPERA):
@@ -435,6 +436,13 @@ class VerificarQRView(LoginRequiredMixin, SecretarioRequiredMixin, View):
                 "ok": False,
                 "tipo": "fecha_invalida",
                 "error": "El QR escaneado no pertenece a una reserva para la fecha actual.",
+            })
+
+        if timezone.now() > reserva.id_turno.limite_recepcion:
+            return JsonResponse({
+                "ok": False,
+                "tipo": "fuera_de_horario",
+                "error": "El QR escaneado corresponde a un turno fuera del horario habilitado para recepción.",
             })
 
         if reserva.recepcionado:
@@ -459,6 +467,17 @@ class VerificarQRView(LoginRequiredMixin, SecretarioRequiredMixin, View):
             "hora":     reserva.id_turno.hora_inicio.strftime("%H:%M"),
             "actividad": reserva.id_turno.get_actividad_display(),
         }
+
+        # Cliente con abono mensual activo: la clase ya está cubierta por el
+        # abono, no corresponde pedirle que pague esta reserva puntual.
+        if usuario.tiene_abono_mensual and usuario.abono_activo:
+            vencimiento = usuario.abono_vencimiento.strftime("%d/%m/%Y")
+            return JsonResponse({
+                "ok":      True,
+                "tipo":    "pago_confirmado",
+                "mensaje": f"El abono se encuentra activo hasta el día {vencimiento}, confirme recepción.",
+                "reserva": reserva_data,
+            })
 
         if reserva.estado != Reserva.Estado.PAGO:
             return JsonResponse({

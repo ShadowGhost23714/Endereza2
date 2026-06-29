@@ -274,6 +274,42 @@
   }
   .toast.ok    { background: var(--verde); }
   .toast.error { background: var(--rojo); }
+
+  @media (max-width: 768px) {
+    .td-wrapper {
+      flex-direction: column;
+      padding: 14px;
+      gap: 16px;
+    }
+    .td-sidebar {
+      width: 100%;
+    }
+    .sidebar-card {
+      position: static;
+      top: auto;
+    }
+    .lista-header {
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .paciente-card {
+      flex-wrap: wrap;
+      padding: 14px;
+    }
+    .pc-info {
+      min-width: 0;
+    }
+    .pc-acciones {
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .modal-box {
+      width: 92vw !important;
+      max-width: 420px;
+    }
+   }
+
 </style>
 
 <div class="td-wrapper">
@@ -698,7 +734,7 @@
       mostrarToast(data.mensaje, "ok");
       if (qrFlowActivo && qrReservaActual) {
         qrFlowActivo = false;
-        abrirModalRecepcionQR(qrReservaActual);
+        abrirModalRecepcionQR(qrReservaActual, "Reserva paga, confirme recepción");
       } else {
         filtrar();
       }
@@ -818,14 +854,14 @@
       abrirModal(data.reserva.id, data.reserva.nombre); // reutiliza el modal de pago existente
     } else if (data.tipo === "pago_confirmado") {
       qrFlowActivo = false;
-      abrirModalRecepcionQR(data.reserva);
+      abrirModalRecepcionQR(data.reserva, data.mensaje);
     }
   }
 
   // ── Modal de recepción vía QR ─────────────────────────────────────────
-  function abrirModalRecepcionQR(reserva) {
+  function abrirModalRecepcionQR(reserva, mensaje) {
     qrReservaActual = reserva;
-    document.getElementById("recepcion-qr-mensaje").textContent = "Reserva paga, confirme recepción";
+    document.getElementById("recepcion-qr-mensaje").textContent = mensaje || "Reserva paga, confirme recepción";
     document.getElementById("recepcion-qr-datos").innerHTML =
       "<strong>" + reserva.nombre + "</strong><br>"
       + "DNI: " + reserva.dni + "<br>"
