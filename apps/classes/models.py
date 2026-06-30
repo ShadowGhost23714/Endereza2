@@ -109,11 +109,14 @@ class Reserva(models.Model):
         CANCELADO      = "cancelado",      "Cancelado"
         PAGO           = "pago",           "Pago"
         LISTA_ESPERA   = "lista_espera",   "Lista de espera"
+        DEVOLVER_DINERO = "devolver_dinero", "Devolver dinero"
+        DINERO_DEVUELTO  = "dinero_devuelto", "Dinero devuelto"
+
 
     id_usuario    = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reservas")
     id_turno      = models.ForeignKey(Turno, on_delete=models.CASCADE, related_name="reservas")
     estado        = models.CharField(
-        max_length=12,
+        max_length=15,
         choices=Estado.choices,
         default=Estado.RESERVADO,
     )
@@ -124,9 +127,9 @@ class Reserva(models.Model):
     )
     qr_token = models.UUIDField(
         default=uuid.uuid4,
-        editable=False,
-        unique=True,
-        verbose_name="Token de QR",
+    editable=False,
+    null=True,  # Permitimos nulos temporalmente
+    blank=True,
     )
    
 
@@ -185,6 +188,9 @@ class Reserva(models.Model):
         if turno.fecha != timezone.localdate():
             return False
         return timezone.now() <= turno.limite_recepcion
+    @property
+    def monto(self):
+        return self.id_turno.precio
 
 class Sala(models.Model):
     numero = models.PositiveSmallIntegerField(unique=True)

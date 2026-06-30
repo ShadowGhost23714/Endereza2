@@ -17,4 +17,6 @@ urlpatterns = [
     path("cancelar-reserva/<int:reserva_id>/",      views.cancelar_reserva,           name="cancelar_reserva"),
     path("certificados/", views.lista_certificados, name="lista_certificados"),
     path("certificados/<int:pk>/resolver/", views.resolver_certificado, name="resolver_certificado"),
+    path("devolver-dinero/", views.lista_devolver_dinero, name="devolver_dinero"),
+    path("devolver-dinero/<int:pk>/resolver/", views.resolver_devolver_dinero, name="confirmar_devolucion"),
 ]
