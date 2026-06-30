@@ -5,15 +5,12 @@
 {% block content %}
 <div class="min-h-screen bg-gray-50 py-10 px-4">
 
-  <div class="mx-auto max-w-4xl">
+  <div class="max-w-3xl mx-auto animate-fade-up">
 
     {# ── Header ── #}
-    <div class="mb-8 flex items-center justify-between">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
       <div>
         <h1 class="text-3xl font-bold text-gray-900">Profesores</h1>
-        <p class="mt-1 text-sm text-gray-500">
-          {{ profesores.paginator.count }} profesor{% if profesores.paginator.count != 1 %}es{% endif %} registrado{% if profesores.paginator.count != 1 %}s{% endif %}
-        </p>
       </div>
       <a href="{% url 'profesores:crear' %}"
         class="inline-flex items-center gap-2 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-semibold rounded-lg px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
@@ -40,30 +37,30 @@
 
     {# ── Lista ── #}
     {% if profesores %}
-    <ul class="divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white shadow-sm">
+    <ul class="flex flex-col gap-3">
       {% for profesor in profesores %}
-      <li class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50 transition-colors">
+      <li class="flex items-center justify-between gap-4 bg-white border border-gray-200 rounded-2xl px-6 py-4 shadow-sm">
 
-        {# Datos del profesor #}
-        <span class="text-gray-800 text-sm sm:text-base">
-          <span class="font-semibold text-gray-900">{{ profesor.apellido }}, {{ profesor.nombre }}</span>
-          <span class="text-gray-400 mx-1">·</span>
-          <span class="text-gray-600">DNI: {{ profesor.dni }}</span>
-          <span class="text-gray-400 mx-1">·</span>
-          <span class="text-gray-600">Especialidad:
-            <span class="font-medium text-teal-700">{{ profesor.get_especialidad_display }}</span>
-          </span>
-        </span>
+        <!-- Datos del profesor -->
+        <div class="flex items-center gap-4 min-w-0">
+          <div class="min-w-0">
+            <p class="font-semibold text-gray-900">{{ profesor.apellido }}, {{ profesor.nombre }}</p>
+            <p class="text-gray-600">DNI: {{ profesor.dni }} &nbsp;·&nbsp;
+              Especialidad: <span class="font-medium text-primary-600">{{ profesor.get_especialidad_display }}</span>
+            </p>
+          </div>
+        </div>
 
-        {# Botón eliminar #}
+        <!-- Botón eliminar -->
         <button type="button" data-pk="{{ profesor.pk }}" data-nombre="{{ profesor.nombre_completo }}"
           data-url-clases="{% url 'profesores:clases_asignadas' profesor.pk %}"
           data-url-eliminar="{% url 'profesores:eliminar' profesor.pk %}" onclick="abrirModalEliminar(this)"
-          class="flex-shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd"
-              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-              clip-rule="evenodd" />
+          class="flex-shrink-0 inline-flex items-center gap-1.5 text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 px-3 py-2 rounded-xl transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6M14 11v6"/>
+            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
           </svg>
           Eliminar
         </button>
@@ -97,14 +94,15 @@
     {% endif %}
 
     {% else %}
-    {# Estado vacío #}
-    <div class="rounded-xl border border-gray-200 bg-white px-8 py-16 text-center shadow-sm">
-      <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto mb-4 h-12 w-12 text-gray-300" fill="none"
-        viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+    <!-- Estado vacío -->
+    <div class="flex flex-col items-center justify-center text-center py-20 bg-white border border-dashed border-gray-300 rounded-2xl">
+      <!-- Icono de usuario -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-300 mb-4" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
       </svg>
-      <p class="text-lg font-semibold text-gray-700">No hay profesores registrados</p>
+      <p class="text-gray-500 font-medium">No hay profesores registrados</p>
       <p class="mt-1 text-sm text-gray-400">Agregá el primero usando el botón de arriba.</p>
     </div>
     {% endif %}
@@ -140,68 +138,6 @@
         </p>
         <div id="lista-clases" class="flex flex-col gap-3 max-h-64 overflow-y-auto pr-1"></div>
 
-        {# Link para crear profesor nuevo #}
-        <button type="button" onclick="toggleFormNuevoProfesor()"
-          class="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-primary-700 hover:underline">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          Crear nuevo profesor
-        </button>
-
-        {# Sub-panel formulario inline #}
-        <div id="form-nuevo-profesor" class="hidden mt-4 border border-gray-200 rounded-xl p-4 bg-gray-50">
-          <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Nuevo profesor</p>
-
-          <div id="form-nuevo-errors"
-            class="hidden mb-3 p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700"></div>
-
-          <div class="flex flex-col gap-3">
-
-            <div class="grid grid-cols-2 gap-3">
-              <div class="flex flex-col gap-1">
-                <label class="text-xs font-medium text-gray-500">Nombre</label>
-                <input id="nuevo-nombre" type="text" placeholder="Nombre"
-                  class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-primary-500 focus:border-primary-500" />
-              </div>
-              <div class="flex flex-col gap-1">
-                <label class="text-xs font-medium text-gray-500">Apellido</label>
-                <input id="nuevo-apellido" type="text" placeholder="Apellido"
-                  class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-primary-500 focus:border-primary-500" />
-              </div>
-            </div>
-
-            <div class="flex flex-col gap-1">
-              <label class="text-xs font-medium text-gray-500">DNI</label>
-              <input id="nuevo-dni" type="text" placeholder="Sin puntos ni espacios" maxlength="8" inputmode="numeric"
-                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-primary-500 focus:border-primary-500" />
-            </div>
-
-            <div class="flex flex-col gap-1">
-              <label class="text-xs font-medium text-gray-500">Especialidad</label>
-              <select id="nuevo-especialidad"
-                class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-primary-500 focus:border-primary-500">
-                <option value="">— Seleccioná —</option>
-                <option value="tren_inferior">Tren inferior</option>
-                <option value="zona_media">Zona media</option>
-                <option value="tren_superior">Tren superior</option>
-              </select>
-            </div>
-
-            <div class="flex justify-end gap-2 mt-1">
-              <button type="button" onclick="toggleFormNuevoProfesor()"
-                class="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors">
-                Cancelar
-              </button>
-              <button type="button" onclick="guardarNuevoProfesor()"
-                class="px-3 py-1.5 text-xs font-semibold text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors">
-                Guardar profesor
-              </button>
-            </div>
-
-          </div>
-        </div>
       </div>
     </div>
 
@@ -290,7 +226,7 @@
       ${opciones}
     </select>
     ${clase.disponibles.length === 0
-                ? '<p class="text-xs text-red-500">No hay profesores disponibles para este horario. Creá uno nuevo.</p>'
+                ? '<p class="text-xs text-red-500">No hay profesores disponibles para este horario.</p>'
                 : ''}`;
             lista.appendChild(fila);
           });
@@ -330,84 +266,7 @@
     document.getElementById('modal-eliminar').addEventListener('click', function (e) {
       if (e.target === this) cerrarModal();
     });
-    // URL del endpoint AJAX — inyectada desde Django
-    const URL_CREAR_AJAX = "{% url 'profesores:crear_ajax' %}";
 
-    window.toggleFormNuevoProfesor = function () {
-      const panel = document.getElementById('form-nuevo-profesor');
-      panel.classList.toggle('hidden');
-      // Limpiar al abrir
-      if (!panel.classList.contains('hidden')) {
-        document.getElementById('nuevo-nombre').value = '';
-        document.getElementById('nuevo-apellido').value = '';
-        document.getElementById('nuevo-dni').value = '';
-        document.getElementById('nuevo-especialidad').value = '';
-        document.getElementById('form-nuevo-errors').classList.add('hidden');
-      }
-    };
-
-    window.guardarNuevoProfesor = function () {
-      const nombre = document.getElementById('nuevo-nombre').value.trim();
-      const apellido = document.getElementById('nuevo-apellido').value.trim();
-      const dni = document.getElementById('nuevo-dni').value.trim();
-      const especialidad = document.getElementById('nuevo-especialidad').value;
-      const errDiv = document.getElementById('form-nuevo-errors');
-
-      if (!nombre || !apellido || !dni || !especialidad) {
-        errDiv.textContent = 'Completá todos los campos.';
-        errDiv.classList.remove('hidden');
-        return;
-      }
-
-      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-      fetch(URL_CREAR_AJAX, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'X-CSRFToken': csrfToken,
-        },
-        body: new URLSearchParams({ nombre, apellido, dni, especialidad }),
-      })
-        .then(r => r.json())
-        .then(data => {
-          if (!data.ok) {
-            // Mostrar errores del form Django
-            const msgs = Object.values(data.errors).flat().join(' · ');
-            errDiv.textContent = msgs;
-            errDiv.classList.remove('hidden');
-            return;
-          }
-
-          // Agregar el nuevo profesor a todos los <select> del modal si coincide la especialidad
-          const selects = document.querySelectorAll('#lista-clases select');
-          selects.forEach(sel => {
-            // Verificar si ya existe la opción (por si se guarda dos veces)
-            if (sel.querySelector(`option[value="${data.id}"]`)) return;
-
-            // Solo agregar si la especialidad coincide con la del profesor a eliminar
-            // (los selects ya están filtrados, pero el nuevo puede no coincidir)
-            const opt = document.createElement('option');
-            opt.value = data.id;
-            opt.textContent = `${data.apellido}, ${data.nombre}`;
-            sel.appendChild(opt);
-
-            // Si la especialidad coincide, seleccionarlo automáticamente
-            if (data.especialidad === sel.closest('[data-especialidad]')?.dataset.especialidad) {
-              sel.value = data.id;
-              seleccionarProfesor(sel);
-            }
-          });
-
-          // Cerrar el sub-panel
-          toggleFormNuevoProfesor();
-          errDiv.classList.add('hidden');
-        })
-        .catch(() => {
-          errDiv.textContent = 'Error al guardar. Intentá de nuevo.';
-          errDiv.classList.remove('hidden');
-        });
-    };
   })();
 </script>
 {% endblock %}

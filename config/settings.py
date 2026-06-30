@@ -31,7 +31,18 @@ MP_PUBLIC_KEY = config("MP_PUBLIC_KEY")
 MP_ACCESS_TOKEN = config("MP_ACCESS_TOKEN")
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "extinct-stem-sporting.ngrok-free.dev",
+    ".trycloudflare.com",
+]
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.trycloudflare.com",
+    "https://extinct-stem-sporting.ngrok-free.dev",
+]
 
 
 # Application definition
@@ -51,6 +62,7 @@ INSTALLED_APPS = [
     'apps.classes',
     "apps.turnos_view",
     "apps.historial_pagos",
+    #"apps.stats",
     #'apps.abonos',
     'config',
 ]

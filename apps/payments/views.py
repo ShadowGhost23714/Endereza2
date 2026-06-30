@@ -1,13 +1,15 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.shortcuts import redirect
-from django.views.generic import TemplateView
+from django.shortcuts import redirect, render
 from django.db import transaction
+from django.core.exceptions import ValidationError
 from datetime import time as time_type
 from django.views import View
 from django.http import JsonResponse
 from datetime import date as date_type
+import mercadopago
 from apps.classes.models import Reserva, Turno
+from config import settings
 from .models import Pago
 from django.utils import timezone
 
@@ -393,3 +395,231 @@ class NuevoAbonadoView(LoginRequiredMixin, SecretarioRequiredMixin, View):
             "ok":      True,
             "mensaje": f"Abono registrado para {usuario.get_full_name()}. Vence el {vencimiento.strftime('%d/%m/%Y')}.",
         })                            
+    
+class VerificarQRView(LoginRequiredMixin, SecretarioRequiredMixin, View):
+    """
+    Verifica el token de un QR escaneado y devuelve qué pantalla
+    debe abrir el frontend, según las reglas de negocio:
+
+    - invalido        -> el token no corresponde a ninguna reserva válida
+    - fecha_invalida   -> el QR es de un turno que no es el de hoy
+    - fuera_de_horario -> es de hoy, pero ya pasó más de 1 hora desde el inicio
+    - ya_utilizado     -> la reserva ya fue recepcionada antes
+    - deuda_abono      -> el cliente tiene abono mensual vencido
+    - no_pago          -> la reserva no está paga (hay que cobrar)
+    - pago_confirmado  -> la reserva está paga (hay que recepcionar)
+    """
+    def post(self, request):
+        token = request.POST.get("token", "").strip()
+
+        try:
+            reserva = (
+                Reserva.objects
+                .select_related("id_turno", "id_usuario")
+                .get(qr_token=token)
+            )
+        except (Reserva.DoesNotExist, ValidationError, ValueError):
+            return JsonResponse({
+                "ok": False,
+                "tipo": "invalido",
+                "error": "El QR escaneado no pertenece a una reserva.",
+            })
+
+        if reserva.estado in (Reserva.Estado.CANCELADO, Reserva.Estado.LISTA_ESPERA):
+            return JsonResponse({
+                "ok": False,
+                "tipo": "invalido",
+                "error": "Este QR no corresponde a una reserva válida.",
+            })
+
+        if reserva.id_turno.fecha != timezone.localdate():
+            return JsonResponse({
+                "ok": False,
+                "tipo": "fecha_invalida",
+                "error": "El QR escaneado no pertenece a una reserva para la fecha actual.",
+            })
+
+        if timezone.now() > reserva.id_turno.limite_recepcion:
+            return JsonResponse({
+                "ok": False,
+                "tipo": "fuera_de_horario",
+                "error": "El QR escaneado corresponde a un turno fuera del horario habilitado para recepción.",
+            })
+
+        if reserva.recepcionado:
+            return JsonResponse({
+                "ok": False,
+                "tipo": "ya_utilizado",
+                "error": "El QR escaneado ya fue utilizado anteriormente.",
+            })
+
+        usuario = reserva.id_usuario
+        if usuario.tiene_abono_mensual and not usuario.abono_activo:
+            return JsonResponse({
+                "ok": False,
+                "tipo": "deuda_abono",
+                "error": "El QR escaneado pertenece a un cliente con deuda de abono mensual.",
+            })
+
+        reserva_data = {
+            "id":       reserva.pk,
+            "nombre":   usuario.get_full_name() or usuario.email,
+            "dni":      getattr(usuario, "dni", "—"),
+            "hora":     reserva.id_turno.hora_inicio.strftime("%H:%M"),
+            "actividad": reserva.id_turno.get_actividad_display(),
+        }
+
+        # Cliente con abono mensual activo: la clase ya está cubierta por el
+        # abono, no corresponde pedirle que pague esta reserva puntual.
+        if usuario.tiene_abono_mensual and usuario.abono_activo:
+            vencimiento = usuario.abono_vencimiento.strftime("%d/%m/%Y")
+            return JsonResponse({
+                "ok":      True,
+                "tipo":    "pago_confirmado",
+                "mensaje": "El abono se encuentra activo hasta el día {vencimiento}, confirme recepción.",
+                "reserva": reserva_data,
+            })
+
+        if reserva.estado != Reserva.Estado.PAGO:
+            return JsonResponse({
+                "ok":      True,
+                "tipo":    "no_pago",
+                "mensaje": "Reserva no está paga, registre el pago para avanzar.",
+                "reserva": reserva_data,
+            })
+
+        return JsonResponse({
+            "ok":      True,
+            "tipo":    "pago_confirmado",
+            "mensaje": "Reserva paga, confirme recepción.",
+            "reserva": reserva_data,
+        })    
+
+
+# Vistas para reservas online y MercadoPago
+
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from apps.classes.models import Turno, Reserva
+from .services import crear_preferencia, MercadoPagoConnectionError, sincronizar_pago  
+import json, logging
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
+
+# Vista para reservar una clase online y redirigir a MercadoPago
+@login_required
+@require_POST
+def reservar_online(request, turno_id):
+    turno = get_object_or_404(Turno, pk=turno_id)
+
+    if not turno.tiene_cupo():
+        messages.error(request, "No hay cupos disponibles para este turno.")
+        return redirect("classes:listar_clases")
+
+    reserva, created = Reserva.objects.get_or_create(
+        id_usuario=request.user,
+        id_turno=turno,
+        defaults={"estado": Reserva.Estado.RESERVADO}
+    )
+
+    if not created and reserva.estado == Reserva.Estado.PAGO:
+        messages.info(request, "Ya tenés esta clase pagada.")
+        return redirect("classes:listar_clases")
+
+    # --- Escenario 2: error de conexión con la API ---
+    try:
+        preferencia = crear_preferencia(reserva, request)
+    except MercadoPagoConnectionError:
+        messages.error(request, "No se pudo conectar a Mercado Pago. Intente más tarde")
+        return redirect("turnos:listar_clases")
+
+    pago, _ = Pago.objects.get_or_create(reserva=reserva)
+    pago.metodo_pago   = Pago.MetodoPago.MERCADO_PAGO
+    pago.preference_id = preferencia["id"]
+    pago.monto         = reserva.id_turno.precio
+    pago.estado        = Pago.Estado.PENDIENTE
+    pago.save()
+
+    # --- Escenario 1: redirige al pago ---
+    return redirect(preferencia["init_point"])
+
+# Vistas para manejar las redirecciones de MercadoPago después del pago
+def pago_exito(request):
+    payment_id = request.GET.get("payment_id")
+    external_reference = request.GET.get("external_reference")
+    pago = sincronizar_pago(payment_id, external_reference)
+
+    # --- Escenario 1: pago exitoso ---
+    if pago and pago.esta_aprobado:
+        messages.success(request, "Reserva pagada")
+    else:
+        messages.error(request, "Hubo problemas para realizar el pago")
+
+    return redirect("turnos:listar_clases")
+
+
+def pago_error(request):
+    payment_id = request.GET.get("payment_id")
+    external_reference = request.GET.get("external_reference")
+    sincronizar_pago(payment_id, external_reference)
+
+    # --- Escenario 3: pago fallido en MP ---
+    messages.error(request, "Hubo problemas para realizar el pago")
+    return redirect("turnos:listar_clases")
+
+
+def pago_pendiente(request):
+    payment_id = request.GET.get("payment_id")
+    external_reference = request.GET.get("external_reference")
+    sincronizar_pago(payment_id, external_reference)
+
+    messages.info(request, "Tu pago está pendiente de confirmación")
+    return redirect("turnos:listar_clases")
+
+
+# Configuración de logging para el webhook
+logger = logging.getLogger(__name__)
+@csrf_exempt
+@require_POST
+def webhook(request):
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return HttpResponse(status=400)
+
+    if data.get("type") != "payment":
+        return HttpResponse(status=200)
+
+    payment_id = str(data.get("data", {}).get("id", ""))
+    if not payment_id:
+        return HttpResponse(status=400)
+
+    sdk = mercadopago.SDK(settings.MP_ACCESS_TOKEN)
+    mp_pago = sdk.payment().get(payment_id)["response"]
+
+    reserva_id = mp_pago.get("external_reference")
+    estado_mp  = mp_pago.get("status")
+
+    ESTADOS = {
+        "approved":   Pago.Estado.APROBADO,
+        "rejected":   Pago.Estado.RECHAZADO,
+        "pending":    Pago.Estado.PENDIENTE,
+        "in_process": Pago.Estado.EN_PROCESO,
+        "cancelled":  Pago.Estado.CANCELADO,
+    }
+
+    try:
+        pago = Pago.objects.get(reserva__id=reserva_id)
+        pago.payment_id = payment_id
+        pago.estado     = ESTADOS.get(estado_mp, Pago.Estado.PENDIENTE)
+        pago.save()
+
+        if pago.esta_aprobado:
+            pago.reserva.estado = Reserva.Estado.PAGO
+            pago.reserva.save()
+    except Pago.DoesNotExist:
+        logger.warning(f"Webhook: no se encontró pago para reserva {reserva_id}")
+
+    return HttpResponse(status=200)

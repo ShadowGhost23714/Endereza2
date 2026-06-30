@@ -1,4 +1,6 @@
 # apps/classes/models.py
+import uuid
+
 
 from django.conf import settings
 from django.db import models
@@ -79,6 +81,16 @@ class Turno(models.Model):
         dt = datetime.combine(self.fecha, self.hora_inicio) + timedelta(hours=1)
         return dt.time()
 
+    @property
+    def limite_recepcion(self):
+        """
+        Datetime límite (aware) hasta el cual se puede mostrar/escanear el
+        QR de este turno: hasta una hora después de la hora de inicio.
+        """
+        from datetime import datetime, timedelta
+        dt_naive = datetime.combine(self.fecha, self.hora_inicio) + timedelta(hours=1)
+        return timezone.make_aware(dt_naive)    
+
 
 class TurnoProfesional(models.Model):
     id_turno    = models.ForeignKey(Turno, on_delete=models.CASCADE, related_name="turno_profesionales")
@@ -110,7 +122,12 @@ class Reserva(models.Model):
         default=False,
         verbose_name="Recepcionado",
     )
-
+    qr_token = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False,
+        unique=True,
+        verbose_name="Token de QR",
+    )
    
 
     @property
@@ -151,6 +168,23 @@ class Reserva(models.Model):
 
     def __str__(self):
         return f"Reserva #{self.pk} — {self.id_usuario} | {self.id_turno} [{self.estado}]"
+    
+    @property
+    def puede_mostrar_qr(self):
+        """
+        El QR solo tiene sentido para reservas activas (no canceladas,
+        no en lista de espera), del turno de HOY, y todavía no recepcionadas.
+        Se habilita el día del turno y se deshabilita una hora después de
+        la hora de inicio (mismo límite que se valida al escanear).
+        """
+        if self.estado not in (self.Estado.RESERVADO, self.Estado.PAGO):
+            return False
+        if self.recepcionado:
+            return False
+        turno = self.id_turno
+        if turno.fecha != timezone.localdate():
+            return False
+        return timezone.now() <= turno.limite_recepcion
 
 class Sala(models.Model):
     numero = models.PositiveSmallIntegerField(unique=True)
