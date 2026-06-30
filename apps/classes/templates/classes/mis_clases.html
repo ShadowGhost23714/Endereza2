@@ -102,6 +102,7 @@
                   class="p-5 space-y-5">
                 {% csrf_token %}
 
+                {% if not user.abono_activo %}
                 <p class="text-sm text-gray-600">
                     Podés cancelar tu reserva y obtener un reintegro.
                     Por favor, seleccioná el método:
@@ -121,7 +122,14 @@
                         <option value="dinero">Devolución del dinero</option>
                     </select>
                 </div>
-
+                {% else %}
+                <p class="text-sm text-gray-600">
+                    Se te va a devolver el dinero como saldo a favor.
+                </p>
+                <select name="tipo_reembolso" id="tipo_reembolso-{{ reserva.pk }}" class="hidden">
+                  <option value="saldo" selected>Saldo a favor</option>
+                </select>
+                {% endif %}
                 
 
                 {% if not reserva.faltan_mas_de_48_horas %}
@@ -206,7 +214,7 @@
                         <h3 class="mb-4 text-lg font-semibold">
                             Cancelar reserva
                         </h3>
-
+                        {% if not user.abono_activo %}
                         <p class="mb-4 text-gray-500">
                             ¿Qué tipo de reintegro querés recibir?
                         </p>
@@ -232,7 +240,7 @@
                                 </label>
 
                             </div>
-
+                            {% endif %}
                             <div class="flex justify-center gap-3">
 
                                 <button type="button"

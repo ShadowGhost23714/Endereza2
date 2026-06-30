@@ -199,6 +199,6 @@ class TurnoForm(forms.ModelForm):
             if self.instance.pk:
                 qs = qs.exclude(pk=self.instance.pk)
             if qs.exists():
-                raise forms.ValidationError("Ya existe un turno con esa actividad, sala, fecha y hora de inicio.")
+                raise forms.ValidationError("Ya existe una clase con esa actividad, sala, fecha y hora de inicio.")
 
         return cleaned_data
