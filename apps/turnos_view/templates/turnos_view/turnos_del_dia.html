@@ -373,22 +373,10 @@
             <span style="font-size:36px;">💵</span>
             Efectivo
           </button>
-          <button class="btn-metodo btn-mp" onclick="elegirMercadoPago()">
+          <button class="btn-metodo btn-mp" onclick="elegirMercadoPago(event)">
             <span style="font-size:36px;">💳</span>
             Mercado Pago
           </button>
-        </div>
-      </div>
-      <div id="paso-mp" style="display:none; text-align:center; padding:10px 0;">
-        <div id="mp-procesando">
-          <div style="font-size:40px; margin-bottom:12px;">⏳</div>
-          <p style="font-weight:600; color:var(--texto);">Conectando con Mercado Pago...</p>
-          <p style="font-size:13px; color:#6b7280;">Simulando proceso de pago</p>
-        </div>
-        <div id="mp-exitoso" style="display:none;">
-          <div style="font-size:40px; margin-bottom:12px;">✅</div>
-          <p style="font-weight:600; color:var(--verde);">¡Pago aprobado!</p>
-          <p style="font-size:13px; color:#6b7280;">El pago fue procesado exitosamente</p>
         </div>
       </div>
     </div>
@@ -688,10 +676,7 @@
   function abrirModal(id, nombre) {
     reservaActivaId = id;
     document.getElementById("modal-nombre").textContent = "Paciente: " + nombre;
-    document.getElementById("paso-metodo").style.display = "block";
-    document.getElementById("paso-mp").style.display = "none";
-    document.getElementById("mp-procesando").style.display = "block";
-    document.getElementById("mp-exitoso").style.display = "none";
+    document.querySelectorAll("#modal-cobrar .btn-metodo").forEach(b => b.classList.remove("seleccionado"));
     document.getElementById("modal-footer").innerHTML =
       '<button class="btn-cancelar-modal" onclick="cerrarModal()">Cancelar</button>';
     document.getElementById("modal-cobrar").classList.add("active");
@@ -710,16 +695,12 @@
       + '<button class="btn-confirmar" onclick="confirmarPago(\'efectivo\')">Confirmar pago</button>';
   }
 
-  function elegirMercadoPago() {
-    document.getElementById("paso-metodo").style.display = "none";
-    document.getElementById("paso-mp").style.display = "block";
-    document.getElementById("modal-footer").innerHTML = "";
-    setTimeout(function() {
-      document.getElementById("mp-procesando").style.display = "none";
-      document.getElementById("mp-exitoso").style.display = "block";
-      document.getElementById("modal-footer").innerHTML =
-        '<button class="btn-confirmar" onclick="confirmarPago(\'mercado_pago\')">Confirmar</button>';
-    }, 2500);
+  function elegirMercadoPago(event) {
+    document.querySelectorAll("#modal-cobrar .btn-metodo").forEach(b => b.classList.remove("seleccionado"));
+    event.currentTarget.classList.add("seleccionado");
+    document.getElementById("modal-footer").innerHTML =
+      '<button class="btn-cancelar-modal" onclick="cerrarModal()">Cancelar</button>'
+      + '<button class="btn-confirmar" onclick="confirmarPago(\'mercado_pago\')">Confirmar pago</button>';
   }
 
   async function confirmarPago(metodo) {
