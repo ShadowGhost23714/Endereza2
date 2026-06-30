@@ -39,7 +39,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "extinct-stem-sporting.ngrok-free.dev",
-    "127.0.0.1", "localhost", ".trycloudflare.com"
+    ".trycloudflare.com",
 ]
 
 #CSRF_TRUSTED_ORIGINS = [

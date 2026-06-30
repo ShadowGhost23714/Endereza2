@@ -6,12 +6,12 @@
 {% block title %}Certificados médicos pendientes{% endblock %}
 
 {% block content %}
-<div class="py-8 px-4 max-w-5xl mx-auto">
+<div class="min-h-screen py-8 px-4 w-full max-w-3xl xl:max-w-[1400px] mx-auto animate-fade-up">
 
   {# ── Encabezado ── #}
   <div class="flex items-center justify-between mb-6">
     <div>
-      <h1 class="text-2xl font-semibold text-gray-900">Certificados médicos</h1>
+      <h1 class="text-3xl font-bold text-gray-900">Certificados médicos</h1>
       <p class="text-sm text-gray-500 mt-0.5">Revisá y resolvé los certificados enviados por los clientes.</p>
     </div>
     {% if certificados %}
@@ -38,7 +38,7 @@
 
   {# ── Lista vacía ── #}
   {% if not certificados %}
-  <div class="flex flex-col items-center justify-center py-20 text-gray-400">
+  <div class="flex flex-col items-center justify-center text-center py-20 bg-white border border-dashed border-gray-300 rounded-2xl">
     <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-3 text-gray-300" fill="none" viewBox="0 0 24 24"
       stroke-width="1.5" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round"
@@ -96,10 +96,10 @@
 
         {# Info del cliente #}
         <div class="flex-1 min-w-0">
-          <p class="text-sm font-semibold text-gray-900 truncate">
+          <p class="font-semibold text-gray-900 truncate">
             {{ cert.reserva.id_usuario.nombre_completo }}
           </p>
-          <p class="text-xs text-gray-500 truncate mt-0.5">
+          <p class="text-gray-500 truncate mt-0.5">
             {{ cert.reserva.id_usuario.email }}
           </p>
 
@@ -113,7 +113,7 @@
               </svg>
               {{ cert.reserva.id_turno.fecha|date:"d/m/Y" }}
             </span>
-            <span class="inline-flex items-center gap-1 text-xs text-gray-600">
+            <span class="inline-flex items-center gap-1 text-gray-600">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none"
                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -122,7 +122,7 @@
               {{ cert.reserva.id_turno.hora_inicio|time:"H:i" }}
             </span>
             <span
-              class="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 text-xs font-medium">
+              class="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 font-medium">
               {{ cert.reserva.id_turno.get_actividad_display }}
             </span>
           </div>
@@ -142,7 +142,7 @@
             <input type="hidden" name="accion" value="validar">
             <button type="submit" title="Validar certificado y otorgar clase a favor"
               onclick="return abrirConfirmacion(this, '¿Validar el certificado de {{ cert.reserva.id_usuario.nombre_completo }}?', 'Se le otorgará una clase a favor.', 'validar')"
-              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-600 hover:bg-primary-600 text-white text-xs font-semibold transition-colors shadow-sm">
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-600 hover:bg-primary-600 text-white text-sm font-semibold transition-colors shadow-sm">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"
                 stroke-width="2.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
@@ -157,7 +157,7 @@
             <input type="hidden" name="accion" value="rechazar">
             <button type="submit" title="Rechazar certificado"
               onclick="return abrirConfirmacion(this, '¿Rechazar el certificado de {{ cert.reserva.id_usuario.nombre_completo }}?', 'No se otorgarán clases a favor.', 'rechazar')"
-              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-gray-100 text-gray-700 text-xs font-semibold border border-gray-200 transition-colors shadow-sm">
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-gray-100 text-gray-700 text-sm font-semibold border border-gray-200 transition-colors shadow-sm">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24"
                 stroke-width="2.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -177,7 +177,9 @@
           <a href="{% url 'core:home' %}" class="text-primary-700 font-semibold hover:underline dark:text-primary-500">← Volver a inicio</a>
         </p>
 </div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
 <script>
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 </script>
@@ -230,6 +232,7 @@
     </div>
   </div>
 </div>
+
 <script>
   let confirmFormBtn = null;
 
