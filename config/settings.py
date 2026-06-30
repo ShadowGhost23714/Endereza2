@@ -30,8 +30,10 @@ DEBUG = True
 MP_PUBLIC_KEY = config("MP_PUBLIC_KEY")
 MP_ACCESS_TOKEN = config("MP_ACCESS_TOKEN")
 
-
-CSRF_TRUSTED_ORIGINS = ["https://*.trycloudflare.com"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://extinct-stem-sporting.ngrok-free.dev",
+    "https://*.trycloudflare.com"
+]
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
@@ -40,9 +42,9 @@ ALLOWED_HOSTS = [
     ".trycloudflare.com",
 ]
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://extinct-stem-sporting.ngrok-free.dev",
-]
+#CSRF_TRUSTED_ORIGINS = [
+ #   "https://extinct-stem-sporting.ngrok-free.dev",
+#]
 
 
 # Application definition
