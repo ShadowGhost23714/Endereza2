@@ -476,7 +476,7 @@ class VerificarQRView(LoginRequiredMixin, SecretarioRequiredMixin, View):
             return JsonResponse({
                 "ok":      True,
                 "tipo":    "pago_confirmado",
-                "mensaje": f"El abono se encuentra activo hasta el día {vencimiento}, confirme recepción.",
+                "mensaje": "El abono se encuentra activo hasta el día {vencimiento}, confirme recepción.",
                 "reserva": reserva_data,
             })
 
