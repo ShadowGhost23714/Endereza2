@@ -13,7 +13,7 @@ class HistorialPagosView(LoginRequiredMixin, TemplateView):
         # Solo los pagos de reservas que pertenecen al usuario autenticado
         pagos = (
             Pago.objects.filter(reserva__id_usuario=self.request.user)
-            .select_related("reserva", "reserva__id_turno")
+            .select_related("reserva", "reserva__id_turno", "reserva__certificado_medico")
             .order_by("-fecha_pago")
         )
         context["pagos"] = pagos

@@ -1,0 +1,220 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}Devoluciones de dinero pendientes{% endblock %}
+
+{% block content %}
+<div class="min-h-screen py-8 px-4 w-full max-w-3xl xl:max-w-[1400px] mx-auto animate-fade-up">
+
+  {# ── Encabezado ── #}
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Devoluciones de dinero</h1>
+      <p class="text-sm text-gray-500 mt-0.5">Revisá y confirmá las devoluciones pendientes de reservas.</p>
+    </div>
+    {% if reservas %}
+    <span
+      class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-sm font-medium">
+      <span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span>
+      {{ reservas.count }} pendiente{{ reservas.count|pluralize:"s" }}
+    </span>
+    {% endif %}
+  </div>
+
+  {# ── Mensajes django ── #}
+  {% if messages %}
+  {% for message in messages %}
+  <div class="mb-4 px-4 py-3 rounded-lg border
+        {% if message.tags == 'success' %}bg-emerald-50 border-emerald-100 text-emerald-800
+        {% elif message.tags == 'error' %}bg-rose-50 border-rose-100 text-rose-800
+        {% else %}bg-blue-50 border-blue-100 text-blue-800{% endif %}
+        text-sm">
+    {{ message }}
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  {# ── Lista vacía ── #}
+  {% if not reservas %}
+  <div class="flex flex-col items-center justify-center text-center py-20 bg-white border border-dashed border-gray-300 rounded-2xl">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-3 text-gray-300" fill="none" viewBox="0 0 24 24"
+      stroke-width="1.5" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+    </svg>
+    <p class="text-base font-medium text-gray-500">No hay devoluciones pendientes</p>
+    <p class="text-sm text-gray-400 mt-1">Cuando una reserva quede marcada para devolver dinero aparecerá acá.</p>
+  </div>
+
+  {# ── Tabla de devoluciones ── #}
+  {% else %}
+  <div class="bg-white rounded-2xl border border-gray-200 shadow overflow-hidden">
+    <div class="divide-y divide-gray-100">
+
+      {% for reserva in reservas %}
+      <div class="flex items-center gap-4 px-5 py-4 hover:bg-gray-50/60 transition-colors">
+
+        {# Icono representativo de devolución #}
+        <div class="flex-shrink-0">
+          <div
+            class="flex items-center justify-center w-16 h-16 rounded-xl border border-gray-200 shadow-sm bg-amber-50">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-amber-500" fill="none" viewBox="0 0 24 24"
+              stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 14.25 4.5 9.75m0 0L9 5.25M4.5 9.75H15a4.5 4.5 0 0 1 4.5 4.5v.75" />
+            </svg>
+          </div>
+        </div>
+
+        {# Info del cliente #}
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold text-gray-900 truncate">
+            {{ reserva.id_usuario.nombre_completo }}
+          </p>
+          <p class="text-gray-500 truncate mt-0.5">
+            {{ reserva.id_usuario.email }}
+          </p>
+
+          {# Info del turno #}
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2">
+            <span class="inline-flex items-center gap-1 text-xs text-gray-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none"
+                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 9v7.5" />
+              </svg>
+              {{ reserva.id_turno.fecha|date:"d/m/Y" }}
+            </span>
+            <span class="inline-flex items-center gap-1 text-gray-600 text-xs">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none"
+                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+              {{ reserva.id_turno.hora_inicio|time:"H:i" }}
+            </span>
+            
+            <span
+            class="inline-flex items-center px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-semibold text-xs">
+            ${{ reserva.monto|floatformat:2 }}
+          </span>
+          <span
+            class="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 font-medium text-xs">
+            {{ reserva.id_turno.get_actividad_display }}
+          </span>
+            
+          </div>
+        </div>
+
+        {# Fecha de solicitud #}
+        <div class="hidden sm:block flex-shrink-0 text-right">
+          <p class="text-xs text-gray-400">Solicitado</p>
+          <p class="text-xs font-medium text-gray-600 mt-0.5">{{ reserva.fecha_solicitud_devolucion|date:"d/m/Y H:i" }}</p>
+        </div>
+
+        {# Acción #}
+        <div class="flex-shrink-0 flex items-center gap-2">
+          <form method="post" action="{% url 'turnos:confirmar_devolucion' reserva.pk %}">
+            {% csrf_token %}
+            <button type="submit" title="Confirmar que el dinero fue devuelto"
+              onclick="return abrirConfirmacion(this, '¿Confirmar la devolución de dinero a {{ reserva.id_usuario.nombre_completo }}?', 'El estado de la reserva pasará a Dinero devuelto.')"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold transition-colors shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"
+                stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+              </svg>
+              Confirmar devolución
+            </button>
+          </form>
+        </div>
+
+      </div>
+      {% endfor %}
+
+    </div>
+  </div>
+  {% endif %}
+  <p class="mt-7 text-center text-lg text-gray-400">
+    <a href="{% url 'core:home' %}" class="text-primary-700 font-semibold hover:underline dark:text-primary-500">← Volver a inicio</a>
+  </p>
+</div>
+
+{# ── Modal de confirmación de acciones ── #}
+<div id="confirmModal"
+  class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-200">
+  <div id="confirmContent"
+    class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm mx-4 scale-95 transition-transform duration-200">
+    <div id="confirmIconWrap" class="flex items-center justify-center w-12 h-12 rounded-full mx-auto mb-4 bg-emerald-100">
+      <svg id="confirmIcon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+        stroke-width="2" stroke="#10b981">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+      </svg>
+    </div>
+    <h3 id="confirmTitle" class="text-base font-semibold text-gray-900 text-center"></h3>
+    <p id="confirmSubtitle" class="text-sm text-gray-500 text-center mt-1"></p>
+    <div class="flex gap-3 mt-6">
+      <button onclick="cerrarConfirmacion()"
+        class="flex-1 px-4 py-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 text-sm font-semibold transition-colors">
+        Cancelar
+      </button>
+      <button id="confirmBtn"
+        name="aprobar"
+        class="flex-1 px-4 py-2 rounded-lg text-white text-sm font-semibold transition-colors bg-primary-600 hover:bg-primary-700">
+        Confirmar
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let confirmFormBtn = null;
+
+  function abrirConfirmacion(btnOrigen, titulo, subtitulo) {
+    const modal = document.getElementById('confirmModal');
+    const content = document.getElementById('confirmContent');
+
+    document.getElementById('confirmTitle').textContent = titulo;
+    document.getElementById('confirmSubtitle').textContent = subtitulo;
+
+    const confirmBtn = document.getElementById('confirmBtn');
+    confirmFormBtn = btnOrigen;
+
+    confirmBtn.onclick = function () {
+      cerrarConfirmacion();
+      confirmFormBtn.closest('form').submit();
+    };
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    setTimeout(() => {
+      modal.classList.remove('opacity-0');
+      content.classList.remove('scale-95');
+      content.classList.add('scale-100');
+    }, 10);
+
+    return false; // evita que el form se envíe directamente
+  }
+
+  function cerrarConfirmacion() {
+    const modal = document.getElementById('confirmModal');
+    const content = document.getElementById('confirmContent');
+    modal.classList.add('opacity-0');
+    content.classList.remove('scale-100');
+    content.classList.add('scale-95');
+    setTimeout(() => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }, 200);
+  }
+
+  // Cerrar con Escape
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') cerrarConfirmacion();
+  });
+
+  // Cerrar al hacer click en el fondo
+  document.getElementById('confirmModal').addEventListener('click', function (e) {
+    if (e.target === this) cerrarConfirmacion();
+  });
+</script>
+{% endblock %}

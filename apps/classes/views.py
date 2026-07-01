@@ -9,9 +9,11 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import get_object_or_404, redirect, render
-
+from datetime import datetime, timedelta
+from apps.classes.models import CertificadoMedico
 from apps.core import models
 from apps.accounts import models
+from apps.payments.models import Pago
 from apps.professor.models import Profesor
 from apps.classes.models import CertificadoMedico
 
@@ -137,6 +139,78 @@ class MisClasesView(LoginRequiredMixin, ListView):
             .order_by("id_turno__fecha", "id_turno__hora_inicio")
         )
 
+@login_required
+def cancelar_reserva(request, reserva_id):
+
+    if request.method != "POST":
+        return redirect("turnos:mis_clases")
+
+    reserva = get_object_or_404(
+        Reserva,
+        pk=reserva_id,
+        id_usuario=request.user
+    )
+
+    fecha_turno = datetime.combine(
+        reserva.id_turno.fecha,
+        reserva.id_turno.hora_inicio
+    )
+
+    faltan_mas_48 = (
+        fecha_turno - timezone.datetime.now()
+    ) >= timedelta(hours=48)
+
+    tipo = request.POST.get("tipo_reembolso")
+
+    if faltan_mas_48:
+        if tipo == "saldo":
+            request.user.saldo_a_favor += reserva.id_turno.get_costo_clase
+            request.user.save(update_fields=["saldo_a_favor"])
+            Pago.objects.filter(reserva=reserva).update(reembolsado=True)
+            reserva.estado = Reserva.Estado.CANCELADO
+        else:
+            reserva.estado = Reserva.Estado.DEVOLVER_DINERO
+        reserva.save()
+
+        messages.success(
+            request,
+            "Reserva cancelada correctamente."
+        )
+
+        return redirect("turnos:mis_clases")
+    
+    if tipo == "saldo":
+        request.user.save(update_fields=["saldo_a_favor"])
+        reserva.estado = Reserva.Estado.CANCELADO
+    else:
+        reserva.estado = Reserva.Estado.DEVOLVER_DINERO
+
+    archivo = request.FILES.get("certificado")
+
+    if not archivo:
+        messages.error(
+            request,
+            "Debés adjuntar un certificado médico."
+        )
+        return redirect("turnos:mis_clases")
+
+    CertificadoMedico.objects.create(
+        reserva=reserva,
+        imagen=archivo,
+    )
+
+    if tipo != "saldo":
+        reserva.estado = Reserva.Estado.DEVOLVER_DINERO
+    else:
+        reserva.estado = Reserva.Estado.CANCELADO
+    reserva.save()
+
+    messages.success(
+        request,
+        "Certificado enviado correctamente. Será revisado por administración."
+    )
+
+    return redirect("turnos:mis_clases")
 
 @login_required
 def reservar_clase(request, turno_id, efectivo):
@@ -231,15 +305,15 @@ def anotarse_lista_espera(request, turno_id):
     return redirect("turnos:mis_clases")
 
 @login_required
-def reservar_clase_a_favor(request, turno_id):
+def reservar_saldo_a_favor(request, turno_id):
     if request.method != "POST":
         return redirect("turnos:listar_clases")
 
     turno = get_object_or_404(Turno, pk=turno_id)
 
-    # Verificar que tiene clases a favor
-    if request.user.clases_a_favor <= 0:
-        messages.error(request, "No tenés clases a favor disponibles.")
+    # Verificar que tiene saldo a favor
+    if request.user.saldo_a_favor < turno.get_costo_clase:
+        messages.error(request, "No tenés saldo a favor suficiente.")
         return redirect("turnos:listar_clases")
 
     # Conflicto de horario
@@ -278,14 +352,14 @@ def reservar_clase_a_favor(request, turno_id):
         )
         Pago.objects.create(
             reserva        = reserva,
-            metodo_pago    = "clase_a_favor",
+            metodo_pago    = "saldo_a_favor",
             registrado_por = None,
         )
-        request.user.clases_a_favor -= 1
-        request.user.save(update_fields=["clases_a_favor"])
+        request.user.saldo_a_favor -= turno.get_costo_clase
+        request.user.save(update_fields=["saldo_a_favor"])
 
     enviar_confirmacion_reserva(reserva)
-    messages.success(request, "¡Reserva creada con clase a favor! Te enviamos un mail de confirmación.")
+    messages.success(request, "¡Reserva creada con saldo a favor! Te enviamos un mail de confirmación.")
     return redirect("turnos:mis_clases")
 
 @login_required
@@ -300,7 +374,62 @@ def lista_certificados(request):
         .select_related("reserva__id_usuario", "reserva__id_turno")
         .order_by("-fecha_envio")
     )
+
+    for cert in certificados:
+        monto = cert.reserva.id_turno.get_costo_clase
+        if cert.reserva.estado == Reserva.Estado.DEVOLVER_DINERO:
+            cert.mensaje_validar  = f"Se registrará un reembolso de ${monto} a otorgar al cliente."
+            cert.mensaje_rechazar = f"No se registrará el reembolso de ${monto} al cliente."
+        else:
+            cert.mensaje_validar  = f"Se le acreditarán ${monto} al cliente."
+            cert.mensaje_rechazar = f"No se acreditarán ${monto} al cliente."
+
     return TemplateResponse(request, "classes/certificados_list.html", {"certificados": certificados})
+
+@login_required
+def lista_devolver_dinero(request):
+    if not (request.user.es_dueno or request.user.es_secretario):
+        messages.error(request, "No tenés permisos para acceder a esta sección.")
+        return redirect("home")
+
+    #lista de reservas que tienen estado "devolver_dinero"
+    reservas = (
+        Reserva.objects
+        .filter(estado=Reserva.Estado.DEVOLVER_DINERO)
+        .select_related("id_usuario", "id_turno")
+        .order_by("-fecha_reserva")
+    )
+    #lista de certificados pendientes que tienen estado "pendiente"
+    certificados = (
+        CertificadoMedico.objects
+        .filter(estado=CertificadoMedico.Estado.PENDIENTE)
+        .select_related("reserva__id_usuario", "reserva__id_turno")
+        .order_by("-fecha_envio")
+    )
+    #lista de reservas que tienen estado "devolver_dinero" y no estan esperando a que le aprueben el certificado
+    reservas_sin_certificado = reservas.exclude(id__in=certificados.values_list("reserva_id", flat=True))
+    return TemplateResponse(request, "classes/lista_devoluciones.html", {"reservas": reservas_sin_certificado})
+
+@login_required
+@require_POST
+def resolver_devolver_dinero(request, pk):
+    if not (request.user.es_dueno or request.user.es_secretario):
+        messages.error(request, "No tenés permisos para realizar esta acción.")
+        return redirect("home")
+
+    reserva = get_object_or_404(
+        Reserva,
+        pk=pk,
+        estado=Reserva.Estado.DEVOLVER_DINERO
+    )
+
+
+
+    reserva.estado = Reserva.Estado.DINERO_DEVUELTO
+    reserva.save()
+    messages.success(request, f"Se aprobó la devolución de dinero para {reserva.id_usuario.nombre_completo}.")
+
+    return redirect("turnos:devolver_dinero")
 
 @login_required
 @require_POST
@@ -318,19 +447,24 @@ def resolver_certificado(request, pk):
         certificado.estado         = CertificadoMedico.Estado.VALIDADO
         certificado.revisado_por   = request.user
         certificado.fecha_revision = timezone.now()
+        
+        reserva = certificado.reserva
+        
+        if reserva.estado == Reserva.Estado.DEVOLVER_DINERO:
+            messages.success(request, f"Certificado validado. Apruebe la devolución de dinero para {reserva.id_usuario.nombre_completo}.")
+        else:
+            usuario = certificado.reserva.id_usuario
+            usuario.saldo_a_favor += certificado.reserva.id_turno.get_costo_clase
+            usuario.save(update_fields=["saldo_a_favor"])
+            messages.success(request, f"Certificado validado. Se le otorgó saldo a favor a {usuario.nombre_completo}.")
         certificado.save()
-
-        usuario = certificado.reserva.id_usuario
-        usuario.clases_a_favor += 1
-        usuario.save(update_fields=["clases_a_favor"])
-        messages.success(request, f"Certificado validado. Se le otorgó una clase a favor a {usuario.nombre_completo}.")
 
     elif accion == "rechazar":
         certificado.estado         = CertificadoMedico.Estado.RECHAZADO
         certificado.revisado_por   = request.user
         certificado.fecha_revision = timezone.now()
         certificado.save()
-        messages.info(request, "Certificado rechazado. No se otorgaron clases a favor.")
+        messages.info(request, "Certificado rechazado. No se otorgó saldo a favor.")
 
     else:
         messages.error(request, "Acción no reconocida.")

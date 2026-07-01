@@ -124,9 +124,12 @@ class Usuario(AbstractUser):
         verbose_name="Vencimiento del abono",
     )
 
-    clases_a_favor = models.PositiveIntegerField(
-    default=0,
-    verbose_name="Clases a favor",
+    saldo_a_favor = models.DecimalField(
+        max_digits=10,
+        name="saldo_a_favor",
+        decimal_places=2,
+        default=0,
+        verbose_name="Saldo a favor",
     )
 
     # ---------------------------------------------------------
@@ -151,14 +154,14 @@ class Usuario(AbstractUser):
             self.fecha_nacimiento    = None
             self.tiene_abono_mensual = False
             self.abono_vencimiento   = None
-            self.clases_a_favor      = 0
+            self.saldo_a_favor      = 0
 
         elif self.tipo == self.TipoUsuario.DUENO:
             self.dni                 = None
             self.fecha_nacimiento    = None
             self.tiene_abono_mensual = False
             self.abono_vencimiento   = None
-            self.clases_a_favor      = 0
+            self.saldo_a_favor      = 0
 
     # ---------------------------------------------------------
     # SAVE

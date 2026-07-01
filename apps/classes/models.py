@@ -1,11 +1,12 @@
 # apps/classes/models.py
 import uuid
 
+
 from django.conf import settings
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-
+from datetime import datetime, timedelta
 from apps.professor.models import Profesor
 
 User = get_user_model()
@@ -67,6 +68,9 @@ class Turno(models.Model):
             id_turno__hora_inicio=hora_inicio
         ).count() > 0
 
+    @property #devuelve un decimal con el costo de la clase, que se usará para calcular el reembolso
+    def get_costo_clase(self):
+        return self.precio
     @property
     def es_hoy(self):
         return self.fecha == timezone.localdate()
@@ -105,11 +109,14 @@ class Reserva(models.Model):
         CANCELADO      = "cancelado",      "Cancelado"
         PAGO           = "pago",           "Pago"
         LISTA_ESPERA   = "lista_espera",   "Lista de espera"
+        DEVOLVER_DINERO = "devolver_dinero", "Devolver dinero"
+        DINERO_DEVUELTO  = "dinero_devuelto", "Dinero devuelto"
+
 
     id_usuario    = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reservas")
     id_turno      = models.ForeignKey(Turno, on_delete=models.CASCADE, related_name="reservas")
     estado        = models.CharField(
-        max_length=12,
+        max_length=15,
         choices=Estado.choices,
         default=Estado.RESERVADO,
     )
@@ -120,13 +127,11 @@ class Reserva(models.Model):
     )
     qr_token = models.UUIDField(
         default=uuid.uuid4,
-        editable=False,
-        unique=True,
-        verbose_name="Token de QR",
+    editable=False,
+    null=True,  # Permitimos nulos temporalmente
+    blank=True,
     )
-
-    class Meta:
-        unique_together = ("id_usuario", "id_turno")
+   
 
     @property
     def es_lista_espera(self):
@@ -149,6 +154,20 @@ class Reserva(models.Model):
         print(f"Verificando si la reserva #{reserva.pk} tiene el pago hecho: {devolver}.")
         print(f"Estado actual de la reserva: {reserva.estado}.")
         return devolver
+    
+
+    @property
+    def faltan_mas_de_48_horas(self):
+        fecha_turno = timezone.make_aware(
+            datetime.combine(
+                self.id_turno.fecha,
+                self.id_turno.hora_inicio
+            )
+        )
+
+        diferencia = fecha_turno - timezone.datetime.now().astimezone()  # Asegura que ambas fechas estén en la misma zona horaria
+
+        return diferencia.total_seconds() >= 48 * 60 * 60
 
     def __str__(self):
         return f"Reserva #{self.pk} — {self.id_usuario} | {self.id_turno} [{self.estado}]"
@@ -169,6 +188,9 @@ class Reserva(models.Model):
         if turno.fecha != timezone.localdate():
             return False
         return timezone.now() <= turno.limite_recepcion
+    @property
+    def monto(self):
+        return self.id_turno.precio
 
 class Sala(models.Model):
     numero = models.PositiveSmallIntegerField(unique=True)
