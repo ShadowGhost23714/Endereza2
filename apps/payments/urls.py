@@ -4,8 +4,9 @@ from .views import (
     RecepcionarTurnoView, CancelarRecepcionView,
     BuscarPacientePorDniView, TurnoEspontaneoView,
     ClasesPorActividadView, NuevaReservaView,RegistrarPacienteView,
-    NuevoAbonadoView,
+    NuevoAbonadoView,VerificarQRView,
 )
+from . import views
 
 app_name = "payments"
 
@@ -21,4 +22,12 @@ urlpatterns = [
     path("api/nueva-reserva/",      NuevaReservaView.as_view(),        name="api_nueva_reserva"),
     path("api/registrar-paciente/",  RegistrarPacienteView.as_view(),   name="api_registrar_paciente"),
     path("api/nuevo-abonado/",      NuevoAbonadoView.as_view(),        name="api_nuevo_abonado"),
+    path("api/verificar-qr/",       VerificarQRView.as_view(),        name="api_verificar_qr"),
+
+    # Rutas para pagos online con MercadoPago 
+    path("reservar-online/<int:turno_id>/", views.reservar_online, name="reservar_online"),
+    path("webhook/",      views.webhook,        name="webhook"),
+    path("exito/",        views.pago_exito,      name="exito"),
+    path("error/",        views.pago_error,      name="error"),
+    path("pendiente/",    views.pago_pendiente,  name="pendiente"),
 ]

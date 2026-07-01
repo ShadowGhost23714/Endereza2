@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.cache import never_cache
 from django.contrib import messages
-from .forms import RegistroForm, LoginForm, CrearSecretarioForm
+from .forms import RegistroForm, LoginForm, CrearSecretarioForm, CustomPasswordChangeForm
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.urls import reverse_lazy
 from django.http import JsonResponse
@@ -129,6 +129,7 @@ def eliminar_secretario(request, pk):
 
 # ───── PASSWORD CHANGE ─────
 class CustomPasswordChangeView(PasswordChangeView):
+    form_class = CustomPasswordChangeForm
     template_name = "accounts/change_password.html"
     success_url = reverse_lazy("accounts:profile")
 
