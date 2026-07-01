@@ -374,6 +374,16 @@ def lista_certificados(request):
         .select_related("reserva__id_usuario", "reserva__id_turno")
         .order_by("-fecha_envio")
     )
+
+    for cert in certificados:
+        monto = cert.reserva.id_turno.get_costo_clase
+        if cert.reserva.estado == Reserva.Estado.DEVOLVER_DINERO:
+            cert.mensaje_validar  = f"Se registrará un reembolso de ${monto} a otorgar al cliente."
+            cert.mensaje_rechazar = f"No se registrará el reembolso de ${monto} al cliente."
+        else:
+            cert.mensaje_validar  = f"Se le acreditarán ${monto} al cliente."
+            cert.mensaje_rechazar = f"No se acreditarán ${monto} al cliente."
+
     return TemplateResponse(request, "classes/certificados_list.html", {"certificados": certificados})
 
 @login_required
