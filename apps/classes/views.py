@@ -118,7 +118,6 @@ class ReservasAsociadasView(LoginRequiredMixin, StaffRequiredMixin, ListView):
     def get_queryset(self):
         render(self.request, "classes/reservas_asociadas.html", {"turno_id": self.kwargs.get("turno_id")})
         turno_id = self.kwargs.get("turno_id")
-        print(f"Obteniendo reservas asociadas al turno_id={turno_id}")
         return Reserva.objects.filter(id_turno=turno_id).select_related("id_usuario").order_by("-fecha_reserva")
 
 
@@ -256,7 +255,6 @@ def reservar_clase(request, turno_id, efectivo):
     ).exclude(estado=Reserva.Estado.CANCELADO).first()
 
     if reserva_existente:
-        print(reserva_existente)  # Debugging line
         if reserva_existente.estado == Reserva.Estado.RESERVADO:
             messages.info(request, "Ya tenés una reserva para este turno.")
             return redirect("turnos:mis_clases")
