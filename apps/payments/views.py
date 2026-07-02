@@ -575,7 +575,7 @@ def pago_exito(request):
     else:
         messages.error(request, "Hubo problemas para realizar el pago")
 
-    return redirect("turnos:listar_clases")
+    return redirect("turnos:mis_clases")
 
 
 def pago_error(request):
@@ -585,7 +585,7 @@ def pago_error(request):
 
     # --- Escenario 3: pago fallido en MP ---
     messages.error(request, "Hubo problemas para realizar el pago")
-    return redirect("turnos:listar_clases")
+    return redirect("turnos:mis_clases")
 
 
 def pago_pendiente(request):
@@ -594,7 +594,7 @@ def pago_pendiente(request):
     sincronizar_pago(payment_id, external_reference)
 
     messages.info(request, "Tu pago está pendiente de confirmación")
-    return redirect("turnos:listar_clases")
+    return redirect("turnos:mis_clases")
 
 
 # Configuración de logging para el webhook
