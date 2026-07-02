@@ -518,6 +518,8 @@ def reservar_online(request, turno_id):
         messages.error(request, "No hay cupos disponibles para este turno.")
         return redirect("classes:listar_clases")
 
+    # 1. Buscamos si ya tiene una reserva activa/pendiente para ESTE intento de pago
+    # Excluimos los estados donde el usuario ya liberó el cupo (cancelado, devuelto, etc.)
     reserva = Reserva.objects.filter(
         id_usuario=request.user,
         id_turno=turno
