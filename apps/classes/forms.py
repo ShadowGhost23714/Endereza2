@@ -164,11 +164,12 @@ class TurnoForm(forms.ModelForm):
         cleaned_data = super().clean()
         fecha        = cleaned_data.get("fecha")
         hora_inicio  = cleaned_data.get("hora_inicio")
-        actividad    = cleaned_data.get("actividad")   # ahora es "tren_inferior", etc.
+        actividad    = cleaned_data.get("actividad")
         profesor     = cleaned_data.get("profesor")
         sala         = cleaned_data.get("sala")
         cupo         = cleaned_data.get("cupo")
 
+        # Validación de profesor ocupado en el mismo turno
         if profesor and fecha and hora_inicio:
             qs_profesor = Turno.profesor_ocupado_en_turno(profesor, fecha, hora_inicio)
             if self.instance.pk:
@@ -176,15 +177,26 @@ class TurnoForm(forms.ModelForm):
             if qs_profesor:
                 self.add_error('profesor', "Este profesor ya tiene asignado un turno en esta fecha y hora.")
 
+        # Validación de sala ocupada en el mismo turno
+        if sala and fecha and hora_inicio:
+            qs_sala = Turno.objects.filter(sala=sala, fecha=fecha, hora_inicio=hora_inicio)
+            if self.instance.pk:
+                qs_sala = qs_sala.exclude(pk=self.instance.pk)
+            if qs_sala.exists():
+                self.add_error('sala', "Esta sala ya está ocupada en la fecha y hora seleccionadas.")
+
+        # Validación de cupo vs capacidad de la sala
         if sala and cupo:
             if cupo > sala.capacidad:
                 self.add_error('cupo', f"El cupo no puede superar la capacidad de la sala ({sala.capacidad}).")
 
+        # Validación de especialidad del profesor vs actividad
         if profesor and actividad:
             # Comparamos directamente contra el campo especialidad del profesor
             if profesor.especialidad != actividad:
                 self.add_error('profesor', "El profesor seleccionado no dicta esta actividad.")
 
+        # Validaciones adicionales para fecha y hora
         if fecha and hora_inicio and actividad:
             if fecha < date.today():
                 raise forms.ValidationError("La fecha no puede ser en el pasado.")

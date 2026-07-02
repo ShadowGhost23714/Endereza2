@@ -61,11 +61,21 @@ class Turno(models.Model):
 
     def tiene_cupo(self):
         return self.cupos_disponibles() > 0
+    
+    # Devuelve True si el profesor está ocupado en el mismo turno
     def profesor_ocupado_en_turno(profesor, fecha, hora_inicio):
         return TurnoProfesional.objects.filter(
             id_profesor=profesor,
             id_turno__fecha=fecha,
             id_turno__hora_inicio=hora_inicio
+        ).count() > 0
+    
+    # Devuelve True si la sala está ocupada en el mismo turno
+    def sala_ocupada_en_turno(sala, fecha, hora_inicio):
+        return Turno.objects.filter(
+            sala=sala,
+            fecha=fecha,
+            hora_inicio=hora_inicio,
         ).count() > 0
 
     @property #devuelve un decimal con el costo de la clase, que se usará para calcular el reembolso
