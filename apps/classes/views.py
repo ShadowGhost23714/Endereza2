@@ -19,7 +19,7 @@ from apps.classes.models import CertificadoMedico
 
 from .forms import TurnoForm
 from .models import Reserva, Turno, TurnoProfesional
-from .emails import enviar_confirmacion_reserva, enviar_confirmacion_lista_espera
+from .emails import enviar_confirmacion_reserva, enviar_confirmacion_lista_espera, enviar_confirmacion_lista_espera_por_cancelacion
 
 
     
@@ -151,6 +151,15 @@ def cancelar_reserva(request, reserva_id):
         id_usuario=request.user
     )
 
+    if not reserva.es_pago_confirmado:
+        reserva.estado = Reserva.Estado.CANCELADO
+        reserva.save()
+        messages.success(
+            request,
+            "Reserva cancelada correctamente."
+        )
+        return redirect("turnos:mis_clases")
+    
     fecha_turno = datetime.combine(
         reserva.id_turno.fecha,
         reserva.id_turno.hora_inicio
@@ -205,6 +214,8 @@ def cancelar_reserva(request, reserva_id):
         reserva.estado = Reserva.Estado.CANCELADO
     reserva.save()
 
+    enviar_confirmacion_lista_espera_por_cancelacion(reserva)
+
     messages.success(
         request,
         "Certificado enviado correctamente. Será revisado por administración."
@@ -245,11 +256,13 @@ def reservar_clase(request, turno_id, efectivo):
     ).exclude(estado=Reserva.Estado.CANCELADO).first()
 
     if reserva_existente:
+        print(reserva_existente)  # Debugging line
         if reserva_existente.estado == Reserva.Estado.RESERVADO:
             messages.info(request, "Ya tenés una reserva para este turno.")
+            return redirect("turnos:mis_clases")
         elif reserva_existente.estado == Reserva.Estado.LISTA_ESPERA:
             messages.info(request, "Ya estás anotado en la lista de espera de este turno.")
-        return redirect("turnos:mis_clases")
+            return redirect("turnos:mis_clases")
 
     # ── Sin cupo: lista de espera (Escenario 3) ───────────────────────────────
     if not turno.tiene_cupo():

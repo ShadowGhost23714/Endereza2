@@ -518,11 +518,29 @@ def reservar_online(request, turno_id):
         messages.error(request, "No hay cupos disponibles para este turno.")
         return redirect("classes:listar_clases")
 
-    reserva, created = Reserva.objects.get_or_create(
+    # 1. Buscamos si ya tiene una reserva activa/pendiente para ESTE intento de pago
+    # Excluimos los estados donde el usuario ya liberó el cupo (cancelado, devuelto, etc.)
+    reserva = Reserva.objects.filter(
         id_usuario=request.user,
-        id_turno=turno,
-        defaults={"estado": Reserva.Estado.RESERVADO}
-    )
+        id_turno=turno
+    ).exclude(
+        estado__in=[Reserva.Estado.CANCELADO, Reserva.Estado.DINERO_DEVUELTO] # Ajustá estos nombres según tus Enums
+    ).first()
+
+    created = False
+    if not reserva:
+        # Si no tiene ninguna reserva previa activa, creamos una nueva
+        reserva = Reserva.objects.create(
+            id_usuario=request.user,
+            id_turno=turno,
+            estado=Reserva.Estado.RESERVADO
+        )
+        created = True
+
+    # 2. Si ya existía y ya está pagada, lo mandamos de vuelta
+    if not created and reserva.estado == Reserva.Estado.PAGO:
+        messages.info(request, "Ya tenés esta clase pagada.")
+        return redirect("classes:listar_clases")
 
     if not created and reserva.estado == Reserva.Estado.PAGO:
         messages.info(request, "Ya tenés esta clase pagada.")
