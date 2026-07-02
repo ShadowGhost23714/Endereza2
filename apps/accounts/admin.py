@@ -16,7 +16,7 @@ class UsuarioAdmin(UserAdmin):
         ("Rol", {"fields": ("tipo",)}),
         ("Abono", {"fields": ("tiene_abono_mensual", "abono_vencimiento")}),
         ("Permisos", {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
-        ("Clases", {"fields": ("clases_a_favor",)}),
+        ("Saldo", {"fields": ("saldo_a_favor",)}),
     )
 
     add_fieldsets = (

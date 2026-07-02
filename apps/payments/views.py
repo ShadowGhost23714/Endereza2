@@ -518,11 +518,27 @@ def reservar_online(request, turno_id):
         messages.error(request, "No hay cupos disponibles para este turno.")
         return redirect("classes:listar_clases")
 
-    reserva, created = Reserva.objects.get_or_create(
+    reserva = Reserva.objects.filter(
         id_usuario=request.user,
-        id_turno=turno,
-        defaults={"estado": Reserva.Estado.RESERVADO}
-    )
+        id_turno=turno
+    ).exclude(
+        estado__in=[Reserva.Estado.CANCELADO, Reserva.Estado.DINERO_DEVUELTO] # Ajustá estos nombres según tus Enums
+    ).first()
+
+    created = False
+    if not reserva:
+        # Si no tiene ninguna reserva previa activa, creamos una nueva
+        reserva = Reserva.objects.create(
+            id_usuario=request.user,
+            id_turno=turno,
+            estado=Reserva.Estado.RESERVADO
+        )
+        created = True
+
+    # 2. Si ya existía y ya está pagada, lo mandamos de vuelta
+    if not created and reserva.estado == Reserva.Estado.PAGO:
+        messages.info(request, "Ya tenés esta clase pagada.")
+        return redirect("classes:listar_clases")
 
     if not created and reserva.estado == Reserva.Estado.PAGO:
         messages.info(request, "Ya tenés esta clase pagada.")
@@ -557,7 +573,7 @@ def pago_exito(request):
     else:
         messages.error(request, "Hubo problemas para realizar el pago")
 
-    return redirect("turnos:listar_clases")
+    return redirect("turnos:mis_clases")
 
 
 def pago_error(request):
@@ -567,7 +583,7 @@ def pago_error(request):
 
     # --- Escenario 3: pago fallido en MP ---
     messages.error(request, "Hubo problemas para realizar el pago")
-    return redirect("turnos:listar_clases")
+    return redirect("turnos:mis_clases")
 
 
 def pago_pendiente(request):
@@ -576,7 +592,7 @@ def pago_pendiente(request):
     sincronizar_pago(payment_id, external_reference)
 
     messages.info(request, "Tu pago está pendiente de confirmación")
-    return redirect("turnos:listar_clases")
+    return redirect("turnos:mis_clases")
 
 
 # Configuración de logging para el webhook

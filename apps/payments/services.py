@@ -18,7 +18,7 @@ def procesar_pago_presencial(reserva_id, monto, metodo_pago="efectivo"):
         nuevo_pago = Pago.objects.create(
             reserva=reserva,
             monto=monto,
-            metodo=metodo_pago
+            metodo_pago=metodo_pago
         )
 
         # 4. Actualizar el estado de la reserva

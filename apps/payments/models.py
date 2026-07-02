@@ -75,6 +75,14 @@ class Pago(models.Model):
 
     def __str__(self):
         return f"Pago #{self.pk} — {self.reserva} [{self.metodo_pago}]"
+    
+    # Propiedades de conveniencia para facilitar la lógica en vistas y templates
+    @property
+    def es_mercado_pago(self):
+        return self.metodo_pago == self.MetodoPago.MERCADO_PAGO
+    @property
+    def esta_aprobado(self):
+        return self.estado == self.Estado.APROBADO
 
 
 @receiver(post_delete, sender=Pago)
@@ -93,11 +101,3 @@ def revertir_reserva_al_eliminar_pago(sender, instance, **kwargs):
         estado=Reserva.Estado.RESERVADO,
         recepcionado=False,
     )
-    
-    # Propiedades de conveniencia para facilitar la lógica en vistas y templates
-    @property
-    def es_mercado_pago(self):
-        return self.metodo_pago == self.MetodoPago.MERCADO_PAGO
-    @property
-    def esta_aprobado(self):
-        return self.estado == self.Estado.APROBADO
