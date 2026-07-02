@@ -196,7 +196,7 @@
 
         <!-- Volver -->
         <p class="mt-7 text-center text-sm text-gray-400">
-          <a href="{% url 'core:home' %}" class="text-primary-700 font-semibold hover:underline dark:text-primary-500">← Cancelar y volver</a>
+          <a href="{% url 'turnos:listar_clases' %}" class="text-primary-700 font-semibold hover:underline dark:text-primary-500">← Volver a clases</a>
         </p>
 
       </div>
@@ -212,13 +212,5 @@
 
   </div>
 </section>
-
-<style>
-  @keyframes fade-up {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .animate-fade-up { animation: fade-up .4s cubic-bezier(.22,1,.36,1); }
-</style>
 
 {% endblock %}
