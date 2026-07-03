@@ -2,9 +2,9 @@
 from django.core.mail import send_mail
 from django.conf import settings
 
-from apps.classes.models import Reserva
 
 def obtener_primera_persona_en_lista_espera(turno):
+    from apps.classes.models import Reserva
     """Devuelve la primera persona en lista de espera para un turno dado."""
     #filtrar reservas que tengan el mismo turno y que estén en estado de lista de espera, ordenadas por fecha de creación
     reserva_lista_espera = Reserva.objects.filter(
@@ -23,6 +23,7 @@ def send_email(subject, message, recipient_list):
         recipient_list = [recipient_list],
         fail_silently  = False,
     )
+    print(f"Email enviado a {recipient_list} con asunto: '{subject}'")
 
 def enviar_confirmacion_reserva(reserva):
     """Envía un email de confirmación al usuario cuando reserva una clase."""
@@ -86,3 +87,23 @@ def enviar_confirmacion_lista_espera_por_cancelacion(reserva):
     )
 
     send_email(asunto, cuerpo, usuario.email)
+
+def enviar_cancelacion_clase_a_usuarios(turno):
+    from apps.classes.models import Reserva
+    """Envía un email a todos los usuarios que tenían reserva en un turno cancelado."""
+    reservas = Reserva.objects.filter(id_turno=turno, estado=Reserva.Estado.RESERVADO)
+    
+    for reserva in reservas:
+        usuario = reserva.id_usuario
+        asunto = f"Turno cancelado — {turno.actividad} el {turno.fecha}"
+        cuerpo = (
+            f"Hola {usuario.first_name or usuario.username},\n\n"
+            f"Lamentamos informarte que el turno que habías reservado fue cancelado.\n\n"
+            f"  Actividad : {turno.actividad}\n"
+            f"  Fecha     : {turno.fecha.strftime('%d/%m/%Y')}\n"
+            f"  Horario   : {turno.hora_inicio.strftime('%H:%M')} – {turno.hora_fin.strftime('%H:%M')}\n"
+            f"  Estado    : Cancelado\n\n"
+            f"Si ya habías abonado, se te acreditará un saldo a favor en tu cuenta.\n\n"
+            f"El equipo de Endereza2"
+        )
+        send_email(asunto, cuerpo, usuario.email)

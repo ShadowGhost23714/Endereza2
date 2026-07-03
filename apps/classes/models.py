@@ -1,7 +1,7 @@
 # apps/classes/models.py
 import uuid
-
-
+from .emails import enviar_cancelacion_clase_a_usuarios
+from django.db import transaction
 from django.conf import settings
 from django.db import models
 from django.contrib.auth import get_user_model
@@ -22,6 +22,7 @@ class Turno(models.Model):
     hora_inicio = models.TimeField(verbose_name="Hora de inicio")
     cupo        = models.PositiveIntegerField(verbose_name="Cupo máximo")
     sala       = models.ForeignKey("Sala", on_delete=models.CASCADE, related_name="turnos")
+    activo      = models.BooleanField(default=True, verbose_name="Activo")
     actividad   = models.CharField(
         max_length=20,
         choices=Actividad.choices,
@@ -39,6 +40,31 @@ class Turno(models.Model):
         verbose_name        = "Turno"
         verbose_name_plural = "Turnos"
         ordering            = ["fecha", "hora_inicio"]
+
+    
+
+    def cancelar_turno(self):
+        # Usamos transaction.atomic para asegurar que si algo falla, no se rompan los saldos
+        with transaction.atomic():
+            # 1. Filtramos las reservas activas que necesitan reembolso y notificación
+            reservas_activas = list(self.reservas.filter(
+                estado__in=[Reserva.Estado.RESERVADO, Reserva.Estado.PAGO, Reserva.Estado.LISTA_ESPERA]
+            ).select_related('id_usuario'))
+            
+            # 2. Notificamos y reembolsamos de forma individual (ya que el saldo depende del usuario)
+            enviar_cancelacion_clase_a_usuarios(self)
+            for reserva in reservas_activas:    
+                # Forzamos temporalmente el estado a CANCELADO en memoria para que pase el "if" de agregar_saldo_a_favor
+                if reserva.estado == Reserva.Estado.PAGO:
+                    reserva.agregar_saldo_a_favor()
+                reserva.estado = Reserva.Estado.CANCELADO 
+            # Desactivamos el turno de forma lógica en la BD
+            # 3. Actualizamos en masa todas las reservas vinculadas a este turno en la Base de Datos
+            self.reservas.update(estado=Reserva.Estado.CANCELADO)
+            
+            # 4. Desactivamos el turno de forma lógica
+            self.activo = False
+            self.save(update_fields=["activo"])
 
     def devolver_profesor(self):
         turno_profesional = self.turno_profesionales.select_related("id_profesor").first()
@@ -142,6 +168,14 @@ class Reserva(models.Model):
     blank=True,
     )
    
+    def agregar_saldo_a_favor(self):
+        if self.estado == self.Estado.CANCELADO:
+            monto = self.id_turno.get_costo_clase
+            self.id_usuario.saldo_a_favor += monto
+            self.id_usuario.save(update_fields=["saldo_a_favor"]) # Optimizado para actualizar solo el saldo
+            print(f"Se ha agregado un saldo a favor de {monto} al usuario {self.id_usuario}.")
+        else:
+            print(f"No se puede agregar saldo a favor porque la reserva #{self.pk} no está cancelada.")
 
     @property
     def es_lista_espera(self):

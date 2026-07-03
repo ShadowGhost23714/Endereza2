@@ -158,13 +158,13 @@
                     -->
 
                     <!-- Modal toggle -->
-                    <button data-modal-target="select-modal" data-modal-toggle="select-modal" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 text-sm" type="button">
+                    <button data-modal-target="select-modal-{{ turno.pk }}" data-modal-toggle="select-modal-{{ turno.pk }}" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 text-sm" type="button">
                     Reservar
                     </button>
 
                     <!-- Main modal -->
-                    <div id="select-modal" tabindex="-1" aria-hidden="true"
-                        class="hidden overflow-y-auto overflow-x-hidden fixed inset-0 z-50 justify-center items-center w-full h-full bg-gray-900/50">
+                    <div id="select-modal-{{ turno.pk }}" tabindex="-1" aria-hidden="true"
+    class="hidden overflow-y-auto overflow-x-hidden fixed inset-0 z-50 justify-center items-center w-full h-full bg-gray-900/50">
                         <div class="relative p-4 w-full max-w-md max-h-full">
                             <!-- Modal content 
                             flex items-center gap-2 font-semibold px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700 transition 
@@ -175,7 +175,7 @@
                                     <h3 class="text-lg font-medium text-gray-700 dark:text-white">Confirmar Reserva</h3>
                                     <button type="button"
                                             class="text-gray-400 bg-transparent hover:bg-gray-100 hover:text-gray-900 rounded-lg text-sm w-9 h-9 ms-auto inline-flex justify-center items-center"
-                                            data-modal-hide="select-modal">
+                                            data-modal-hide="select-modal-{{ turno.pk }}">
                                         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
                                         </svg>
