@@ -14,6 +14,16 @@ def obtener_primera_persona_en_lista_espera(turno):
     
     return reserva_lista_espera
 
+def send_email(subject, message, recipient_list):
+    """Envía un email usando la configuración de Django."""
+    send_mail(
+        subject      = subject,
+        message      = message,
+        from_email   = None,  # Usará DEFAULT_FROM_EMAIL de settings.py
+        recipient_list = [recipient_list],
+        fail_silently  = False,
+    )
+
 def enviar_confirmacion_reserva(reserva):
     """Envía un email de confirmación al usuario cuando reserva una clase."""
     turno   = reserva.id_turno
@@ -32,13 +42,7 @@ def enviar_confirmacion_reserva(reserva):
         f"El equipo de Endereza2"
     )
 
-    send_mail(
-        subject      = asunto,
-        message      = cuerpo,
-        from_email   = settings.DEFAULT_FROM_EMAIL,
-        recipient_list = [usuario.email],
-        fail_silently  = True,
-    )
+    send_email(asunto, cuerpo, usuario.email)
 
 
 def enviar_confirmacion_lista_espera(reserva):
@@ -58,13 +62,7 @@ def enviar_confirmacion_lista_espera(reserva):
         f"El equipo de Endereza2"
     )
 
-    send_mail(
-        subject      = asunto,
-        message      = cuerpo,
-        from_email   = settings.DEFAULT_FROM_EMAIL,
-        recipient_list = [usuario.email],
-        fail_silently  = True,
-    )
+    send_email(asunto, cuerpo, usuario.email)
 
 def enviar_confirmacion_lista_espera_por_cancelacion(reserva):
     """Envía un email informando que el usuario fue movido de la lista de espera a reserva activa."""
@@ -87,10 +85,4 @@ def enviar_confirmacion_lista_espera_por_cancelacion(reserva):
         f"El equipo de Endereza2"
     )
 
-    send_mail(
-        subject      = asunto,
-        message      = cuerpo,
-        from_email   = settings.DEFAULT_FROM_EMAIL,
-        recipient_list = [destino.id_usuario.email],
-        fail_silently  = True,
-    )
+    send_email(asunto, cuerpo, usuario.email)
