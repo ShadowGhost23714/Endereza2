@@ -16,9 +16,9 @@ from apps.accounts import models
 from apps.payments.models import Pago
 from apps.professor.models import Profesor
 from apps.classes.models import CertificadoMedico
-
+from django.db import transaction
 from .forms import TurnoForm
-from .models import Reserva, Turno, TurnoProfesional
+from .models import Reserva, Turno, TurnoProfesional, User
 from .emails import enviar_confirmacion_reserva, enviar_confirmacion_lista_espera, enviar_confirmacion_lista_espera_por_cancelacion
 
 
@@ -65,8 +65,10 @@ class TurnoListView(ListView):
         if self.request.user.is_authenticated:
             # Mostrar solo turnos futuros para usuarios autenticados
             return Turno.objects.filter(
-                fecha__gte=timezone.now().date()
+                fecha__gte=timezone.now().date(),
+                activo=True
             ).order_by("fecha", "hora_inicio")
+            
         return Turno.objects.all().order_by("fecha", "hora_inicio")
     
     def get_context_data(self, **kwargs):
@@ -85,23 +87,22 @@ class TurnoListView(ListView):
 class TurnoDeleteView(LoginRequiredMixin, SuperuserRequiredMixin, View):
     model         = Turno
     template_name = "classes/turno_delete.html"
-    success_url   = reverse_lazy("turnos:turno_delete", kwargs={"pk": 0})  # Placeholder, se redirige manualmente
+    success_url   = reverse_lazy("turnos:turno_delete", kwargs={"pk": 0})
 
     def post(self, request, pk):
         try:
-            turno = get_object_or_404(Turno, pk=pk)
+            # Buscamos el turno activo
+            turno = get_object_or_404(Turno, pk=pk, activo=True)
             
-            reservas = Reserva.objects.filter(id_turno = turno.pk)
-            for reserva in reservas:
-                reserva.notify_cancelling_reserva()  # Notificar a los usuarios afectados por la cancelación
-                reserva.id_usuario.saldo_a_favor += turno.get_costo_clase  # Reembolsar el costo de la clase al usuario
-                reserva.id_usuario.save(update_fields=["saldo_a_favor"])
-                reserva.delete()  # Eliminar las reservas asociadas al turno
-            turno.delete() #elimino el turno
-            messages.success(request, "Turno eliminado exitosamente.")
+            # Ejecutamos toda la lógica encapsulada del modelo
+            turno.cancelar_turno()
+            
+            messages.success(request, "Turno cancelado y saldos reembolsados exitosamente.")
             return redirect("turnos:listar_clases")
+            
         except Exception as e:
-            messages.error(request, "Error al eliminar el turno.")
+            print(f"Error al cancelar turno: {e}")
+            messages.error(request, "Error al intentar cancelar el turno.")
             return redirect("turnos:listar_clases")
 
 class ReservaListView(LoginRequiredMixin, ListView):
