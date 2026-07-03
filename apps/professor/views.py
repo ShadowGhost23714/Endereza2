@@ -6,12 +6,31 @@ from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.utils import timezone
+from django.db.models import Q
 from .forms import ProfesorForm
 from .models import Profesor
 import json
 from django.http import JsonResponse
 from django.views import View
 from apps.classes.models import Turno, TurnoProfesional
+
+
+def asignaciones_futuras(profesor):
+    """Devuelve solo las asignaciones de clases futuras o pendientes (no pasadas)."""
+    ahora = timezone.localtime()
+    hoy = ahora.date()
+    hora_actual = ahora.time()
+
+    return (
+        TurnoProfesional.objects
+        .filter(id_profesor=profesor)
+        .filter(
+            Q(id_turno__fecha__gt=hoy) |
+            Q(id_turno__fecha=hoy, id_turno__hora_inicio__gte=hora_actual)
+        )
+        .select_related("id_turno")
+    )
 
 class StaffRequiredMixin(UserPassesTestMixin):
     def test_func(self):
@@ -63,7 +82,7 @@ class ProfesorDeleteView(LoginRequiredMixin, StaffRequiredMixin, View):
             reasignaciones = {}
 
         # Clases actualmente asignadas a este profesor
-        asignaciones = TurnoProfesional.objects.filter(id_profesor=profesor).select_related("id_turno")
+        asignaciones = asignaciones_futuras(profesor)
 
         if asignaciones.exists():
             # Validar que todas tienen reasignación
@@ -105,11 +124,7 @@ class ProfesorClasesAsignadasView(LoginRequiredMixin, StaffRequiredMixin, View):
 
     def get(self, request, pk):
         profesor = get_object_or_404(Profesor, pk=pk)
-        asignaciones = (
-            TurnoProfesional.objects
-            .filter(id_profesor=profesor)
-            .select_related("id_turno")
-        )
+        asignaciones = asignaciones_futuras(profesor)
 
         otros_profesores = Profesor.objects.exclude(pk=pk).filter(especialidad=profesor.especialidad)
 
