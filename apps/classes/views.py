@@ -94,6 +94,8 @@ class TurnoDeleteView(LoginRequiredMixin, SuperuserRequiredMixin, View):
             reservas = Reserva.objects.filter(id_turno = turno.pk)
             for reserva in reservas:
                 reserva.notify_cancelling_reserva()  # Notificar a los usuarios afectados por la cancelación
+                reserva.id_usuario.saldo_a_favor += turno.get_costo_clase  # Reembolsar el costo de la clase al usuario
+                reserva.id_usuario.save(update_fields=["saldo_a_favor"])
                 reserva.delete()  # Eliminar las reservas asociadas al turno
             turno.delete() #elimino el turno
             messages.success(request, "Turno eliminado exitosamente.")
@@ -137,7 +139,19 @@ class MisClasesView(LoginRequiredMixin, ListView):
             .select_related("id_turno")
             .order_by("id_turno__fecha", "id_turno__hora_inicio")
         )
+def chequear_certificado_medico(archivo, reserva, request):
+    if not archivo:
+        messages.error(
+            request,
+            "Debés adjuntar un certificado médico."
+        )
+        return redirect("turnos:mis_clases")
 
+    CertificadoMedico.objects.create(
+        reserva=reserva,
+        imagen=archivo,
+    )
+    
 @login_required
 def cancelar_reserva(request, reserva_id):
 
@@ -180,44 +194,49 @@ def cancelar_reserva(request, reserva_id):
             reserva.estado = Reserva.Estado.DEVOLVER_DINERO
         reserva.save()
 
+        clase = reserva.id_turno
+        clase.cupo += 1
+        clase.save()
+
         messages.success(
             request,
             "Reserva cancelada correctamente."
         )
 
         return redirect("turnos:mis_clases")
-    
+    archivo = request.FILES.get("certificado")
+
     if tipo == "saldo":
         request.user.save(update_fields=["saldo_a_favor"])
         reserva.estado = Reserva.Estado.CANCELADO
-    else:
+        chequear_certificado_medico(archivo, reserva, request)
+    elif tipo == "dinero":
         reserva.estado = Reserva.Estado.DEVOLVER_DINERO
+        chequear_certificado_medico(archivo, reserva, request)
 
-    archivo = request.FILES.get("certificado")
+    
 
-    if not archivo:
-        messages.error(
-            request,
-            "Debés adjuntar un certificado médico."
-        )
-        return redirect("turnos:mis_clases")
-
-    CertificadoMedico.objects.create(
-        reserva=reserva,
-        imagen=archivo,
-    )
-
+    
+    mensaje = ""
     if tipo != "saldo":
         reserva.estado = Reserva.Estado.DEVOLVER_DINERO
-    else:
+        mensaje = "Se registró la solicitud de devolución de dinero. Será revisada por administración."
+    elif tipo == "saldo":
         reserva.estado = Reserva.Estado.CANCELADO
+        mensaje = "Se registró la solicitud de reembolso a saldo a favor. Será revisada por administración."
+    else:
+        mensaje = "Reserva cancelada correctamente."
     reserva.save()
+
+    clase = reserva.id_turno
+    clase.cupo += 1
+    clase.save()
 
     enviar_confirmacion_lista_espera_por_cancelacion(reserva)
 
     messages.success(
         request,
-        "Certificado enviado correctamente. Será revisado por administración."
+        mensaje
     )
 
     return redirect("turnos:mis_clases")
@@ -368,6 +387,11 @@ def reservar_saldo_a_favor(request, turno_id):
         )
         request.user.saldo_a_favor -= turno.get_costo_clase
         request.user.save(update_fields=["saldo_a_favor"])
+
+    # Aumentar el cupo de la clase
+    clase = reserva.id_turno
+    clase.cupo -= 1
+    clase.save()
 
     enviar_confirmacion_reserva(reserva)
     messages.success(request, "¡Reserva creada con saldo a favor! Te enviamos un mail de confirmación.")

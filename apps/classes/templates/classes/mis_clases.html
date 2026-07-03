@@ -186,7 +186,6 @@
                         type="file"
                         name="certificado"
                         accept=".jpg,.jpeg,.png,.pdf"
-                        required
                         class="hidden"
                         onchange="document.getElementById('certificado-filename-{{ reserva.pk }}').textContent = this.files.length ? this.files[0].name : 'Sin archivos seleccionados';">
                     <p class="mt-2 text-xs text-gray-500">
