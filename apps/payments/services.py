@@ -55,6 +55,7 @@ def crear_preferencia(reserva, request):
         "auto_return": "approved",
         "external_reference": str(reserva.id),
         "notification_url": f"{base_url}/pagos/webhook/",
+        "binary_mode": True,
     }
 
     try:
