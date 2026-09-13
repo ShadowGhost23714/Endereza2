@@ -125,6 +125,25 @@
             Gestionar
           </a>
         </div>
+
+        <!-- Tarjeta Devolución de dinero -->
+        <div class="bg-white rounded-2xl shadow border border-gray-100 p-6 flex flex-col justify-between">
+          <div>
+            <!-- Icono -->
+            <div class="w-11 h-11 text-gray-600 bg-gray-100 rounded-xl flex items-center justify-center mb-5">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+              </svg>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900 mb-2">Devolución de dinero</h3>
+            <p class="text-gray-500 text-sm mb-5">Procesar y gestionar solicitudes de devolución de fondos.</p>
+          </div>
+
+          <a href="{% url 'turnos:devolver_dinero' %}"
+            class="block w-full text-center border border-gray-300 text-gray-700 font-semibold text-sm py-2.5 rounded-xl hover:bg-gray-100 transition-colors">
+            Gestionar
+          </a>
+        </div>
       </div>
     </div>
     </div>
