@@ -26,7 +26,23 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# MercadoPago Credentials
+MP_PUBLIC_KEY = config("MP_PUBLIC_KEY")
+MP_ACCESS_TOKEN = config("MP_ACCESS_TOKEN")
+
+
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "extinct-stem-sporting.ngrok-free.dev",
+    ".trycloudflare.com",
+]
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.trycloudflare.com",
+    "https://extinct-stem-sporting.ngrok-free.dev",
+]
 
 
 # Application definition
@@ -46,6 +62,8 @@ INSTALLED_APPS = [
     'apps.classes',
     "apps.turnos_view",
     "apps.historial_pagos",
+    #"apps.stats",
+    #'apps.abonos',
     'config',
 ]
 
@@ -124,7 +142,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # Config compressor
 
@@ -132,7 +150,11 @@ COMPRESS_ROOT = BASE_DIR / 'static'
 
 COMPRESS_ENABLED = True
 
-STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+]
 
 
 # =========================
@@ -146,5 +168,15 @@ LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'core:home'
 LOGOUT_REDIRECT_URL = 'core:home'
 
-EMAIL_BACKEND   = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'Endereza2 <noreply@endereza2.com>'
+EMAIL_BACKEND   = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST      = 'smtp.gmail.com'
+EMAIL_PORT      = 587
+EMAIL_USE_TLS  = True
+
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

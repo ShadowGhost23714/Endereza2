@@ -3,9 +3,9 @@ from django import forms
 from django.contrib.auth.forms import (
     AuthenticationForm,
     UserCreationForm,
+    PasswordChangeForm,
 )
 from django.core.exceptions import ValidationError
-
 from .models import Usuario
 
 # ==========================================================
@@ -275,6 +275,11 @@ class PerfilForm(forms.ModelForm):
         elif usuario.es_secretario:
             self.fields.pop("fecha_nacimiento")
 
+
+# ==========================================================
+# REGISTRO SECRETARIO
+# ==========================================================
+
 class CrearSecretarioForm(UserCreationForm):
     """
     Formulario para que el dueño cree una cuenta de tipo Secretario.
@@ -361,3 +366,16 @@ class CrearSecretarioForm(UserCreationForm):
 
         return user
     
+# ==========================================================
+# CAMBIO DE CONTRASEÑA
+# ==========================================================
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+
+    def clean_new_password1(self):
+        new_password = self.cleaned_data.get("new_password1")
+
+        if self.user.check_password(new_password):
+            raise ValidationError("La nueva contraseña debe ser distinta de la contraseña actual.")
+
+        return new_password

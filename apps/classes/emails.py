@@ -3,6 +3,28 @@ from django.core.mail import send_mail
 from django.conf import settings
 
 
+def obtener_primera_persona_en_lista_espera(turno):
+    from apps.classes.models import Reserva
+    """Devuelve la primera persona en lista de espera para un turno dado."""
+    #filtrar reservas que tengan el mismo turno y que estén en estado de lista de espera, ordenadas por fecha de creación
+    reserva_lista_espera = Reserva.objects.filter(
+        id_turno=turno,
+        estado=Reserva.Estado.LISTA_ESPERA
+    ).order_by('fecha_reserva').first()
+    
+    return reserva_lista_espera
+
+def send_email(subject, message, recipient_list):
+    """Envía un email usando la configuración de Django."""
+    send_mail(
+        subject      = subject,
+        message      = message,
+        from_email   = None,  # Usará DEFAULT_FROM_EMAIL de settings.py
+        recipient_list = [recipient_list],
+        fail_silently  = False,
+    )
+    print(f"Email enviado a {recipient_list} con asunto: '{subject}'")
+
 def enviar_confirmacion_reserva(reserva):
     """Envía un email de confirmación al usuario cuando reserva una clase."""
     turno   = reserva.id_turno
@@ -21,13 +43,7 @@ def enviar_confirmacion_reserva(reserva):
         f"El equipo de Endereza2"
     )
 
-    send_mail(
-        subject      = asunto,
-        message      = cuerpo,
-        from_email   = settings.DEFAULT_FROM_EMAIL,
-        recipient_list = [usuario.email],
-        fail_silently  = True,
-    )
+    send_email(asunto, cuerpo, usuario.email)
 
 
 def enviar_confirmacion_lista_espera(reserva):
@@ -47,10 +63,47 @@ def enviar_confirmacion_lista_espera(reserva):
         f"El equipo de Endereza2"
     )
 
-    send_mail(
-        subject      = asunto,
-        message      = cuerpo,
-        from_email   = settings.DEFAULT_FROM_EMAIL,
-        recipient_list = [usuario.email],
-        fail_silently  = True,
+    send_email(asunto, cuerpo, usuario.email)
+
+def enviar_confirmacion_lista_espera_por_cancelacion(reserva):
+    """Envía un email informando que el usuario fue movido de la lista de espera a reserva activa."""
+    turno   = reserva.id_turno
+    usuario = reserva.id_usuario
+    destino = obtener_primera_persona_en_lista_espera(turno)
+
+    if not destino:
+        return  # No hay nadie en lista de espera, no se envía ningún correo
+    asunto = f"¡Cupo disponible! — {turno.actividad} el {turno.fecha}"
+    cuerpo = (
+        f"Hola {usuario.first_name or usuario.username},\n\n"
+        f"¡Buenas noticias! Se liberó un cupo en el turno que estabas esperando.\n\n"
+        f"  Actividad : {turno.actividad}\n"
+        f"  Fecha     : {turno.fecha.strftime('%d/%m/%Y')}\n"
+        f"  Horario   : {turno.hora_inicio.strftime('%H:%M')} – {turno.hora_fin.strftime('%H:%M')}\n"
+        f"  Estado    : Reservado\n\n"
+        f"Recordá que debés abonar en efectivo al llegar a la clase.\n\n"
+        f"¡Nos vemos pronto!\n"
+        f"El equipo de Endereza2"
     )
+
+    send_email(asunto, cuerpo, usuario.email)
+
+def enviar_cancelacion_clase_a_usuarios(turno):
+    from apps.classes.models import Reserva
+    """Envía un email a todos los usuarios que tenían reserva en un turno cancelado."""
+    reservas = Reserva.objects.filter(id_turno=turno, estado=Reserva.Estado.RESERVADO)
+    
+    for reserva in reservas:
+        usuario = reserva.id_usuario
+        asunto = f"Turno cancelado — {turno.actividad} el {turno.fecha}"
+        cuerpo = (
+            f"Hola {usuario.first_name or usuario.username},\n\n"
+            f"Lamentamos informarte que el turno que habías reservado fue cancelado.\n\n"
+            f"  Actividad : {turno.actividad}\n"
+            f"  Fecha     : {turno.fecha.strftime('%d/%m/%Y')}\n"
+            f"  Horario   : {turno.hora_inicio.strftime('%H:%M')} – {turno.hora_fin.strftime('%H:%M')}\n"
+            f"  Estado    : Cancelado\n\n"
+            f"Si ya habías abonado, se te acreditará un saldo a favor en tu cuenta.\n\n"
+            f"El equipo de Endereza2"
+        )
+        send_email(asunto, cuerpo, usuario.email)

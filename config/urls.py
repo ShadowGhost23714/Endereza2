@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.views import LogoutView
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,5 +28,17 @@ urlpatterns = [
     path("agenda/", include("apps.turnos_view.urls")),
 
     # historial_pagos/urls.py
-    path("historial-pagos/", include("apps.historial_pagos.urls", namespace="historial_pagos")),  # ← agregar
+    path("historial-pagos/", include("apps.historial_pagos.urls", namespace="historial_pagos")),
+
+    # stats/urls.py
+    #path("stats/", include("apps.stats.urls", namespace="stats")),
+    
+    # abonos/urls.py
+    #path("abono/", include("apps.abonos.urls")),
 ]
+
+if settings.DEBUG:                                        # ← agregar
+    urlpatterns += static(                               # ← agregar
+        settings.MEDIA_URL,                              # ← agregar
+        document_root=settings.MEDIA_ROOT                # ← agregar
+    )   

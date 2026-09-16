@@ -108,18 +108,20 @@
           <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           Resumen de actividad
         </p>
-        <div class="grid grid-cols-3 gap-3">
+        <div class="grid grid-cols-2 gap-3">
           <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 text-center dark:bg-gray-800 dark:border-gray-700">
             <p class="text-2xl font-extrabold text-gray-900 tracking-tight dark:text-white">12</p><!-- {{ stats.total_clases }} -->
             <p class="text-xs font-semibold text-gray-400 mt-1 leading-snug">Clases<br>asistidas</p>
           </div>
+          <!--
           <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 text-center dark:bg-gray-800 dark:border-gray-700">
-            <p class="text-2xl font-extrabold text-gray-900 tracking-tight dark:text-white">4</p><!-- {{ stats.clases_mes }} -->
+            <p class="text-2xl font-extrabold text-gray-900 tracking-tight dark:text-white">4</p>
             <p class="text-xs font-semibold text-gray-400 mt-1 leading-snug">Clases<br>este mes</p>
           </div>
+          -->
           <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 text-center dark:bg-gray-800 dark:border-gray-700">
-            <p class="text-2xl font-extrabold text-gray-900 tracking-tight dark:text-white">1</p><!-- {{ stats.clases_favor }} -->
-            <p class="text-xs font-semibold text-gray-400 mt-1 leading-snug">Clases<br>a favor</p>
+            <p class="text-2xl font-extrabold text-gray-900 tracking-tight dark:text-white">{{ user.saldo_a_favor }}</p>
+            <p class="text-xs font-semibold text-gray-400 mt-1 leading-snug">Saldo<br>a favor</p>
           </div>
         </div>
         <hr class="my-5 border-gray-100">
@@ -135,21 +137,28 @@
           {% if user.es_cliente %}
           <div class="flex justify-between items-center">
             <span class="text-sm font-semibold text-gray-600 dark:text-white">Abono mensual</span>
-            {% if user.profile.tiene_abono_mensual %}
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Activo
-            </span>
+            {% if user.abono_activo %}
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                Activo, vence: {{ user.abono_vencimiento|date:"d/m/Y" }}
+              </span>
+            {% elif not user.tiene_abono_mensual and user.abono_vencimiento %}
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-700">
+                <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+              Cancelado, vence: {{ user.abono_vencimiento|date:"d/m/Y" }}
+              </span>
             {% else %}
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700">
-              <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>Sin abono
-            </span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>Sin abono
+              </span>
             {% endif %}
-          </div>
-          {% endif %}
         </div>
+        {% endif %}
       </div>
     </div>
+  </div>
 
+    {% if user.es_cliente %}
     <!-- ══ HISTORIAL DE PAGOS ══ -->
     <div class="bg-white border border-gray-200 rounded-2xl p-7 dark:bg-gray-800 dark:border-gray-700">
       <div class="flex flex-wrap items-center justify-between gap-4">
@@ -168,9 +177,10 @@
         </a>
       </div>
     </div>
+    {% endif %}
 
     <!-- ══ CAMBIAR CONTRASEÑA ══ -->
-    <div class="bg-white border border-gray-200 rounded-2xl p-7 dark:bg-gray-800 dark:border-gray-700" >
+    <div class="bg-white border border-gray-200 rounded-2xl p-7 dark:bg-gray-800 dark:border-gray-700">
       <div class="flex flex-wrap items-center justify-between gap-4">
         <div>
           <p class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">
@@ -185,6 +195,27 @@
         </a>
       </div>
     </div>
+
+     <!-- ══ CANCELAR ABONO  ══ -->
+      {% if user.abono_activo %}
+      <div class="bg-white border border-gray-200 rounded-2xl p-7 dark:bg-gray-800 dark:border-gray-700">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+              </svg>
+              Abono mensual
+            </p>
+            <p class="text-sm text-gray-400">Tu abono vence el {{ user.abono_vencimiento|date:"d/m/Y" }}. Al cancelar seguirá activo hasta esa fecha.</p>
+          </div>
+          <button onclick="cancelarAbono()"
+            class="inline-flex items-center gap-2 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-semibold rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+            Cancelar abono
+          </button>
+        </div>
+      </div>
+      {% endif %}
 
 
     <!-- ══ ZONA DE PELIGRO ══ (En desarrollo)
@@ -217,5 +248,24 @@
   }
   .animate-fade-up { animation: fade-up .4s cubic-bezier(.22,1,.36,1); }
 </style>
+
+<script>
+async function cancelarAbono() {
+    if (!confirm("¿Confirmar cancelación del abono? Seguirá activo hasta la fecha de vencimiento.")) return;
+
+    const res  = await fetch("{% url 'accounts:cancelar_abono' %}", {
+        method: "POST",
+        headers: { "X-CSRFToken": "{{ csrf_token }}" },
+    });
+    const data = await res.json();
+
+    if (data.ok) {
+        alert(data.mensaje);
+        location.reload();
+    } else {
+        alert(data.error);
+    }
+}
+</script>
 
 {% endblock %}
